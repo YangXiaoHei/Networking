@@ -34,8 +34,8 @@ The goal of this first lab was primarily to introduce you to Wireshark. The foll
 
 #### 4、Print the two HTTP messages (GET and OK) referred to in question 2 above. To do so, select Print from the Wireshark File command menu, and select the “Selected Packet Only” and “Print as displayed” radial buttons, and then click OK. 
 
- 1、选中分组
- 2、文件
- 3、导出分组解析结果 -> JSON、C 语言数组 ...
- 4、仅到处选中/或者标记分组
- 5、命名
+ * 选中分组
+ * 文件
+ * 导出分组解析结果 -> JSON、C 语言数组 ...
+ * 仅到处选中/或者标记分组
+ * 命名
