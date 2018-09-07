@@ -66,7 +66,9 @@ int main(int argc, char const *argv[])
                 break;
             }
             buf[rdlen] = 0; 
-            printf("received data : %s", buf);
+            printf("*************************************************************\n");
+            printf("received data : \n\n%s", buf);
+            printf("*************************************************************\n");
         }
     }
     
