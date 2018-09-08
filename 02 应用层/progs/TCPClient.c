@@ -35,6 +35,7 @@ int main(int argc, char const *argv[])
         perror("connect error");
         exit(1);
     }
+    printf("connnect succ!\n");
 
     FILE *fp = NULL;
     if ((fp = fdopen(fd, "w")) == NULL)
