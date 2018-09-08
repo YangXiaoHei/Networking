@@ -32,6 +32,18 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
+    /********** 为 udp 套接字绑定一个端口，而不是让操作系统随便选 *********/
+    // struct sockaddr_in tmpaddr;
+    // memcpy(&tmpaddr, &svraddr, sizeof(svraddr));
+    // tmpaddr.sin_addr.s_addr = 0;
+    // tmpaddr.sin_port = htons(5432);
+    // if (bind(fd, (struct sockaddr *)&tmpaddr, sizeof(tmpaddr)) < 0)
+    // {
+    //     perror("bind error");
+    //     exit(1);
+    // }
+    /*************************************************************/
+
     char buf[1 << 20];
     while (fgets(buf, sizeof(buf), stdin) != NULL)
     {
