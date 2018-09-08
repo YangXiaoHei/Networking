@@ -9,6 +9,14 @@
 
 int main(int argc, char const *argv[])
 {
+    if (argc != 2)
+    {
+        printf("usage : %s <#port>\n", argv[0]);
+        exit(1);
+    }
+
+    unsigned int port = atoi(argv[1]);
+
     int listenfd;
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -20,7 +28,7 @@ int main(int argc, char const *argv[])
     bzero(&svraddr, sizeof(svraddr));
     svraddr.sin_family = AF_INET;
     svraddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    svraddr.sin_port = htons(5000);
+    svraddr.sin_port = htons(port);
     
     if (bind(listenfd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0)
     {
@@ -53,7 +61,7 @@ int main(int argc, char const *argv[])
         
         while (1)
         {
-            printf("begin to read data...\n");
+            printf("wait to read data...\n");
             if ((rdlen = read(connfd, buf, sizeof(buf))) < 0)
             {
                 printf("read error : already read %zd bytes, error reason: %s\n",rdlen, strerror(errno));
@@ -61,13 +69,14 @@ int main(int argc, char const *argv[])
             }
             else if (rdlen == 0)
             {
-                printf("read finished!\n");
+                printf("peer close socket, read finished!\n");
                 close(connfd);
                 break;
             }
             buf[rdlen] = 0; 
+            printf("received data following:\n");
             printf("*************************************************************\n");
-            printf("received data : \n\n%s", buf);
+            printf("%s", buf);
             printf("*************************************************************\n");
         }
     }
