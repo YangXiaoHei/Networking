@@ -41,7 +41,8 @@ int parse_http_protocol(const char *protocol_str, char *method, size_t mlen, cha
     size_t len = strlen(protocol_str);
 
     char *p = (char *)protocol_str, *q;
-   
+    
+    /* Get HTTP method field */   
     if ((q = strchr(protocol_str, ' ')) == NULL)
         return WEB_SVR_RET_CODE__BAD_REQUEST;
 
@@ -51,6 +52,7 @@ int parse_http_protocol(const char *protocol_str, char *method, size_t mlen, cha
     memcpy(method, protocol_str, q - p);
     method[q - p] = 0;
 
+    /* Get HTTP url field */
     p = ++q;
     if ((q = strchr(q, ' ')) == NULL)
         return WEB_SVR_RET_CODE__BAD_REQUEST;
@@ -67,6 +69,7 @@ int do_method(const char *method, const char *url, char *content, size_t *clen)
 {
     int retcode = 0;
 
+    /* Just implement GET method yet */
     if (strcmp(method, "GET") != 0)
     {
         retcode = WEB_SVR_RET_CODE__NOT_SUPPORTED;
@@ -111,32 +114,57 @@ int do_method(const char *method, const char *url, char *content, size_t *clen)
     *clen = nread;
     return 0;
 err:
+    /* clear response buf */
     bzero(content, *clen);
     *clen = 0;
     return retcode;
 }
 
-int packbuf(int retcode, char *dst, size_t dst_len, const char *data, size_t data_len)
+int packbuf(int retcode, struct stat *st, char *dst, size_t dst_len, const char *data, size_t data_len)
 {
     int len;
-    int status_code = 200;
-    const char *phrase = "unknow error";
+    int status_code;
+    const char *phrase;
     switch(retcode)
     {
+        /* OK */
+        case 0 :
+            status_code = 200;
+            phrase = "OK";
+
+        /* Not Found */
         case WEB_SVR_RET_CODE__NOT_FOUND :
             status_code = 404;
             phrase = "Not Found";
             break;
+
+        /* Parse Fail */
         case WEB_SVR_RET_CODE__BAD_REQUEST :
             status_code = 400;
             phrase = "Bad Request";
             break;
+
+        /* Internal error */
         default:
             status_code = 500;
             phrase = "Internal Error";
     }
+
+    /* status header line */
     len = snprintf(dst, dst_len, "%s %d %s\r\n", "HTTP/1.1", status_code, phrase);
+
+    /* response header line */
     len += snprintf(dst + len, dst_len - len, "Content-Type:text/html\r\nContent-Length:%zd\r\n", data_len);
+    len += snprintf(dst + len, dst_len - len, "Server:YangXiaoHei_WebServer_v1.0\r\n");
+    struct tm *tmbuf = localtime(&st->st_mtimespec.tv_sec);
+    len += snprintf(dst + len, dst_len - len, "Last-Modified:%04d/%02d/%02d [%0d:%0d:%0d]\r\n", 
+                    tmbuf->m_year + 1900, 
+                    tmbuf->m_mon + 1, 
+                    tmpbuf->m_mday, 
+                    tmpbuf->m_hour, 
+                    tmpbuf->m_min,
+                    tmpbuf->m_sec);
+    len += snprintf(dst + len, dst_len - len, "Connection:keep-alive\r\n");
     len += snprintf(dst + len, dst_len - len, "\r\n");
     memcpy(dst + len, data, data_len);
     len += data_len;
