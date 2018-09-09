@@ -264,6 +264,7 @@ int main(int argc, char const *argv[])
     char method[32], url[512];
     char databuf[1 << 20], rspbuf[1 << 20];
     size_t databuf_len, rspbuf_len;
+    ssize_t nsendback;
     while (1)
     {
         LOG("wait to accept...");
@@ -303,27 +304,29 @@ int main(int argc, char const *argv[])
             LOG("begin to parse HTTP protocol");
 
             int retcode = 0;
-            if ((retcode = parse_http_protocol(reqbuf, method, sizeof(method), url, sizeof(url))) < 0)
+            if ((retcode = parse_http_protocol(reqbuf, method, sizeof(method), url, sizeof(url))) != 0)
             {
-                LOG("parse HTTP protocol fail!, close peer socket");
-                goto handle_http_err;
+                LOG("parse HTTP protocol fail!");
+                bzero(databuf, databuf_len);
+                databuf_len = 0;
+                goto handle_http_sendback;
             }
 
             struct stat st;
-            if ((retcode = do_method(method, url, databuf, &databuf_len, &st)) < 0)
+            if ((retcode = do_method(method, url, databuf, &databuf_len, &st)) != 0)
             {
-                LOG("do HTTP method fail!, close peer socket");
-                goto handle_http_err;
+                LOG("do HTTP method fail!");
+                goto handle_http_sendback;
             }
 
+handle_http_sendback:
             rspbuf_len = packbuf(retcode, &st, rspbuf, rspbuf_len, databuf, databuf_len);
-
-            if (sendbackrsp(connfd, rspbuf, rspbuf_len) < 0)
+            if ((nsendback = sendbackrsp(connfd, rspbuf, rspbuf_len)) < 0)
             {
-                LOG("send back rsp fail!, close peer socket");
+                LOG("send back rsp fail!, close socket");
                 goto handle_http_err;
             }
-            LOG("sendback succ!");
+            LOG("sendback %d bytes succ!", nsendback);
 
             continue;
 
