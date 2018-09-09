@@ -9,23 +9,32 @@
 #include <fcntl.h>
 #include <stdarg.h>
 
+enum {
+    WEB_SVR_RET_CODE__NOT_FOUND = 100,
+    WEB_SVR_RET_CODE__BAD_REQUEST = 101,
+    WEB_SVR_RET_CODE__NOT_SUPPORTED = 102,
+    WEB_SVR_RET_CODE__INTERNAL = 103,
+    WEB_SVR_RET_CODE__INTERNAL_PERM = 104, 
+    WEB_SVR_RET_CODE__INTERNAL_BADF = 105,
+    WEB_SVR_RET_CODE__INTERNAL_RD = 106,
+    WEB_SVR_RET_CODE__INTERNAL_BUFSZ = 107
+};
+
 #define PATH_PREFIX "/Users/bot/Desktop/Networking/Networking/resource/"
 
-ssize_t YHLog(int line, const char *format, ...)
+ssize_t YHLog(int line, const char *fun, const char *format, ...)
 {
     va_list ap;
     va_start(ap, format);
     char buf[512];
     ssize_t len = vsnprintf(buf, sizeof(buf), format, ap);
-    if (errno != 0)
-        len += snprintf(buf + len, sizeof(buf) - len, "【%s】", strerror(errno));
     buf[len] = 0;
-    len = fprintf(stderr, "[%s:%s:%d]:%s\n", __FILE__, __FUNCTION__, line, buf);
+    len = fprintf(stderr, "[%s:%s:%d] %s\n", __FILE__, fun, line, buf);
     va_end(ap);
     return len;
 }
 
-#define LOG(_format_, ...) YHLog(__LINE__, _format_, ##__VA_ARGS__)
+#define LOG(_format_, ...) YHLog(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 
 int parse_http_protocol(const char *protocol_str, 
                         char *method, 
@@ -38,20 +47,20 @@ int parse_http_protocol(const char *protocol_str,
     char *p = (char *)protocol_str, *q;
    
     if ((q = strchr(protocol_str, ' ')) == NULL)
-        return -1;
+        return WEB_SVR_RET_CODE__BAD_REQUEST;
 
     if (q - p + 1 > mlen)
-        return -2;
+        return WEB_SVR_RET_CODE__INTERNAL_BUFSZ;
 
     memcpy(method, protocol_str, q - p);
     method[q - p] = 0;
 
     p = ++q;
     if ((q = strchr(q, ' ')) == NULL)
-        return -3;
+        return WEB_SVR_RET_CODE__BAD_REQUEST;
 
     if (q - p + 1 > ulen)
-        return -4;
+        return WEB_SVR_RET_CODE__INTERNAL_BUFSZ;
 
     memcpy(url, p, q - p);
     url[q - p] = 0;
@@ -60,20 +69,18 @@ int parse_http_protocol(const char *protocol_str,
 
 int do_method(const char *method, const char *url, char *content, size_t *clen)
 {
-    /* no supported yet */
+    int retcode = 0;
+
     if (strcmp(method, "GET") != 0)
     {
-        bzero(content, *clen);
-        *clen = 0;
-        return -1; 
+        retcode = WEB_SVR_RET_CODE__NOT_SUPPORTED;
+        goto err;
     }
 
     if (mkdir(PATH_PREFIX, 777) != 0 && errno != EEXIST)
     {
-        perror("mkdir error");
-        bzero(content, *clen);
-        *clen = 0;
-        return -2;
+        retcode = WEB_SVR_RET_CODE__NOT_FOUND;
+        goto err;
     }
 
     char path[1024];
@@ -82,28 +89,57 @@ int do_method(const char *method, const char *url, char *content, size_t *clen)
     int fd;
     if ((fd = open(path, O_RDONLY)) < 0)
     {
-        perror("open error");
-        exit(1);
+        switch(errno)
+        {
+            case ENOENT:
+                retcode = WEB_SVR_RET_CODE__NOT_FOUND;
+                break;
+            case EPERM:
+                retcode = WEB_SVR_RET_CODE__INTERNAL_PERM;
+                break;
+            case EBADF:
+                retcode = WEB_SVR_RET_CODE__INTERNAL_BADF;
+                break;
+            default:
+                retcode = WEB_SVR_RET_CODE__INTERNAL;
+        }
+        goto err;
     }
     ssize_t nread;
     if ((nread = read(fd, content, *clen - 1)) < 0)
     {
-        LOG("%s read error", path);
-        bzero(content, *clen);
-        *clen = 0;
-        return -3;
+        retcode = WEB_SVR_RET_CODE__INTERNAL_RD;
+        goto err;
     }
     content[nread] = 0;
     *clen = nread;
-
     return 0;
+err:
+    bzero(content, *clen);
+    *clen = 0;
+    return retcode;
 }
 
-int packbuf(char *dst, size_t dst_len, const char *data, size_t data_len)
+int packbuf(int retcode, char *dst, size_t dst_len, const char *data, size_t data_len)
 {
-    int status_code = data_len > 0 ? 200 : 404;
-    const char *phrase = status_code == 200 ? "OK" : "Not found";
-    int len = snprintf(dst, dst_len, "%s %d %s\r\n", "HTTP/1.1", status_code, phrase);
+    int len;
+    int status_code = 200;
+    const char *phrase = "unknow error";
+    switch(retcode)
+    {
+        case WEB_SVR_RET_CODE__NOT_FOUND :
+            status_code = 404;
+            phrase = "Not Found";
+            break;
+        case WEB_SVR_RET_CODE__BAD_REQUEST :
+            status_code = 400;
+            phrase = "Bad Request";
+            break;
+        default:
+            status_code = 500;
+            phrase = "Internal Error";
+    }
+    len = snprintf(dst, dst_len, "%s %d %s\r\n", "HTTP/1.1", status_code, phrase);
     len += snprintf(dst + len, dst_len - len, "Content-Type:text/html\r\nContent-Length:%zd\r\n", data_len);
     len += snprintf(dst + len, dst_len - len, "\r\n");
     memcpy(dst + len, data, data_len);
@@ -113,17 +149,15 @@ int packbuf(char *dst, size_t dst_len, const char *data, size_t data_len)
 
 int sendbackrsp(int sockfd, const char *rsp, size_t rsp_len)
 {   
-    LOG("sendbackrsp begin");
     ssize_t nwrite;
     if ((nwrite = write(sockfd, rsp, rsp_len)) < 0)
     {
         if (errno != EINTR)
         {
-            perror("write error");
+            perror("sendback rsp error");
             return -1;
         }
     }
-    LOG("sendbackrsp end");
     return nwrite;
 }
 
@@ -144,7 +178,7 @@ int start_service(unsigned short port)
     int reuse = 0;
     if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0)
     {
-        perror("setsockopet error\n");
+        perror("setsockopet error");
         goto err;
     }
     if (bind(listenfd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0)
@@ -167,7 +201,7 @@ int main(int argc, char const *argv[])
 {
     if (argc != 2)
     {
-        printf("usage : %s <#port>\n", argv[0]);
+        LOG("usage : %s <#port>", argv[0]);
         exit(1);
     }
 
@@ -175,7 +209,7 @@ int main(int argc, char const *argv[])
     int listenfd;
     if ((listenfd = start_service(port)) < 0)
     {
-        printf("start_service error!\n");
+        LOG("start_service error!");
         exit(1);
     }
 
@@ -189,7 +223,7 @@ int main(int argc, char const *argv[])
     size_t databuf_len = sizeof(databuf), rspbuf_len = sizeof(rspbuf);
     while (1)
     {
-        printf("wait to accept...\n");
+        LOG("wait to accept...");
         if ((connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &len)) < 0)
         {
             perror("accept error");
@@ -197,11 +231,11 @@ int main(int argc, char const *argv[])
         }
         const char *ip = inet_ntop(AF_INET, &cliaddr.sin_addr, ipbuf, sizeof(ipbuf));
         unsigned short port = ntohs(cliaddr.sin_port);
-        printf("connection received from [%s:%d]\n", ip, port);
+        LOG("connection received from [%s:%d]", ip, port);
 
         while (1)
         {
-            printf("wait to received data from [%s:%d]...\n", ip, port);
+            LOG("wait to received data from [%s:%d]...", ip, port);
             if ((nread = read(connfd, reqbuf, sizeof(reqbuf))) < 0)
             {
                 if (errno != EINTR)
@@ -212,38 +246,38 @@ int main(int argc, char const *argv[])
             }
             else if (nread == 0)
             {
-                printf("peer closed socket, read EOF\n");
+                LOG("peer closed socket, read EOF");
                 goto handle_http_err;
             }
             reqbuf[nread] = 0;
 
-            printf("received data content:\n");
-            printf("*****************************************\n");
-            printf("%s", reqbuf);
-            printf("*****************************************\n");
-            printf("begin to parse HTTP protocol\n");
+            LOG("received data content:");
+            LOG("*****************************************");
+            LOG("%s", reqbuf);
+            LOG("*****************************************");
+            LOG("begin to parse HTTP protocol");
 
-            if (parse_http_protocol(reqbuf, method, sizeof(method), url, sizeof(url)) < 0)
+            int retcode = 0;
+            if ((retcode = parse_http_protocol(reqbuf, method, sizeof(method), url, sizeof(url))) < 0)
             {
-                printf("parse HTTP protocol fail!, close peer socket\n");
+                LOG("parse HTTP protocol fail!, close peer socket");
                 goto handle_http_err;
             }
 
-            if (do_method(method, url, databuf, &databuf_len) < 0)
+            if ((retcode = do_method(method, url, databuf, &databuf_len)) < 0)
             {
-                printf("do HTTP method fail!, close peer socket\n");
+                LOG("do HTTP method fail!, close peer socket");
                 goto handle_http_err;
             }
 
-            rspbuf_len = packbuf(rspbuf, rspbuf_len, databuf, databuf_len);
-
-            printf("packbuf end\n");
+            rspbuf_len = packbuf(retcode, rspbuf, rspbuf_len, databuf, databuf_len);
 
             if (sendbackrsp(connfd, rspbuf, rspbuf_len) < 0)
             {
-                printf("send back rsp fail!, close peer socket\n");
+                LOG("send back rsp fail!, close peer socket");
                 goto handle_http_err;
             }
+            LOG("sendback succ!");
 
             continue;
 
