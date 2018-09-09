@@ -104,11 +104,15 @@ int main(int argc, char const *argv[])
 
         begin = curtime_us();
         nbytes = 0;
+        int did_received = 0;
         while (1)
         {
             len = sizeof(svraddr);
             if ((nbytes = recvfrom(fd, &recvbuf, sizeof(struct ping), 0, (struct sockaddr *)&svraddr, &len)) > 0)
+            {
+                did_received = 1;
                 break;
+            }
 
             end = curtime_us();
             if (nbytes <= 0)
@@ -128,6 +132,12 @@ int main(int argc, char const *argv[])
         flags = fcntl(fd, F_GETFL);
         flags &= ~O_NONBLOCK;
         fcntl(fd, F_SETFL, flags);
+
+        if (did_received == 0)
+        {
+            LOG("ping_%d timeout...", i + 1);
+            continue;
+        }
 
         if (recvbuf.magic != PING_MAGIC && recvbuf.seq != i)
         {
