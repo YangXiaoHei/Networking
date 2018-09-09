@@ -36,11 +36,7 @@ ssize_t YHLog(int line, const char *fun, const char *format, ...)
 
 #define LOG(_format_, ...) YHLog(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 
-int parse_http_protocol(const char *protocol_str, 
-                        char *method, 
-                        size_t mlen, 
-                        char *url, 
-                        size_t ulen)
+int parse_http_protocol(const char *protocol_str, char *method, size_t mlen, char *url, size_t ulen)
 {
     size_t len = strlen(protocol_str);
 
