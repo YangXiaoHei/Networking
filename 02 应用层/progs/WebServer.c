@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdarg.h>
+#include <time.h>
 
 enum {
     WEB_SVR_RET_CODE__NOT_FOUND         = 100,
@@ -65,7 +66,7 @@ int parse_http_protocol(const char *protocol_str, char *method, size_t mlen, cha
     return 0;
 }
 
-int do_method(const char *method, const char *url, char *content, size_t *clen)
+int do_method(const char *method, const char *url, char *content, size_t *clen, struct stat *st)
 {
     int retcode = 0;
 
@@ -87,6 +88,24 @@ int do_method(const char *method, const char *url, char *content, size_t *clen)
 
     int fd;
     if ((fd = open(path, O_RDONLY)) < 0)
+    {
+        switch(errno)
+        {
+            case ENOENT:
+                retcode = WEB_SVR_RET_CODE__NOT_FOUND;
+                break;
+            case EPERM:
+                retcode = WEB_SVR_RET_CODE__INTERNAL_PERM;
+                break;
+            case EBADF:
+                retcode = WEB_SVR_RET_CODE__INTERNAL_BADF;
+                break;
+            default:
+                retcode = WEB_SVR_RET_CODE__INTERNAL;
+        }
+        goto err;
+    }
+    if (lstat(path, st) < 0)
     {
         switch(errno)
         {
@@ -131,6 +150,7 @@ int packbuf(int retcode, struct stat *st, char *dst, size_t dst_len, const char 
         case 0 :
             status_code = 200;
             phrase = "OK";
+            break;
 
         /* Not Found */
         case WEB_SVR_RET_CODE__NOT_FOUND :
@@ -158,12 +178,12 @@ int packbuf(int retcode, struct stat *st, char *dst, size_t dst_len, const char 
     len += snprintf(dst + len, dst_len - len, "Server:YangXiaoHei_WebServer_v1.0\r\n");
     struct tm *tmbuf = localtime(&st->st_mtimespec.tv_sec);
     len += snprintf(dst + len, dst_len - len, "Last-Modified:%04d/%02d/%02d [%0d:%0d:%0d]\r\n", 
-                    tmbuf->m_year + 1900, 
-                    tmbuf->m_mon + 1, 
-                    tmpbuf->m_mday, 
-                    tmpbuf->m_hour, 
-                    tmpbuf->m_min,
-                    tmpbuf->m_sec);
+                    tmbuf->tm_year + 1900, 
+                    tmbuf->tm_mon + 1, 
+                    tmbuf->tm_mday, 
+                    tmbuf->tm_hour, 
+                    tmbuf->tm_min,
+                    tmbuf->tm_sec);
     len += snprintf(dst + len, dst_len - len, "Connection:keep-alive\r\n");
     len += snprintf(dst + len, dst_len - len, "\r\n");
     memcpy(dst + len, data, data_len);
@@ -289,13 +309,14 @@ int main(int argc, char const *argv[])
                 goto handle_http_err;
             }
 
-            if ((retcode = do_method(method, url, databuf, &databuf_len)) < 0)
+            struct stat st;
+            if ((retcode = do_method(method, url, databuf, &databuf_len, &st)) < 0)
             {
                 LOG("do HTTP method fail!, close peer socket");
                 goto handle_http_err;
             }
 
-            rspbuf_len = packbuf(retcode, rspbuf, rspbuf_len, databuf, databuf_len);
+            rspbuf_len = packbuf(retcode, &st, rspbuf, rspbuf_len, databuf, databuf_len);
 
             if (sendbackrsp(connfd, rspbuf, rspbuf_len) < 0)
             {
