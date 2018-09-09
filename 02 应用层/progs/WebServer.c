@@ -185,7 +185,6 @@ int start_service(unsigned short port)
     {
         perror("bind error");
         goto err;
-        
     }
     if (listen(listenfd, 1) < 0)
     {
@@ -220,9 +219,11 @@ int main(int argc, char const *argv[])
 
     char method[32], url[512];
     char databuf[1 << 20], rspbuf[1 << 20];
-    size_t databuf_len = sizeof(databuf), rspbuf_len = sizeof(rspbuf);
+    size_t databuf_len, rspbuf_len;
     while (1)
     {
+        databuf_len = sizeof(databuf);
+        rspbuf_len = sizeof(rspbuf);
         LOG("wait to accept...");
         if ((connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &len)) < 0)
         {
