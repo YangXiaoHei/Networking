@@ -89,11 +89,11 @@ int main(int argc, char const *argv[])
 
     struct sockaddr_in cliaddr;
     socklen_t len = sizeof(cliaddr);
-    struct ping pbuf;
+    struct ping recvping;
     char ipbuf[128];
     while (1)
     {
-        if (recvfrom(fd, &pbuf, sizeof(pbuf), 0, (struct sockaddr *)&cliaddr, &len) < 0)
+        if (recvfrom(fd, &recvping, sizeof(recvping), 0, (struct sockaddr *)&cliaddr, &len) < 0)
         {
             ERRLOG("recvfrom error");
             break;
@@ -101,17 +101,17 @@ int main(int argc, char const *argv[])
         const char *ip = inet_ntop(AF_INET, &cliaddr.sin_addr, ipbuf, sizeof(ipbuf));
         unsigned short port = htons(cliaddr.sin_port);
         LOG("receive data from [%s:%d]", ip, port);
-        if (pbuf.magic != PING_MAGIC && !(pbuf.seq >= 1 && pbuf.seq <= 10))
+        if (recvping.magic != PING_MAGIC && !(recvping.seq >= 1 && recvping.seq <= 10))
         {
             LOG("error ping pack from [%s:%d]! discard it\n", ip, port);
             continue;
         }
-        if (sendto(fd, &pbuf, sizeof(pbuf), 0, (struct sockaddr *)&cliaddr, len) < 0)
+        if (sendto(fd, &recvping, sizeof(recvping), 0, (struct sockaddr *)&cliaddr, len) < 0)
         {
             ERRLOG("sendto error");
             break;
         }
-        LOG("send ping_%d back to [%s:%d] succ!", pbuf.seq, ip, port);
+        LOG("send ping_%d back to [%s:%d] succ!", recvping.seq, ip, port);
     }
     close(fd);
 
