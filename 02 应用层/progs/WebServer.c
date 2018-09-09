@@ -222,8 +222,6 @@ int main(int argc, char const *argv[])
     size_t databuf_len, rspbuf_len;
     while (1)
     {
-        databuf_len = sizeof(databuf);
-        rspbuf_len = sizeof(rspbuf);
         LOG("wait to accept...");
         if ((connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &len)) < 0)
         {
@@ -236,6 +234,8 @@ int main(int argc, char const *argv[])
 
         while (1)
         {
+            databuf_len = sizeof(databuf);
+            rspbuf_len = sizeof(rspbuf);
             LOG("wait to received data from [%s:%d]...", ip, port);
             if ((nread = read(connfd, reqbuf, sizeof(reqbuf))) < 0)
             {
