@@ -42,10 +42,15 @@ int main(int argc, char const *argv[])
     char buf[1024];
     while (fgets(buf, sizeof(buf), stdin) != NULL)
     {
-        write(fd, buf, strlen(buf));
+        ntowrite = strlen(buf);
+        if (buf[ntowrite - 1] == '\n')
+        {
+            buf[ntowrite - 1] = 0;
+            ntowrite--;
+        }
+        write(fd, buf, ntowrite);
         printf("client begin to receive\n");
         ssize_t nread = read(fd, buf, sizeof(buf));
-        printf("client receive data\n");
         buf[nread] = 0;
         if (fputs(buf, stdout) == EOF)
         {

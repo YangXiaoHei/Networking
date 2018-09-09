@@ -20,7 +20,7 @@ enum {
     WEB_SVR_RET_CODE__INTERNAL_BUFSZ = 107
 };
 
-#define PATH_PREFIX "/Users/bot/Desktop/Networking/Networking/resource/"
+#define PATH_PREFIX "/Users/bot/Desktop/Networking/Networking/02 应用层/resource/"
 
 ssize_t YHLog(int line, const char *fun, const char *format, ...)
 {
