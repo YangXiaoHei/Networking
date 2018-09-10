@@ -38,73 +38,35 @@ ssize_t YHLog_err(int line, const char *fun, const char *format, ...)
 #define LOG(_format_, ...) YHLog(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 #define ERRLOG(_format_, ...) YHLog_err(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 
-int main(int argc, char const *argv[])
+#define MOCK 1
+
+#define NETEASE_MOCK 1
+#define QQ_MOCK 0
+
+static char *cmd[] = {
+
+#if NETEASE_MOCK
+    "helo yanghan\r\n",
+    "auth login\r\n",
+    "eWFuZ3hpYW9oZWkzMjExMjNAMTYzLmNvbQ==\r\n",
+    "eWFuZ2hhbjEyMw==\r\n",
+    "mail from <yangxiaohei321123@163.com>\r\n",
+    "rcpt to <569712232@qq.com>\r\n"
+#elif QQ_MOCK
+    "helo yanghan\r\n",
+    "auth login\r\n",
+    "NTY5NzEyMjMyQHFxLmNvbQ==\n",
+    "c3Jid2VocWt4dGVuYmVhYg==\n",
+    "mail from <569712232@qq.com>\r\n",
+    "rcpt to <yangxiaohei321123@163.com>\r\n"
+#endif
+
+};
+
+void automaticly_input(int fd, const char *ip, unsigned short port)
 {
-
-    if (argc != 3)
-    {
-        LOG("usage : %s <#domain> <#port>\n", argv[0]);
-        exit(1);
-    }
-
-    const char *script = "nslookup smtp.163.com | grep Address | sed '1d' | head -n1 | sed 's/Address: //'";
-    FILE *fp;
-    if ((fp = popen(script, "r")) == NULL)
-    {
-        LOG("popen error");
-        exit(1);
-    }
-    char ip[128];
-    if (fgets(ip, sizeof(ip), fp) == NULL)
-    {
-        if (ferror(fp))
-        {
-            LOG("fgets error");
-            exit(1);
-        }
-    }
-    int len = strlen(ip);
-    if (ip[len - 1] == '\n')
-        ip[len - 1] = 0;
-    LOG("DNS lookup result : %s", ip);
-
-    unsigned short port = atoi(argv[2]);
-    struct sockaddr_in svraddr;
-    bzero(&svraddr, sizeof(svraddr));
-    svraddr.sin_family = AF_INET;
-    svraddr.sin_port = htons(port);
-    if (inet_pton(AF_INET, ip, &svraddr.sin_addr) < 0)
-    {
-        ERRLOG("inet_pton error");
-        exit(1);
-    }
-
-    int fd;
-    if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
-        ERRLOG("socket error");
-        exit(1);
-    }    
-    if (connect(fd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0)
-    {
-        ERRLOG("connect error");
-        exit(1);
-    }
-    LOG("connect [%s:%d] succ!", ip, port);
-
     ssize_t nread = 0, ntowrite = 0, nwrite = 0;
     char recvbuf[1024];
-    setbuf(stdout, NULL);
-
-    /*****************************  Mock data *******************************/
-    char *cmd[] = {
-        "helo yanghan\r\n",
-        "auth login\r\n",
-        "eWFuZ3hpYW9oZWkzMjExMjNAMTYzLmNvbQ==\r\n",
-        "eWFuZ2hhbjEyMw==\r\n",
-        "mail from <yangxiaohei321123@163.com>\r\n",
-        "rcpt to <569712232@qq.com>\r\n"
-    };
     int size = sizeof(cmd) / sizeof(cmd[0]);
     for (int i = 0; i < size; i++)
     {
@@ -138,7 +100,71 @@ int main(int argc, char const *argv[])
             exit(1);
         }
     }
-    /**************************************************************************/
+}
+
+int main(int argc, char const *argv[])
+{
+
+    if (argc != 3)
+    {
+        LOG("usage : %s <#domain> <#port>\n", argv[0]);
+        exit(1);
+    }
+
+    char script[1024];
+    int len = snprintf(script, sizeof(script), "nslookup %s | grep Address | sed '1d' | head -n1 | sed 's/Address: //'", argv[1]);
+    script[len] = 0;
+    FILE *fp;
+    if ((fp = popen(script, "r")) == NULL)
+    {
+        LOG("popen error");
+        exit(1);
+    }
+    char ip[128];
+    if (fgets(ip, sizeof(ip), fp) == NULL)
+    {
+        if (ferror(fp))
+        {
+            LOG("fgets error");
+            exit(1);
+        }
+    }
+    len = strlen(ip);
+    if (ip[len - 1] == '\n')
+        ip[len - 1] = 0;
+    LOG("DNS lookup result : %s", ip);
+
+    unsigned short port = atoi(argv[2]);
+    struct sockaddr_in svraddr;
+    bzero(&svraddr, sizeof(svraddr));
+    svraddr.sin_family = AF_INET;
+    svraddr.sin_port = htons(port);
+    if (inet_pton(AF_INET, ip, &svraddr.sin_addr) < 0)
+    {
+        ERRLOG("inet_pton error");
+        exit(1);
+    }
+
+    int fd;
+    if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
+        ERRLOG("socket error");
+        exit(1);
+    }    
+    if (connect(fd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0)
+    {
+        ERRLOG("connect error");
+        exit(1);
+    }
+    LOG("connect [%s:%d] succ!", ip, port);
+
+    ssize_t nread = 0, ntowrite = 0, nwrite = 0;
+    char recvbuf[1024];
+    setbuf(stdout, NULL);
+
+#if MOCK
+    automaticly_input(fd, ip, port);
+#endif
 
     ssize_t stored_len = 0;
     char lastcmd[256];
