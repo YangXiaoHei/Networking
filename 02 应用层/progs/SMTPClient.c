@@ -95,7 +95,53 @@ int main(int argc, char const *argv[])
     ssize_t nread = 0, ntowrite = 0, nwrite = 0;
     char recvbuf[1024];
     setbuf(stdout, NULL);
-    setbuf(stdin, NULL);
+
+    /*****************************  Mock data *******************************/
+    char *cmd[] = {
+        "helo yanghan\r\n",
+        "auth login\r\n",
+        "eWFuZ3hpYW9oZWkzMjExMjNAMTYzLmNvbQ==\r\n",
+        "eWFuZ2hhbjEyMw==\r\n",
+        "mail from <yangxiaohei321123@163.com>\r\n",
+        "rcpt to <569712232@qq.com>\r\n"
+    };
+    int size = sizeof(cmd) / sizeof(cmd[0]);
+    for (int i = 0; i < size; i++)
+    {
+        if ((nread = read(fd, recvbuf, sizeof(recvbuf))) < 0)
+        {
+            ERRLOG("read error");
+            exit(1);
+        }
+        else if (nread == 0)
+        {
+            LOG("SMTP server [%s:%d] close connection!", ip, port);
+            close(fd);
+            break;
+        }
+        recvbuf[nread] = 0;
+        LOG("recv %d bytes from [%s:%d]", nread, ip, port);
+
+        /* echo received data */
+        if (fputs(recvbuf, stdout) == EOF)
+        {
+            LOG("fputs error!");
+            exit(1);
+        }
+
+        printf(">%s", cmd[i]);
+        int nwrite;
+        int ntowrite = strlen(cmd[i]);
+        if ((nwrite = write(fd, cmd[i], ntowrite)) != ntowrite)
+        {
+            ERRLOG("write error");
+            exit(1);
+        }
+    }
+    /**************************************************************************/
+
+    ssize_t stored_len = 0;
+    char lastcmd[256];
     while (1)
     {
         /* --------------------------- recv ---------------------------- */
@@ -122,11 +168,29 @@ int main(int argc, char const *argv[])
         }
 
         /* --------------------------- send ---------------------------- */
+
         printf(">");
-        if (fgets(recvbuf, sizeof(recvbuf), stdin) == NULL && ferror(stdin))
+        if (strncmp(lastcmd, "data", 4) == 0)
         {
-            LOG("fgets error");
-            exit(1);
+            int len = 0;
+            while (fgets(recvbuf + len, sizeof(recvbuf) - len, stdin) != NULL)
+            {
+                if (strstr(recvbuf, "\n.\n") != NULL)
+                    break;
+                printf(">");
+                len = strlen(recvbuf);
+            }
+        }
+        else
+        {
+            if (fgets(recvbuf, sizeof(recvbuf), stdin) == NULL && ferror(stdin))
+            {
+                LOG("fgets error");
+                exit(1);
+            }
+            int len = snprintf(lastcmd, sizeof(lastcmd), "%s", recvbuf);
+            if (lastcmd[len - 1] == '\n')
+                lastcmd[len - 1] = 0;
         }
 
         ntowrite = strlen(recvbuf);
