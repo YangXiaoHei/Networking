@@ -10,7 +10,6 @@
 #include <stdarg.h>
 #include <time.h>
 
-
 ssize_t YHLog(int line, const char *fun, const char *format, ...)
 {
     va_list ap;
@@ -38,18 +37,39 @@ ssize_t YHLog_err(int line, const char *fun, const char *format, ...)
 #define LOG(_format_, ...) YHLog(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 #define ERRLOG(_format_, ...) YHLog_err(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 
-#define MOCK 1
+
+#define MOCK 0                                      /* 是否用预先设置好的 SMTP 握手控制命令 */
+#define __DEST_MAIL_ADDR__              "???????"   /* 这里填目的邮箱，比如 569712232@qq.com */
+#define __FROM_MAIL_ADDR__              "???????"   /* 这里填源邮箱，比如 yangxiaohei321123@163.com */
+#define __DEST_MAIL_ADDR__BASE64__      "???????"   /* 这里填源邮箱 base64 后的字符串 */
+#define __AUTH_VERIFY_CODE__BASE64__    "???????"   /* 这里填源邮箱打开 SMTP 服务的授权码 base64 后的字符串 */
 
 static char *cmd[] = {
-    "helo yanghan\r\n",
+
+    /* HELO xxx */
+    "helo xxx\r\n",
+
+    /* AUTH LOGIN */
     "auth login\r\n",
-    "eWFuZ3hpYW9oZWkzMjExMjNAMTYzLmNvbQ==\r\n",
-    "eWFuZ2hhbjEyMw==\r\n",
-    "mail from <yangxiaohei321123@163.com>\r\n",
+
+    /* 邮箱地址 base64 编码后的字符串 */
+    __DEST_MAIL_ADDR__BASE64__ "\r\n",
+
+    /* 授权码 base64 编码后的字符串 */
+    __AUTH_VERIFY_CODE__BASE64__ "\r\n",
+
+    /* 邮件起始地 */
+    "mail from <" __FROM_MAIL_ADDR__ ">\r\n",
+
+    /* 邮件目的地 */
     "rcpt to <569712232@qq.com>\r\n",
+
+    /* DATA */
     "data\r\n",
-    "from: <yangxiaohei321123@163.com>\r\n"  
-    "to: <569712232@qq.com>\r\n"
+
+    /* 邮件内容 */
+    "from: < " __FROM_MAIL_ADDR__ ">\r\n"  
+    "to: <" __DEST_MAIL_ADDR__ ">\r\n"
     "subject: I love you\r\n"
     "Content-Type:text/plain\t\n"
     "\r\nI love computer network"
@@ -193,11 +213,13 @@ int main(int argc, char const *argv[])
 #endif
 
 #if MOCK
+        int len = 0;
         const char *begin = "******************** cmd *****************\n";
-        const char *end = "******************************************\n";
-        write(STDOUT_FILENO, begin, strlen(begin));
-        write(STDOUT_FILENO, cmd[i], strlen(cmd[i]));
-        write(STDOUT_FILENO, end, strlen(end));
+        const char *end   = "******************************************\n";
+        char tmpbuf[1024];
+        len = snprintf(tmpbuf, sizeof(tmpbuf), "%s%s%s", begin, cmd[i], end);
+        tmpbuf[len] = 0;
+        write(STDOUT_FILENO, tmpbuf, len);
         ntowrite = strlen(cmd[i]);
         if ((nwrite = write(fd, cmd[i], ntowrite)) != ntowrite)
         {
