@@ -38,10 +38,10 @@ ssize_t YHLog_err(int line, const char *fun, const char *format, ...)
 #define LOG(_format_, ...) YHLog(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 #define ERRLOG(_format_, ...) YHLog_err(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 
-#define MOCK 1
+#define MOCK 0
 
-#define NETEASE_MOCK 1
-#define QQ_MOCK 0
+#define NETEASE_MOCK 0
+#define QQ_MOCK 1
 
 static char *cmd[] = {
 
@@ -56,7 +56,7 @@ static char *cmd[] = {
     "helo yanghan\r\n",
     "auth login\r\n",
     "NTY5NzEyMjMyQHFxLmNvbQ==\n",
-    "c3Jid2VocWt4dGVuYmVhYg==\n",
+    "d3Zjd2pjZGl6cndxYmRiaA==\n",
     "mail from <569712232@qq.com>\r\n",
     "rcpt to <yangxiaohei321123@163.com>\r\n"
 #endif
@@ -112,7 +112,7 @@ int main(int argc, char const *argv[])
     }
 
     char script[1024];
-    int len = snprintf(script, sizeof(script), "nslookup %s | grep Address | sed '1d' | head -n1 | sed 's/Address: //'", argv[1]);
+    int len = snprintf(script, sizeof(script), "nslookup %s | grep Address | sed '1d' | head -n2 | sed 's/Address: //'", argv[1]);
     script[len] = 0;
     FILE *fp;
     if ((fp = popen(script, "r")) == NULL)
