@@ -62,7 +62,7 @@ static char *cmd[] = {
     "mail from <" __FROM_MAIL_ADDR__ ">\r\n",
 
     /* 邮件目的地 */
-    "rcpt to <569712232@qq.com>\r\n",
+    "rcpt to <" __DEST_MAIL_ADDR__ ">\r\n",
 
     /* DATA */
     "data\r\n",
