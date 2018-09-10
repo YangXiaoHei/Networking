@@ -38,69 +38,23 @@ ssize_t YHLog_err(int line, const char *fun, const char *format, ...)
 #define LOG(_format_, ...) YHLog(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 #define ERRLOG(_format_, ...) YHLog_err(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 
-#define MOCK 0
-
-#define NETEASE_MOCK 0
-#define QQ_MOCK 1
+#define MOCK 1
 
 static char *cmd[] = {
-
-#if NETEASE_MOCK
     "helo yanghan\r\n",
     "auth login\r\n",
     "eWFuZ3hpYW9oZWkzMjExMjNAMTYzLmNvbQ==\r\n",
     "eWFuZ2hhbjEyMw==\r\n",
     "mail from <yangxiaohei321123@163.com>\r\n",
-    "rcpt to <569712232@qq.com>\r\n"
-#elif QQ_MOCK
-    "helo yanghan\r\n",
-    "auth login\r\n",
-    "NTY5NzEyMjMyQHFxLmNvbQ==\n",
-    "d3Zjd2pjZGl6cndxYmRiaA==\n",
-    "mail from <569712232@qq.com>\r\n",
-    "rcpt to <yangxiaohei321123@163.com>\r\n"
-#endif
-
+    "rcpt to <569712232@qq.com>\r\n",
+    "data\r\n",
+    "from: <yangxiaohei321123@163.com>\r\n"  
+    "to: <569712232@qq.com>\r\n"
+    "subject: I love you\r\n"
+    "Content-Type:text/plain\t\n"
+    "\r\nI love computer network"
+    "\r\n.\r\n"
 };
-
-void automaticly_input(int fd, const char *ip, unsigned short port)
-{
-    ssize_t nread = 0, ntowrite = 0, nwrite = 0;
-    char recvbuf[1024];
-    int size = sizeof(cmd) / sizeof(cmd[0]);
-    for (int i = 0; i < size; i++)
-    {
-        if ((nread = read(fd, recvbuf, sizeof(recvbuf))) < 0)
-        {
-            ERRLOG("read error");
-            exit(1);
-        }
-        else if (nread == 0)
-        {
-            LOG("SMTP server [%s:%d] close connection!", ip, port);
-            close(fd);
-            break;
-        }
-        recvbuf[nread] = 0;
-        LOG("recv %d bytes from [%s:%d]", nread, ip, port);
-
-        /* echo received data */
-        if (fputs(recvbuf, stdout) == EOF)
-        {
-            LOG("fputs error!");
-            exit(1);
-        }
-
-        printf(">%s", cmd[i]);
-        int nwrite;
-        int ntowrite = strlen(cmd[i]);
-        if ((nwrite = write(fd, cmd[i], ntowrite)) != ntowrite)
-        {
-            ERRLOG("write error");
-            exit(1);
-        }
-    }
-}
 
 int main(int argc, char const *argv[])
 {
@@ -162,12 +116,14 @@ int main(int argc, char const *argv[])
     char recvbuf[1024];
     setbuf(stdout, NULL);
 
-#if MOCK
-    automaticly_input(fd, ip, port);
-#endif
-
     ssize_t stored_len = 0;
     char lastcmd[256];
+
+#if MOCK
+    int i = 0;
+    int size = sizeof(cmd) / sizeof(cmd[0]);
+#endif
+
     while (1)
     {
         /* --------------------------- recv ---------------------------- */
@@ -184,7 +140,7 @@ int main(int argc, char const *argv[])
             break;
         }
         recvbuf[nread] = 0;
-        LOG("recv %d bytes from [%s:%d]", nread, ip, port);
+        LOG("recv %d bytes response from [%s:%d]", nread, ip, port);
 
         /* echo received data */
         if (fputs(recvbuf, stdout) == EOF)
@@ -193,8 +149,15 @@ int main(int argc, char const *argv[])
             exit(1);
         }
 
+#if MOCK
+        if (i == size)
+            break;
+#endif 
+
         /* --------------------------- send ---------------------------- */
 
+#if MOCK
+#else
         printf(">");
         if (strncmp(lastcmd, "data", 4) == 0)
         {
@@ -206,6 +169,8 @@ int main(int argc, char const *argv[])
                 printf(">");
                 len = strlen(recvbuf);
             }
+            recvbuf[len] = 0;
+            bzero(lastcmd, sizeof(lastcmd));
         }
         else
         {
@@ -225,6 +190,22 @@ int main(int argc, char const *argv[])
             ERRLOG("write error");
             exit(1);
         }
+#endif
+
+#if MOCK
+        const char *begin = "******************** cmd *****************\n";
+        const char *end = "******************************************\n";
+        write(STDOUT_FILENO, begin, strlen(begin));
+        write(STDOUT_FILENO, cmd[i], strlen(cmd[i]));
+        write(STDOUT_FILENO, end, strlen(end));
+        ntowrite = strlen(cmd[i]);
+        if ((nwrite = write(fd, cmd[i], ntowrite)) != ntowrite)
+        {
+            ERRLOG("write error");
+            exit(1);
+        }
+        i++;
+#endif
     }
 
     return 0;
