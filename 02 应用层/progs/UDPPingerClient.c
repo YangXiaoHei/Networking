@@ -53,6 +53,52 @@ unsigned long curtime_us()
     return tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
+void setflag(int fd, int flag)
+{
+    int flags = fcntl(fd, F_GETFL);
+    flags |= flag;
+    fcntl(fd, F_SETFL, flags);
+}
+
+void clrflag(int fd, int flag)
+{
+    int flags = fcntl(fd, F_GETFL);
+    flags &= ~flag;
+    fcntl(fd, F_SETFL, flags);
+}
+
+int recv_rsp(int fd, char *buf, size_t buflen, int *timeout, struct sockaddr_in *addr, socklen_t *len)
+{
+    *timeout = 0;
+
+    setflag(fd, O_NONBLOCK);
+
+    int nbytes;
+    unsigned long begin = curtime_us(), end;
+    while (1)
+    {
+        if ((nbytes = recvfrom(fd, buf, buflen, 0, (struct sockaddr *)addr, len)) > 0)
+            break;
+
+        end = curtime_us();
+        if (nbytes <= 0)
+        {
+            if ((end - begin) > 1000000)
+                break;
+
+            if (errno != EAGAIN && errno != EINTR)
+            {
+                ERRLOG("recvfrom error!");
+                return -1;
+            }
+        }
+    }
+
+    clrflag(fd, O_NONBLOCK);
+
+    return 0;
+}
+
 int main(int argc, char const *argv[])
 {
     if (argc != 3)
@@ -60,6 +106,14 @@ int main(int argc, char const *argv[])
         LOG("usage : %s <#ip> <#port>\n", argv[0]);
         exit(1);
     }
+
+    struct ping pings[10];
+    for (int i = 0; i < 10; i++)
+    {
+        pings[i].magic = PING_MAGIC;
+        pings[i].seq = i;
+    }
+
     unsigned short port = atoi(argv[2]);
     struct sockaddr_in svraddr;
     svraddr.sin_family = AF_INET;
@@ -77,17 +131,9 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
-    struct ping pings[10];
-    for (int i = 0; i < 10; i++)
-    {
-        pings[i].magic = PING_MAGIC;
-        pings[i].seq = i;
-    }
-
     socklen_t len;
-    unsigned long begin, end;
-    ssize_t nbytes;
-    struct ping recvbuf;
+    struct ping recvping;
+    int timeout;
     for (int i = 0; i < 10; i++)
     {
         pings[i].ping_timestamp = curtime_us();
@@ -97,56 +143,27 @@ int main(int argc, char const *argv[])
             exit(1);
         }
 
-        /* set nonblocking socket in order to execute a busy loop */
-        int flags = fcntl(fd, F_GETFL);
-        flags |= O_NONBLOCK;
-        fcntl(fd, F_SETFL, flags);
-
-        begin = curtime_us();
-        nbytes = 0;
-        int did_recv = 0;
-        while (1)
+        len = sizeof(svraddr);
+        if (recv_rsp(fd, (char *)&recvping, sizeof(recvping), &timeout, &svraddr, &len))
         {
-            len = sizeof(svraddr);
-            if ((nbytes = recvfrom(fd, &recvbuf, sizeof(struct ping), 0, (struct sockaddr *)&svraddr, &len)) > 0)
-            {
-                did_recv = 1;
-                break;
-            }
-
-            end = curtime_us();
-            if (nbytes <= 0)
-            {
-                if ((end - begin) > 1000000)
-                    break;
-
-                if (errno != EAGAIN && errno != EINTR)
-                {
-                    ERRLOG("recvfrom error!");
-                    exit(1);
-                }
-            }
+            LOG("recv_rsp error!");
+            exit(1);
         }
 
-        /* clear flag to make sendto call block */
-        flags = fcntl(fd, F_GETFL);
-        flags &= ~O_NONBLOCK;
-        fcntl(fd, F_SETFL, flags);
-
-        if (did_recv == 0)
+        if (timeout)
         {
             LOG("ping_%d timeout...", i + 1);
             continue;
         }
 
-        if (recvbuf.magic != PING_MAGIC && recvbuf.seq != i)
+        if (recvping.magic != PING_MAGIC && recvping.seq != i)
         {
             LOG("recv invalid data from [%s:%d]", argv[1], port);
             exit(1);
         }
 
         unsigned long recv_timestamp = curtime_us();
-        LOG("ping_%d from %s, time = %.3f ms", recvbuf.seq, argv[1], (recv_timestamp - recvbuf.ping_timestamp) / 1000.0);
+        LOG("ping_%d from %s, time = %.3f ms", recvping.seq, argv[1], (recv_timestamp - recvping.ping_timestamp) / 1000.0);
     }
 
     return 0;
