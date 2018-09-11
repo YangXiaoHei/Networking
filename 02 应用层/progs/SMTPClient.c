@@ -82,7 +82,7 @@ static char *cmd[] = {
 int DNS_lookup(const char *domain, char *ipbuf, size_t buf_len)
 {
     char script[1024];
-    int len = snprintf(script, sizeof(script), "nslookup %s | grep Address | sed '1d' | head -n1 | sed 's/Address: //'", domain);
+    int len = snprintf(script, sizeof(script), "nslookup %s | grep Address | sed '1d' | sed -n 's/Address: //; 1p'", domain);
     script[len] = 0;
     FILE *fp;
     if ((fp = popen(script, "r")) == NULL)
