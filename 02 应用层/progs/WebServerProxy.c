@@ -5,13 +5,59 @@
 #include <string.h>
 #include <sys/time.h>
 #include <stdarg.h>
+#include <sys/socket.h>
+
+ssize_t YHLog(int line, const char *fun, const char *format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+    char buf[512];
+    ssize_t len = vsnprintf(buf, sizeof(buf), format, ap);
+    buf[len] = 0;
+    len = fprintf(stderr, "[%s:%s:%d] %s\n", __FILE__, fun, line, buf);
+    va_end(ap);
+    return len;
+}
+
+ssize_t YHLog_err(int line, const char *fun, const char *format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+    char buf[512];
+    ssize_t len = vsnprintf(buf, sizeof(buf), format, ap);
+    buf[len] = 0;
+    len = fprintf(stderr, "[%s:%s:%d] %s: %s\n", __FILE__, fun, line, buf, strerror(errno));
+    va_end(ap);
+    return len;
+}
+
+#define LOG(_format_, ...)      YHLog(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
+#define ERRLOG(_format_, ...)   YHLog_err(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 
 #define _DEBUG_ 1
+#define MAX_BUFSZ (1 << 10)
+
+struct session_t {
+    unsigned long proc_begtime;
+    unsigned long proc_endtime;
+    unsigned long trans_begtime;
+    unsigned long trans_endtime;
+
+    int connfd;
+    int listenfd;
+    int svr_connfd;
+
+    char req_buf[MAX_BUFSZ];
+    char req_buf_len;
+    char rsp_buf[MAX_BUFSZ];
+    char rsp_buf_len;
+
+    int is_using;
+}
 
 struct task_t {
     int seq;
-    unsigned long begtime;
-    unsigned long endtime;
+    struct session_t session;
 };
 
 struct work_queue_node {
@@ -28,17 +74,64 @@ struct work_queue {
     pthread_cond_t full;
     pthread_mutex_t lock;
 };
-static struct work_queue *task_queue;
 
+/* 工作队列 */
+static struct work_queue *task_queue;
+static struct work_queue *idle_pool;
+
+static pthread_t query_net_io;
+static pthread_t search_net_io;
+static pthread_t[10] work_process;
+
+/* 监听的端口 */
+unsigned short port;
+
+/* 全局递增序列号 */
 pthread_mutex_t global_lock = PTHREAD_MUTEX_INITIALIZER;
 static int global_value = 1;
-
 int get_value()
 {
     pthread_mutex_lock(&global_lock);
     int val = global_value++;
     pthread_mutex_unlock(&global_lock);
     return val;
+}
+
+/* 获取当前时间 us */
+unsigned long curtime_us()
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec * 1000000 + tv.tv_usec;
+}
+
+struct task_t* new_task()
+{
+    struct task_t* t;
+    if ((t = malloc(sizeof(struct task_t))) == NULL)
+        return NULL;
+    return t;
+}
+
+void reset_task(struct task_t *task)
+{
+    bzero(task, sizeof(struct task_t));
+}
+
+/* 设置非阻塞文件描述符 */
+void setnonblock(int fd)
+{
+    int flags = fcntl(fd, F_GETFL);
+    flags |= O_NONBLOCK;
+    fcntl(fd, F_SETFL, flags);
+}
+
+/* 清除文件描述符非阻塞标志 */
+void clrnonblock(int fd)
+{
+    int flags = fcntl(fd, F_GETFL);
+    flags &= ~O_NONBLOCK;
+    fcntl(fd, F_SETFL, flags);
 }
 
 void queue_display(struct work_queue *queue, const char *format, ...)
@@ -197,79 +290,137 @@ int dequeue(struct work_queue *queue, struct task_t **task)
     return 0;
 }
 
-unsigned long curtime_us()
+int prepare_service(unsigned short port)
 {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return tv.tv_sec * 1000000 + tv.tv_usec;
-}
-
-struct task_t* new_task()
-{
-    struct task_t* t;
-    if ((t = malloc(sizeof(struct task_t))) == NULL)
-        return NULL;
-    t->seq = 0;
-    t->begtime = curtime_us();
-    t->endtime = 0;
-    sleep(rand() % 3 + 1);
-    return t;
-}
-
-void run_task(struct task_t *t)
-{
-    sleep(rand() % 3 + 1);
-    free(t);
-}
-
-void *produce(void *arg)
-{   
-    int index = *(int *)arg;
-    while (1)
+    if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        enqueue(task_queue, new_task());
+        ERRLOG("socket error!");
+        return -1;
+    }
+    struct sockaddr_in svraddr, cliaddr;
+    socklen_t len = sizeof(cliaddr);
+    bzero(&svraddr, sizeof(svraddr));
+    svraddr.sin_family = AF_INET;
+    svraddr.sin_port = htons(port);
+    svraddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (bind(listenfd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0)
+    {
+        ERRLOG("bind error");
+        return -2;
+    }
+    if (listen(listenfd, 10000) < 0)
+    {
+        ERRLOG("listen error");
+        return -3;
     }
 }
 
-void *consume(void *arg)
+int TCP_connect(const char *ip, unsigned short port)
 {
-    int index = *(int *)arg;
+    struct sockaddr_in svraddr;
+    svraddr.sin_family = AF_INET;
+    svraddr.sin_port = htons(port);
+    if (inet_pton(AF_INET, ip, &svraddr.sin_addr) < 0)
+    {
+        ERRLOG("inet_pton error");
+        return -1;
+    }
+    int svr_fd;
+    if ((svr_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
+        ERRLOG("socket error");
+        return -2;
+    }
+    if (bind(svr_fd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0)
+    {
+        ERRLOG("bind error");
+        return -3;
+    }
+    struct sockaddr_in peeraddr;
+    socklen_t len;
+    if (conncect(svr_fd, (struct sockaddr *)&peeraddr, &len) < 0)
+    {
+        ERRLOG("connect to [%s:%d] error!", ip, port);
+        return -4;
+    }
+    return svr_fd;
+}
+
+void *query_routine(void *arg)
+{
+    int listenfd, connfd;
+
+    if ((listenfd = prepare_service(port)) < 0)
+    {
+        LOG("prepare_service error!");
+        exit(1);
+    }
     while (1)
     {
-        struct task_t *t;
-        dequeue(task_queue, &t);
-        run_task(t);
+        if (connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &len) < 0)
+        {
+            ERRLOG("accept error");
+            exit(1);
+        }
+        sturct task_t *available;
+        if (dequeue(idle_pool, &available) < 0)
+        {
+            LOG("fetch from idle_pool error!");
+            exit(1);
+        }
+
+        // TODO 假装能一次性读完所有内容
+        ssize_t nread;
+        if ((nread = read(connfd, available->session.req_buf, MAX_BUFSZ)) < 0)
+        {
+            ERRLOG("read from client error!");
+            exit(1);
+        }
+        available->session.proc_begtime = curtime_us();
+        available->session.connfd = connfd;
+        available->session.listenfd = listenfd;
+        available->session.req_buf[nread] = 0;
+        available->session.req_buf_len = nread;
+
+        if (enqueue(work_queue, available) < 0)
+        {
+            LOG("push to work_queue error!");
+            exit(1);
+        }
+    }
+}
+
+void *work_process_routine(void *arg)
+{
+    while (1)
+    {
+
     }
 }
 
 int main(int argc, char const *argv[])
 {
-    if (argc != 4)
-    {
-        printf("usage : %s <#producer> <#consumer> <#queue_capacity>\n", argv[0]);
-        exit(1);
-    }
+    port = 5000;
 
     setbuf(stdout, NULL);
 
-    task_queue = queue_init(atoi(argv[3]));
+    /* 初始 session 池 */
+    idle_pool = queue_init(100);
+    for (int i = 0; i < 100; i++)
+        enqueue(idle_pool, new_task());
 
-    int n_pro = atoi(argv[1]);
-    int n_con = atoi(argv[2]);
+    /* 初始化工作队列 */
+    task_queue = queue_init(10);
 
-    pthread_t tid_consumer[n_con], tid_producer[n_pro];
-    int cons[n_con], pros[n_pro];
-    for (int i = 0; i < n_pro; i++)
-    {
-        pros[i] = i;
-        pthread_create(tid_producer + i, NULL, produce, pros + i);
-    }
-    for (int i = 0; i < n_con; i++)
-    {
-        cons[i] = i;
-        pthread_create(tid_consumer + i, NULL, consume, cons + i);
-    }
-    while (1);
+    /* 启动上下游线程 */
+    pthread_create(&query_net_io, NULL, query_routine, NULL);
+
+    /* 启动工作线程 */
+    for (int i = 0; i < 10; i++)
+        pthread_create(work_process + i; NULL, work_process_routine, NULL);
+
+    while (1)
+        sleep(1);
 
     return 0;
 }
