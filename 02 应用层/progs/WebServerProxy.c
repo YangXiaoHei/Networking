@@ -37,15 +37,25 @@ ssize_t YHLog_err(int line, const char *fun, const char *format, ...)
 #define _DEBUG_ 1
 #define MAX_BUFSZ (1 << 10)
 
+enum {
+    WEB_PROXY_SVR__PROCEDURE__FORWARD_TO_ORG,
+    WEB_PROXY_SVR__PROCEDURE__SENDBACK_TO_CLIENT
+};
+
 struct session_t {
     unsigned long proc_begtime;
     unsigned long proc_endtime;
-    unsigned long trans_begtime;
-    unsigned long trans_endtime;
+
+    int procedure_cmd;
+    int seqno;
 
     int connfd;
     int listenfd;
-    int svr_connfd;
+
+    int svr_fd;
+
+    const char *cli_ip;
+    unsigned short cli_port;
 
     char req_buf[MAX_BUFSZ];
     char req_buf_len;
@@ -56,7 +66,6 @@ struct session_t {
 }
 
 struct task_t {
-    int seq;
     struct session_t session;
 };
 
@@ -83,8 +92,16 @@ static pthread_t query_net_io;
 static pthread_t search_net_io;
 static pthread_t[10] work_process;
 
+/* 监听可读事件用的数组 */
+pthread_rwlock_t global_fds_lock = PTHREAD_RWLOCK_INITIALIZER;
+static struct task_t *check_readable_fds[1024];
+
 /* 监听的端口 */
 unsigned short port;
+
+/* 初始服务器 ip 和 port */
+const char *trans_ip;
+unsigned short trans_port;
 
 /* 全局递增序列号 */
 pthread_mutex_t global_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -134,25 +151,25 @@ void clrnonblock(int fd)
     fcntl(fd, F_SETFL, flags);
 }
 
-void queue_display(struct work_queue *queue, const char *format, ...)
-{
-    pthread_mutex_lock(&queue->lock);
-    struct work_queue_node *cur;
-    va_list ap;
-    va_start(ap, format);
-    vprintf(format, ap);
-    va_end(ap);
-    printf("%d {", queue->size);
-    for (cur = queue->header->next; cur != queue->tailer; cur = cur->next)
-    {
-        if (cur->next == queue->tailer)
-            printf(" %d", cur->task->seq);
-        else
-            printf(" %d,", cur->task->seq);
-    }
-    printf(" }\n");
-    pthread_mutex_unlock(&queue->lock);
-}
+// void queue_display(struct work_queue *queue, const char *format, ...)
+// {
+//     pthread_mutex_lock(&queue->lock);
+//     struct work_queue_node *cur;
+//     va_list ap;
+//     va_start(ap, format);
+//     vprintf(format, ap);
+//     va_end(ap);
+//     printf("%d {", queue->size);
+//     for (cur = queue->header->next; cur != queue->tailer; cur = cur->next)
+//     {
+//         if (cur->next == queue->tailer)
+//             printf(" %d", cur->task->seq);
+//         else
+//             printf(" %d,", cur->task->seq);
+//     }
+//     printf(" }\n");
+//     pthread_mutex_unlock(&queue->lock);
+// }
 
 struct work_queue *queue_init(int capacity)
 {
@@ -241,16 +258,15 @@ int enqueue(struct work_queue *queue, struct task_t *task)
     if ((node = malloc(sizeof(struct work_queue_node))) == NULL)
         goto err;
 
-    task->seq = get_value();
     node->task = task;
     node->prev = queue->tailer->prev;
     node->next = queue->tailer;
     queue->tailer->prev->next = node;
     queue->tailer->prev = node;
 
-#if _DEBUG_
-    queue_display(queue, "producer put %d in queue  \t", task->seq);
-#endif
+// #if _DEBUG_
+//     queue_display(queue, "producer put %d in queue  \t", task->seq);
+// #endif
 
     if (queue->size == 1)
         pthread_cond_broadcast(&queue->empty);
@@ -279,9 +295,9 @@ int dequeue(struct work_queue *queue, struct task_t **task)
     *task = node->task;
     free(node);
 
-#if _DEBUG_
-    queue_display(queue, "consumer get %d from queue\t", (*task)->seq);
-#endif
+// #if _DEBUG_
+//     queue_display(queue, "consumer get %d from queue\t", (*task)->seq);
+// #endif
 
     if (queue->size == queue->capacity - 1)
         pthread_cond_broadcast(&queue->full);
@@ -297,6 +313,8 @@ int prepare_service(unsigned short port)
         ERRLOG("socket error!");
         return -1;
     }
+    LOG("create listen socket succ [listenfd=%d]", listenfd);
+
     struct sockaddr_in svraddr, cliaddr;
     socklen_t len = sizeof(cliaddr);
     bzero(&svraddr, sizeof(svraddr));
@@ -308,11 +326,13 @@ int prepare_service(unsigned short port)
         ERRLOG("bind error");
         return -2;
     }
+    LOG("listen socket bind succ");
     if (listen(listenfd, 10000) < 0)
     {
         ERRLOG("listen error");
         return -3;
     }
+    LOG("listen succ, prepare_service finished!");
 }
 
 int TCP_connect(const char *ip, unsigned short port)
@@ -343,6 +363,8 @@ int TCP_connect(const char *ip, unsigned short port)
         ERRLOG("connect to [%s:%d] error!", ip, port);
         return -4;
     }
+    setnonblock(svr_fd);
+    LOG("connect to original svr [%s:%d] succ!", trans_ip, trans_port);
     return svr_fd;
 }
 
@@ -362,25 +384,35 @@ void *query_routine(void *arg)
             ERRLOG("accept error");
             exit(1);
         }
+        char ipbuf[128];
+        const char *peer_ip = inet_ntop(AF_INET, &cliaddr.sin_addr, ipbuf, sizeof(ipbuf));
+        unsigned short peer_port = ntohs(cliaddr.sin_port);
+        LOG("new connection establish from [%s:%d]", peer_ip, peer_port);
+
         sturct task_t *available;
         if (dequeue(idle_pool, &available) < 0)
         {
             LOG("fetch from idle_pool error!");
             exit(1);
         }
+        LOG("fetch new session from idle_pool succ!");
 
-        // TODO 假装能一次性读完所有内容
         ssize_t nread;
         if ((nread = read(connfd, available->session.req_buf, MAX_BUFSZ)) < 0)
         {
             ERRLOG("read from client error!");
             exit(1);
         }
+        available->session.seqno = get_value();
         available->session.proc_begtime = curtime_us();
         available->session.connfd = connfd;
         available->session.listenfd = listenfd;
+        available->session.cli_ip = peer_ip;
+        available->session.cli_port = peer_port;
         available->session.req_buf[nread] = 0;
         available->session.req_buf_len = nread;
+        available->session.procedure_cmd = WEB_PROXY_SVR__PROCEDURE__FORWARD_TO_ORG;
+        available->session.is_using = 1;
 
         if (enqueue(work_queue, available) < 0)
         {
@@ -390,11 +422,132 @@ void *query_routine(void *arg)
     }
 }
 
+void *search_routine(void *arg)
+{
+    while (1)
+    {
+        pthread_rwlock_rdlock(&global_fds_lock);
+        for (int i = 0; i < 1024; i++)
+        {
+            if (check_readable_fds[i])
+            {   
+                int nread;
+                if ((nread = read(i, check_readable_fds[i]->session.rsp_buf, MAX_BUFSZ)) < 0)
+                {
+                    LOG("fd %d no readable event occur! [seqno=%d]", 
+                        i, check_readable_fds[i]->session.seqno);
+                }
+                else if (nread == 0)
+                {
+                    LOG("fd %d read 0 bytes?? [seqno=%d]", 
+                        i, check_readable_fds[i]->session.seqno);
+                }
+                else
+                {
+                    check_readable_fds[i]->session.rsp_buf_len = nread;
+                    check_readable_fds[i]->session.procedure_cmd = WEB_PROXY_SVR__PROCEDURE__SENDBACK_TO_CLIENT;
+                    LOG("successfully read %d bytes from fd %d [%s:%d] [seqno=%d]", 
+                        nread, i, trans_ip, trans_port, check_readable_fds[i]->session.seqno);
+                    if (enqueue(work_queue, check_readable_fds[i]) < 0)
+                    {
+                        LOG("put session to work_queue fail!");
+                        exit(1);
+                    }
+                    break;
+                }
+            }
+        }
+        pthread_rwlock_unlock(&global_fds_lock);
+    }
+}
+
 void *work_process_routine(void *arg)
 {
     while (1)
     {
+        struct task_t *available;
+        if (dequeue(work_queue, &available) < 0)
+        {
+            LOG("fetch session from idle_pool fail!");
+            eixt(1);
+        }
+        LOG("fetch session from idle_pool succ! [procedure=%d][seqno=%d]",
+            available->session.procedure_cmd, available->session.seqno);
 
+        if (available->session.is_using == 0)
+        {
+            LOG("fetch a unusing session, release it\n");
+            continue;
+        }
+        LOG("session is using [procedure=%d][seqno=%d]", 
+            available->session.procedure_cmd, available->session.seqno);
+
+        switch (available->session.procedure_cmd)
+        {
+            case WEB_PROXY_SVR__PROCEDURE__FORWARD_TO_ORG :
+            {
+                if (available->session.svr_fd == 0)
+                {
+                    if ((available->session.svr_fd = TCP_connect(trans_ip, trans_port)) < 0)
+                    {
+                        LOG("TCP_connect to org_svr error");
+                        eixt(1);
+                    }
+                    LOG("first time establish connect to original svr [%s:%d] succ! [seqno=%d]", 
+                        trans_ip, trans_port, available->session.seqno);
+                }
+                
+                ssize_t nwrite;
+                const char *msg = "hello world";
+                if ((nwrite = write(available->session.svr_fd, msg, sizeof(msg))) < 0)
+                {
+                    ERRLOG("write error!");
+                    eixt(1);
+                }
+                LOG("forward request to original svr [%s:%d] succ! [seqno=%d]", 
+                    trans_ip, trans_port, available->session.seqno);
+
+                pthread_rwlock_wrlock(&global_fds_lock);
+                check_readable_fds[available->session.svr_fd] = available;
+                pthread_rwlock_unlock(&global_fds_lock);
+
+            } break;
+            case WEB_PROXY_SVR__PROCEDURE__SENDBACK_TO_CLIENT :
+            {
+                if (available->session.connfd == 0)
+                {
+                    LOG("fatal error! client connfd is zero [seqno=%d]", available->session.seqno);
+                    eixt(1);
+                }
+                ssize_t nwrite;
+                const char *msg = "handle finished!";
+                if ((nwrite = write(available->session.connfd, msg, sizeof(msg))) < 0)
+                {
+                    ERRLOG("write error!");
+                    eixt(1);
+                }
+
+                close(available->session.connfd);
+                close(available->session.svr_fd);
+
+                pthread_rwlock_wrlock(&global_fds_lock);
+                check_readable_fds[available->session.svr_fd] = NULL;
+                pthread_rwlock_unlock(&global_fds_lock);
+
+                reset_task(available);
+
+                if (enqueue(idle_pool, available) < 0)
+                {
+                    LOG("release session to idle_pool fail! [seqno=%d]", available->session.seqno);
+                    eixt(1);
+                }
+            } break;
+            default :
+            {
+                LOG ("fatal error! unexpected procedure [seqno=%d]", available->session.seqno);
+                eixt(1);
+            }
+        }
     }
 }
 
@@ -402,18 +555,24 @@ int main(int argc, char const *argv[])
 {
     port = 5000;
 
+    trans_ip = "";
+    trans_port = 6000;
+
     setbuf(stdout, NULL);
 
     /* 初始 session 池 */
     idle_pool = queue_init(100);
-    for (int i = 0; i < 100; i++)
-        enqueue(idle_pool, new_task());
 
     /* 初始化工作队列 */
     task_queue = queue_init(10);
 
+    /* 充满空闲 session 池 */
+    for (int i = 0; i < 100; i++)
+        enqueue(idle_pool, new_task());
+
     /* 启动上下游线程 */
     pthread_create(&query_net_io, NULL, query_routine, NULL);
+    pthread_create(&search_net_io, NULL, search_routine, NULL);
 
     /* 启动工作线程 */
     for (int i = 0; i < 10; i++)
