@@ -151,7 +151,7 @@ void * BackgroundBusyLoop(void *arg) {
         readBuffer[nRead] = 0;
         NSString *readContent = [NSString stringWithFormat:@"%s", readBuffer];
         UpdateUI( vc.stateLabel.text = [NSString stringWithFormat:@"%zd 字节，%@",nRead, readContent];
-                 vc.button.enabled = YES;
+                  vc.button.enabled = YES;
                  [vc.view setNeedsDisplay]; )
         sleep(4);
     }
