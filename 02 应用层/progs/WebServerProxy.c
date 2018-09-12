@@ -39,7 +39,7 @@ ssize_t YHLog_err(int line, const char *fun, const char *format, ...)
 #define LOG(_format_, ...)      YHLog(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 #define ERRLOG(_format_, ...)   YHLog_err(__LINE__, __FUNCTION__, _format_, ##__VA_ARGS__)
 
-#define _DEBUG_ 1
+#define _DEBUG_ 0
 #define MAX_BUFSZ (1 << 10)
 
 enum {
@@ -72,14 +72,15 @@ struct session_t {
 
 struct task_t {
     struct session_t session;
+    int (*display_value_for_queue_iterate)(struct task_t *);
 };
-
 struct work_queue_node {
     struct task_t *task;
     struct work_queue_node *next;
     struct work_queue_node *prev;
 };
 struct work_queue {
+    const char *name;
     struct work_queue_node *header;
     struct work_queue_node *tailer;
     int size;
@@ -93,8 +94,13 @@ struct work_queue {
 static struct work_queue *task_queue;
 static struct work_queue *idle_pool;
 
+/* 上游线程 */
 static pthread_t query_net_io;
+
+/* 下游线程 */
 static pthread_t search_net_io;
+
+/* 工作线程 */
 static pthread_t work_process[10];
 
 /* 监听可读事件用的数组 */
@@ -102,11 +108,11 @@ pthread_rwlock_t global_fds_lock = PTHREAD_RWLOCK_INITIALIZER;
 static struct task_t *check_readable_fds[1024];
 
 /* 监听的端口 */
-unsigned short port;
+unsigned short myport;
 
 /* 初始服务器 ip 和 port */
-const char *trans_ip;
-unsigned short trans_port;
+const char *original_svr_ip;
+unsigned short original_svr_port;
 
 /* 全局递增序列号 */
 pthread_mutex_t global_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -127,11 +133,17 @@ unsigned long curtime_us()
     return tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
+int display(struct task_t *task)
+{
+    return task->session.seqno;
+}
+
 struct task_t* new_task()
 {
     struct task_t* t;
     if ((t = malloc(sizeof(struct task_t))) == NULL)
         return NULL;
+    t->display_value_for_queue_iterate = display;
     return t;
 }
 
@@ -156,27 +168,27 @@ void clrnonblock(int fd)
     fcntl(fd, F_SETFL, flags);
 }
 
-// void queue_display(struct work_queue *queue, const char *format, ...)
-// {
-//     pthread_mutex_lock(&queue->lock);
-//     struct work_queue_node *cur;
-//     va_list ap;
-//     va_start(ap, format);
-//     vprintf(format, ap);
-//     va_end(ap);
-//     printf("%d {", queue->size);
-//     for (cur = queue->header->next; cur != queue->tailer; cur = cur->next)
-//     {
-//         if (cur->next == queue->tailer)
-//             printf(" %d", cur->task->seq);
-//         else
-//             printf(" %d,", cur->task->seq);
-//     }
-//     printf(" }\n");
-//     pthread_mutex_unlock(&queue->lock);
-// }
+void queue_display(struct work_queue *queue, const char *format, ...)
+{
+    pthread_mutex_lock(&queue->lock);
+    struct work_queue_node *cur;
+    va_list ap;
+    va_start(ap, format);
+    vprintf(format, ap);
+    va_end(ap);
+    printf("%s %d {", queue->name, queue->size);
+    for (cur = queue->header->next; cur != queue->tailer; cur = cur->next)
+    {
+        if (cur->next == queue->tailer)
+            printf(" %d", cur->task->display_value_for_queue_iterate(cur->task));
+        else
+            printf(" %d,", cur->task->display_value_for_queue_iterate(cur->task));
+    }
+    printf(" }\n");
+    pthread_mutex_unlock(&queue->lock);
+}
 
-struct work_queue *queue_init(int capacity)
+struct work_queue *queue_init(const char *name, int capacity)
 {
     capacity = capacity < 0 ? 0 : capacity;
 
@@ -201,6 +213,7 @@ struct work_queue *queue_init(int capacity)
     if (pthread_cond_init(&queue->full, NULL) != 0)
         goto err_5;
 
+    queue->name = name;
     queue->size = 0;
     queue->capacity = capacity;
     queue->header->prev = NULL;
@@ -269,9 +282,9 @@ int enqueue(struct work_queue *queue, struct task_t *task)
     queue->tailer->prev->next = node;
     queue->tailer->prev = node;
 
-// #if _DEBUG_
-//     queue_display(queue, "producer put %d in queue  \t", task->seq);
-// #endif
+#if _DEBUG_
+    queue_display(queue, "producer put %d in queue  \t", task->display_value_for_queue_iterate(task));
+#endif
 
     if (queue->size == 1)
         pthread_cond_broadcast(&queue->empty);
@@ -300,9 +313,9 @@ int dequeue(struct work_queue *queue, struct task_t **task)
     *task = node->task;
     free(node);
 
-// #if _DEBUG_
-//     queue_display(queue, "consumer get %d from queue\t", (*task)->seq);
-// #endif
+#if _DEBUG_
+    queue_display(queue, "consumer get %d from queue\t", (*task)->display_value_for_queue_iterate(*task));
+#endif
 
     if (queue->size == queue->capacity - 1)
         pthread_cond_broadcast(&queue->full);
@@ -325,7 +338,7 @@ int prepare_service(unsigned short port)
     socklen_t len = sizeof(cliaddr);
     bzero(&svraddr, sizeof(svraddr));
     svraddr.sin_family = AF_INET;
-    svraddr.sin_port = htons(port);
+    svraddr.sin_port = htons(myport);
     svraddr.sin_addr.s_addr = htonl(INADDR_ANY);
     if (bind(listenfd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0)
     {
@@ -338,7 +351,7 @@ int prepare_service(unsigned short port)
         ERRLOG("listen error");
         return -3;
     }
-    LOG("listen succ, prepare_service finished!");
+    LOG("listen succ!");
     return listenfd;
 }
 
@@ -370,7 +383,7 @@ int TCP_connect(const char *ip, unsigned short port)
         return -4;
     }
     setnonblock(svr_fd);
-    LOG("connect to original svr [%s:%d] succ!", trans_ip, trans_port);
+    LOG("connect to original svr [%s:%d] succ!", original_svr_ip, original_svr_port);
     return svr_fd;
 }
 
@@ -378,11 +391,12 @@ void *query_routine(void *arg)
 {
     int listenfd, connfd;
 
-    if ((listenfd = prepare_service(port)) < 0)
+    if ((listenfd = prepare_service(myport)) < 0)
     {
         LOG("prepare_service error!");
         exit(1);
     }
+    LOG("prepare_service finished!");
     while (1)
     {
         struct sockaddr_in cliaddr;
@@ -432,8 +446,10 @@ void *query_routine(void *arg)
 
 void *search_routine(void *arg)
 {
+    int i;
     while (1)
     {
+        LOG("search_net_io begin check... [loop=%d]", i);
         pthread_rwlock_rdlock(&global_fds_lock);
         for (int i = 0; i < 1024; i++)
         {
@@ -455,7 +471,7 @@ void *search_routine(void *arg)
                     check_readable_fds[i]->session.rsp_buf_len = nread;
                     check_readable_fds[i]->session.procedure_cmd = WEB_PROXY_SVR__PROCEDURE__SENDBACK_TO_CLIENT;
                     LOG("successfully read %d bytes from fd %d [%s:%d] [seqno=%d]", 
-                        nread, i, trans_ip, trans_port, check_readable_fds[i]->session.seqno);
+                        nread, i, original_svr_ip, original_svr_port, check_readable_fds[i]->session.seqno);
                     if (enqueue(task_queue, check_readable_fds[i]) < 0)
                     {
                         LOG("put session to work_queue fail!");
@@ -466,6 +482,9 @@ void *search_routine(void *arg)
             }
         }
         pthread_rwlock_unlock(&global_fds_lock);
+        LOG("search_net_io end check!");
+        i++;
+        sleep(1);
     }
 }
 
@@ -496,13 +515,13 @@ void *work_process_routine(void *arg)
             {
                 if (available->session.svr_fd == 0)
                 {
-                    if ((available->session.svr_fd = TCP_connect(trans_ip, trans_port)) < 0)
+                    if ((available->session.svr_fd = TCP_connect(original_svr_ip, original_svr_port)) < 0)
                     {
                         LOG("TCP_connect to org_svr error");
                         exit(1);
                     }
                     LOG("first time establish connect to original svr [%s:%d] succ! [seqno=%d]", 
-                        trans_ip, trans_port, available->session.seqno);
+                        original_svr_ip, original_svr_port, available->session.seqno);
                 }
                 
                 ssize_t nwrite;
@@ -513,7 +532,7 @@ void *work_process_routine(void *arg)
                     exit(1);
                 }
                 LOG("forward request to original svr [%s:%d] succ! [seqno=%d]", 
-                    trans_ip, trans_port, available->session.seqno);
+                    original_svr_ip, original_svr_port, available->session.seqno);
 
                 pthread_rwlock_wrlock(&global_fds_lock);
                 check_readable_fds[available->session.svr_fd] = available;
@@ -561,30 +580,54 @@ void *work_process_routine(void *arg)
 
 int main(int argc, char const *argv[])
 {
-    port = 5000;
+    myport = 5000;
 
-    trans_ip = "";
-    trans_port = 6000;
+    original_svr_ip = "";
+    original_svr_port = 6000;
+
+    int idle_pool_capacity = 10;
+    int task_queue_capacity = 4;
 
     setbuf(stdout, NULL);
 
     /* 初始 session 池 */
-    idle_pool = queue_init(100);
+    idle_pool = queue_init("idle_pool", idle_pool_capacity);
 
     /* 初始化工作队列 */
-    task_queue = queue_init(10);
+    task_queue = queue_init("task_queue", task_queue_capacity);
 
     /* 充满空闲 session 池 */
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < idle_pool_capacity; i++)
         enqueue(idle_pool, new_task());
 
     /* 启动上下游线程 */
-    pthread_create(&query_net_io, NULL, query_routine, NULL);
-    pthread_create(&search_net_io, NULL, search_routine, NULL);
+    int err;
+    if ((err = pthread_create(&query_net_io, NULL, query_routine, NULL)) < 0)
+    {   
+        errno = err;
+        ERRLOG("pthread_create error!");
+        exit(1);
+    }
+    LOG("query_net_io create succ!");
+    if ((err = pthread_create(&search_net_io, NULL, search_routine, NULL)) < 0)
+    {   
+        errno = err;
+        ERRLOG("pthread_create error!");
+        exit(1);
+    }
+    LOG("search_net_io create succ!");
 
     /* 启动工作线程 */
     for (int i = 0; i < 10; i++)
-        pthread_create(work_process + i, NULL, work_process_routine, NULL);
+    {
+        if ((err = pthread_create(work_process + i, NULL, work_process_routine, NULL)) < 0)
+        {   
+            errno = err;
+            ERRLOG("pthread_create error!");
+            exit(1);
+        }
+    }
+    LOG("work_process all create succ!");
 
     while (1)
         sleep(1);
