@@ -63,9 +63,9 @@ struct session_t {
     unsigned short cli_port;
 
     char req_buf[MAX_BUFSZ];
-    char req_buf_len;
+    int req_buf_len;
     char rsp_buf[MAX_BUFSZ];
-    char rsp_buf_len;
+    int rsp_buf_len;
 
     int is_using;
 };
@@ -340,16 +340,22 @@ int prepare_service(unsigned short port)
     svraddr.sin_family = AF_INET;
     svraddr.sin_port = htons(myport);
     svraddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    int on = 1;  
+    if((setsockopt(listenfd,SOL_SOCKET,SO_REUSEADDR,&on,sizeof(on)))<0)  
+    {  
+        perror("setsockopt failed");  
+        return -2; 
+    }  
     if (bind(listenfd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0)
     {
         ERRLOG("bind error");
-        return -2;
+        return -3;
     }
     LOG("listen socket bind succ");
     if (listen(listenfd, 10000) < 0)
     {
         ERRLOG("listen error");
-        return -3;
+        return -4;
     }
     LOG("listen succ!");
     return listenfd;
@@ -371,19 +377,14 @@ int TCP_connect(const char *ip, unsigned short port)
         ERRLOG("socket error");
         return -2;
     }
-    if (bind(svr_fd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0)
-    {
-        ERRLOG("bind error");
-        return -3;
-    }
-    struct sockaddr_in peeraddr;
-    if (connect(svr_fd, (struct sockaddr *)&peeraddr, sizeof(peeraddr)) < 0)
+    if (connect(svr_fd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0)
     {
         ERRLOG("connect to [%s:%d] error!", ip, port);
-        return -4;
+        close(svr_fd);
+        return -3;
     }
     setnonblock(svr_fd);
-    LOG("connect to original svr [%s:%d] succ!", original_svr_ip, original_svr_port);
+    LOG("connect to original svr [%s:%d] succ! [svr_fd=%d]", original_svr_ip, original_svr_port, svr_fd);
     return svr_fd;
 }
 
@@ -425,6 +426,7 @@ void *query_routine(void *arg)
             ERRLOG("read from client error!");
             exit(1);
         }
+        LOG("read from client succ! ....");
         available->session.seqno = get_value();
         available->session.proc_begtime = curtime_us();
         available->session.connfd = connfd;
@@ -449,7 +451,6 @@ void *search_routine(void *arg)
     int i;
     while (1)
     {
-        LOG("search_net_io begin check... [loop=%d]", i);
         pthread_rwlock_rdlock(&global_fds_lock);
         for (int i = 0; i < 1024; i++)
         {
@@ -470,8 +471,16 @@ void *search_routine(void *arg)
                 {
                     check_readable_fds[i]->session.rsp_buf_len = nread;
                     check_readable_fds[i]->session.procedure_cmd = WEB_PROXY_SVR__PROCEDURE__SENDBACK_TO_CLIENT;
-                    LOG("successfully read %d bytes from fd %d [%s:%d] [seqno=%d]", 
-                        nread, i, original_svr_ip, original_svr_port, check_readable_fds[i]->session.seqno);
+                    LOG("successfully read %d bytes"  
+                        "[svr_fd=%d]"
+                        "[%s:%d]"
+                        "[seqno=%d]", 
+                        nread, 
+                        i, 
+                        original_svr_ip, 
+                        original_svr_port, 
+                        check_readable_fds[i]->session.seqno);
+
                     if (enqueue(task_queue, check_readable_fds[i]) < 0)
                     {
                         LOG("put session to work_queue fail!");
@@ -482,7 +491,6 @@ void *search_routine(void *arg)
             }
         }
         pthread_rwlock_unlock(&global_fds_lock);
-        LOG("search_net_io end check!");
         i++;
         sleep(1);
     }
@@ -495,10 +503,10 @@ void *work_process_routine(void *arg)
         struct task_t *available;
         if (dequeue(task_queue, &available) < 0)
         {
-            LOG("fetch session from idle_pool fail!");
+            LOG("fetch session from task_queue fail!");
             exit(1);
         }
-        LOG("fetch session from idle_pool succ! [procedure=%d][seqno=%d]",
+        LOG("fetch session from task_queue succ! [procedure=%d][seqno=%d]",
             available->session.procedure_cmd, available->session.seqno);
 
         if (available->session.is_using == 0)
@@ -517,16 +525,23 @@ void *work_process_routine(void *arg)
                 {
                     if ((available->session.svr_fd = TCP_connect(original_svr_ip, original_svr_port)) < 0)
                     {
-                        LOG("TCP_connect to org_svr error");
-                        exit(1);
+                        available->session.svr_fd = 0;
+                        LOG("TCP_connect to org_svr error, releasing session... [seqno=%d]", available->session.seqno);
+                        if (enqueue(task_queue, available) < 0)
+                        {
+                            LOG("release session fail! [seqno=%d]", available->session.seqno);
+                            exit(1);
+                        }
+                        continue;
                     }
                     LOG("first time establish connect to original svr [%s:%d] succ! [seqno=%d]", 
                         original_svr_ip, original_svr_port, available->session.seqno);
                 }
                 
                 ssize_t nwrite;
-                const char *msg = "hello world";
-                if ((nwrite = write(available->session.svr_fd, msg, sizeof(msg))) < 0)
+                if ((nwrite = write(available->session.svr_fd, 
+                                    available->session.req_buf, 
+                                    available->session.req_buf_len)) != available->session.req_buf_len)
                 {
                     ERRLOG("write error!");
                     exit(1);
@@ -547,12 +562,22 @@ void *work_process_routine(void *arg)
                     exit(1);
                 }
                 ssize_t nwrite;
-                const char *msg = "handle finished!";
-                if ((nwrite = write(available->session.connfd, msg, sizeof(msg))) < 0)
+                if ((nwrite = write(available->session.connfd, 
+                                    available->session.rsp_buf, 
+                                    available->session.rsp_buf_len)) != available->session.rsp_buf_len)
                 {
-                    ERRLOG("write error!");
+                    ERRLOG("write error!" 
+                            "[nwrite=%d]"
+                            "[connfd=%d]"
+                            "[rsp_buf_len=%d]"
+                            "[seqno=%d]", 
+                            nwrite,
+                            available->session.connfd, 
+                            available->session.rsp_buf_len,
+                            available->session.seqno);
                     exit(1);
                 }
+                LOG("sendback rsp %d bytes to client succ! [seqno=%d]", nwrite, available->session.seqno);
 
                 close(available->session.connfd);
                 close(available->session.svr_fd);
@@ -561,6 +586,7 @@ void *work_process_routine(void *arg)
                 check_readable_fds[available->session.svr_fd] = NULL;
                 pthread_rwlock_unlock(&global_fds_lock);
 
+                LOG("work finished, release session... [seqno=%d]", available->session.seqno);
                 reset_task(available);
 
                 if (enqueue(idle_pool, available) < 0)
@@ -568,6 +594,7 @@ void *work_process_routine(void *arg)
                     LOG("release session to idle_pool fail! [seqno=%d]", available->session.seqno);
                     exit(1);
                 }
+                LOG("release session finished!");
             } break;
             default :
             {
@@ -580,10 +607,16 @@ void *work_process_routine(void *arg)
 
 int main(int argc, char const *argv[])
 {
-    myport = 5000;
+    if (argc != 4)
+    {
+        LOG("usage : %s <#my_port> <#svr_ip> <#svr_port>\n", argv[0]);
+        exit(1);
+    }
 
-    original_svr_ip = "";
-    original_svr_port = 6000;
+    myport = atoi(argv[1]);
+
+    original_svr_ip = argv[2];
+    original_svr_port = atoi(argv[3]);
 
     int idle_pool_capacity = 10;
     int task_queue_capacity = 4;
@@ -591,10 +624,18 @@ int main(int argc, char const *argv[])
     setbuf(stdout, NULL);
 
     /* 初始 session 池 */
-    idle_pool = queue_init("idle_pool", idle_pool_capacity);
+    if ((idle_pool = queue_init("idle_pool", idle_pool_capacity)) == NULL) 
+    {
+        LOG("idle_pool init fail!");
+        exit(1);
+    }
 
     /* 初始化工作队列 */
-    task_queue = queue_init("task_queue", task_queue_capacity);
+    if ((task_queue = queue_init("task_queue", task_queue_capacity)) == NULL)
+    {
+        LOG("task_queue init fail!");
+        exit(1);
+    }
 
     /* 充满空闲 session 池 */
     for (int i = 0; i < idle_pool_capacity; i++)

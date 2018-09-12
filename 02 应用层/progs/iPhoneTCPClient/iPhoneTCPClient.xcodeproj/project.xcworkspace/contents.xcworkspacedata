@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:iPhoneClient.xcodeproj">
+      location = "self:iPhoneTCPClient.xcodeproj">
    </FileRef>
 </Workspace>

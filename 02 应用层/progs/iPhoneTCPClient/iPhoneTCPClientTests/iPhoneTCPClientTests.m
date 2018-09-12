@@ -1,6 +1,6 @@
 //
-//  iPhoneClientTests.m
-//  iPhoneClientTests
+//  iPhoneTCPClientTests.m
+//  iPhoneTCPClientTests
 //
 //  Created by YangHan on 2018/9/12.
 //  Copyright © 2018年 YangHan. All rights reserved.
@@ -8,11 +8,11 @@
 
 #import <XCTest/XCTest.h>
 
-@interface iPhoneClientTests : XCTestCase
+@interface iPhoneTCPClientTests : XCTestCase
 
 @end
 
-@implementation iPhoneClientTests
+@implementation iPhoneTCPClientTests
 
 - (void)setUp {
     [super setUp];

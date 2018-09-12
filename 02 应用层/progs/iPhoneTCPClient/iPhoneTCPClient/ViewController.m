@@ -25,27 +25,30 @@
 
 @implementation ViewController
 
+void InitState(ViewController *vc) {
+    [vc.button setTitle:@"建立 TCP 连接" forState:UIControlStateNormal];
+    vc.stateLabel.text = @"Nothing to show";
+    vc.button.enabled = YES;
+    vc.TCPConnected = NO;
+}
+
 - (IBAction)didTapButton:(UIButton *)sender {
     
     self.button.enabled = NO;
     
     /* 关闭 TCP 连接 */
     if (self.TCPConnected) {
+        InitState(self);
         close(self.sockfd);
-        self.stateLabel.text = @"Nothing to show";
-        [self.button setTitle:@"建立 TCP 连接" forState:UIControlStateNormal];
-        self.button.enabled = YES;
-        self.TCPConnected = NO;
         return;
     }
     
     /* 打开 TCP 连接 */
-    
     void (^ErrorBlock)(void) = ^{
         [self.view endEditing:YES];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            self.stateLabel.text = @"Nothing to show";
-            self.button.enabled = YES;
+            InitState(self);
+            close(self.sockfd);
         });
     };
     [self.button setTitle:@"关闭 TCP 连接" forState:UIControlStateNormal];
@@ -111,7 +114,7 @@
     
     /* 创建后台非阻塞轮询读线程 */
     int err;
-    if ((err = pthread_create(&_readDataThread, NULL, backgroundBusyLoop, (__bridge void *)(self))) < 0) {
+    if ((err = pthread_create(&_readDataThread, NULL, BackgroundBusyLoop, (__bridge void *)(self))) < 0) {
         errno = err;
         self.stateLabel.text = [NSString stringWithFormat:@"Create thread error! : %s", strerror(errno)];
         ErrorBlock();
@@ -123,7 +126,7 @@
 #define UpdateUI(...) \
 dispatch_async(dispatch_get_main_queue(), ^{ __VA_ARGS__ });
 
-void * backgroundBusyLoop(void *arg) {
+void * BackgroundBusyLoop(void *arg) {
     ViewController *vc = (__bridge ViewController *)arg;
     while (1) {
         ssize_t nRead;
@@ -137,9 +140,10 @@ void * backgroundBusyLoop(void *arg) {
                 UpdateUI( vc.stateLabel.text = [NSString stringWithFormat:@"服务器没有回传数据"]; )
             }
         } else if (nRead == 0) {  /* 服务器切断 TCP 连接 */
-            UpdateUI( vc.stateLabel.text = [NSString stringWithFormat:@"%@ 关闭了套接字, read EOF!", vc.ipTextField.text];
-                vc.stateLabel.text = @"Nothing to show";
-                vc.button.enabled = YES; )
+            UpdateUI(vc.stateLabel.text = [NSString stringWithFormat:@"%@ 关闭了套接字, read EOF!", vc.ipTextField.text];)
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                InitState(vc);
+            });
             close(vc.sockfd);
             return NULL;
         }
@@ -147,24 +151,21 @@ void * backgroundBusyLoop(void *arg) {
         readBuffer[nRead] = 0;
         NSString *readContent = [NSString stringWithFormat:@"%s", readBuffer];
         UpdateUI( vc.stateLabel.text = [NSString stringWithFormat:@"%zd 字节，%@",nRead, readContent];
-                  vc.button.enabled = YES;
-                  [vc.view setNeedsDisplay]; )
-        return NULL;
+                 vc.button.enabled = YES;
+                 [vc.view setNeedsDisplay]; )
+        sleep(4);
     }
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.stateLabel.text = @"Nothing to show";
-    [self.button setTitle:@"建立 TCP 连接" forState:UIControlStateNormal];
+    /* 初始 UI 设置 */
+    InitState(self);
     
     /* 默认 ip/port */
     self.ipTextField.text = @"10.10.5.165";
     self.portTextField.text = @"5000";
-    
-    /* 默认是无 TCP 连接的 */
-    self.TCPConnected = NO;
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
