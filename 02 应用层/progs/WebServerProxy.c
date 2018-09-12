@@ -6,6 +6,11 @@
 #include <sys/time.h>
 #include <stdarg.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <arpa/inet.h>
+#include <pthread.h>
+#include <errno.h>
 
 ssize_t YHLog(int line, const char *fun, const char *format, ...)
 {
@@ -63,7 +68,7 @@ struct session_t {
     char rsp_buf_len;
 
     int is_using;
-}
+};
 
 struct task_t {
     struct session_t session;
@@ -90,7 +95,7 @@ static struct work_queue *idle_pool;
 
 static pthread_t query_net_io;
 static pthread_t search_net_io;
-static pthread_t[10] work_process;
+static pthread_t work_process[10];
 
 /* 监听可读事件用的数组 */
 pthread_rwlock_t global_fds_lock = PTHREAD_RWLOCK_INITIALIZER;
@@ -308,6 +313,7 @@ int dequeue(struct work_queue *queue, struct task_t **task)
 
 int prepare_service(unsigned short port)
 {
+    int listenfd;
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         ERRLOG("socket error!");
@@ -333,6 +339,7 @@ int prepare_service(unsigned short port)
         return -3;
     }
     LOG("listen succ, prepare_service finished!");
+    return listenfd;
 }
 
 int TCP_connect(const char *ip, unsigned short port)
@@ -357,8 +364,7 @@ int TCP_connect(const char *ip, unsigned short port)
         return -3;
     }
     struct sockaddr_in peeraddr;
-    socklen_t len;
-    if (conncect(svr_fd, (struct sockaddr *)&peeraddr, &len) < 0)
+    if (connect(svr_fd, (struct sockaddr *)&peeraddr, sizeof(peeraddr)) < 0)
     {
         ERRLOG("connect to [%s:%d] error!", ip, port);
         return -4;
@@ -379,7 +385,9 @@ void *query_routine(void *arg)
     }
     while (1)
     {
-        if (connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &len) < 0)
+        struct sockaddr_in cliaddr;
+        socklen_t len = sizeof(cliaddr);
+        if ((connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &len)) < 0)
         {
             ERRLOG("accept error");
             exit(1);
@@ -389,7 +397,7 @@ void *query_routine(void *arg)
         unsigned short peer_port = ntohs(cliaddr.sin_port);
         LOG("new connection establish from [%s:%d]", peer_ip, peer_port);
 
-        sturct task_t *available;
+        struct task_t *available;
         if (dequeue(idle_pool, &available) < 0)
         {
             LOG("fetch from idle_pool error!");
@@ -414,7 +422,7 @@ void *query_routine(void *arg)
         available->session.procedure_cmd = WEB_PROXY_SVR__PROCEDURE__FORWARD_TO_ORG;
         available->session.is_using = 1;
 
-        if (enqueue(work_queue, available) < 0)
+        if (enqueue(task_queue, available) < 0)
         {
             LOG("push to work_queue error!");
             exit(1);
@@ -448,7 +456,7 @@ void *search_routine(void *arg)
                     check_readable_fds[i]->session.procedure_cmd = WEB_PROXY_SVR__PROCEDURE__SENDBACK_TO_CLIENT;
                     LOG("successfully read %d bytes from fd %d [%s:%d] [seqno=%d]", 
                         nread, i, trans_ip, trans_port, check_readable_fds[i]->session.seqno);
-                    if (enqueue(work_queue, check_readable_fds[i]) < 0)
+                    if (enqueue(task_queue, check_readable_fds[i]) < 0)
                     {
                         LOG("put session to work_queue fail!");
                         exit(1);
@@ -466,10 +474,10 @@ void *work_process_routine(void *arg)
     while (1)
     {
         struct task_t *available;
-        if (dequeue(work_queue, &available) < 0)
+        if (dequeue(task_queue, &available) < 0)
         {
             LOG("fetch session from idle_pool fail!");
-            eixt(1);
+            exit(1);
         }
         LOG("fetch session from idle_pool succ! [procedure=%d][seqno=%d]",
             available->session.procedure_cmd, available->session.seqno);
@@ -491,7 +499,7 @@ void *work_process_routine(void *arg)
                     if ((available->session.svr_fd = TCP_connect(trans_ip, trans_port)) < 0)
                     {
                         LOG("TCP_connect to org_svr error");
-                        eixt(1);
+                        exit(1);
                     }
                     LOG("first time establish connect to original svr [%s:%d] succ! [seqno=%d]", 
                         trans_ip, trans_port, available->session.seqno);
@@ -502,7 +510,7 @@ void *work_process_routine(void *arg)
                 if ((nwrite = write(available->session.svr_fd, msg, sizeof(msg))) < 0)
                 {
                     ERRLOG("write error!");
-                    eixt(1);
+                    exit(1);
                 }
                 LOG("forward request to original svr [%s:%d] succ! [seqno=%d]", 
                     trans_ip, trans_port, available->session.seqno);
@@ -517,14 +525,14 @@ void *work_process_routine(void *arg)
                 if (available->session.connfd == 0)
                 {
                     LOG("fatal error! client connfd is zero [seqno=%d]", available->session.seqno);
-                    eixt(1);
+                    exit(1);
                 }
                 ssize_t nwrite;
                 const char *msg = "handle finished!";
                 if ((nwrite = write(available->session.connfd, msg, sizeof(msg))) < 0)
                 {
                     ERRLOG("write error!");
-                    eixt(1);
+                    exit(1);
                 }
 
                 close(available->session.connfd);
@@ -539,13 +547,13 @@ void *work_process_routine(void *arg)
                 if (enqueue(idle_pool, available) < 0)
                 {
                     LOG("release session to idle_pool fail! [seqno=%d]", available->session.seqno);
-                    eixt(1);
+                    exit(1);
                 }
             } break;
             default :
             {
                 LOG ("fatal error! unexpected procedure [seqno=%d]", available->session.seqno);
-                eixt(1);
+                exit(1);
             }
         }
     }
@@ -576,7 +584,7 @@ int main(int argc, char const *argv[])
 
     /* 启动工作线程 */
     for (int i = 0; i < 10; i++)
-        pthread_create(work_process + i; NULL, work_process_routine, NULL);
+        pthread_create(work_process + i, NULL, work_process_routine, NULL);
 
     while (1)
         sleep(1);
