@@ -87,4 +87,21 @@
 >![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl14.png)
 > 从上图可以看出，需要 4 个 TCP 报文段才可以携带一个单独的 HTTP 响应报文体和报文 body
 
+### 4. HTML Documents with Embedded Objects
+
+* How many HTTP GET request messages did your browser send?  To which Internet addresses were these GET requests sent? 
+
+>
+> ![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl15.png)
+> 从上图可以看出，总共发了 3 个 GET 请求报文
+> 
+> 第一个 GET 发到 128.119.245.12，其他两个报文分别发到 165.193.123.218 和 134.241.6.82
+
+* Can you tell whether your browser downloaded the two images serially, or whether they were downloaded from the two web sites in parallel?  Explain. 
+
+>
+> ![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl15.png)
+> 并行下载，从上图可以看出，在一张图片下载完成之前，已经发出了第二个 GET 请求报文。
+
+
 
