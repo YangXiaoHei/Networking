@@ -65,4 +65,26 @@
 
 ### 3. Retrieving Long Documents 
 
+* How many HTTP GET request messages did your browser send? Which packet number in the trace contains the GET message for the Bill or Rights? 
+
+>
+> ![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl12.png)
+> 从上图可以看出，浏览器发送了一个 GET 请求报文。该报文的编号是 8
+
+* Which packet number in the trace contains the status code and phrase associated with the response to the HTTP GET request? 
+
+>
+>![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl13.png)
+> 从上图可以看出，包的编号是 10
+
+* What is the status code and phrase in the response? 
+
+> 200 OK
+
+* How many data-containing TCP segments were needed to carry the single HTTP response and the text of the Bill of Rights? 
+
+>
+>![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl14.png)
+> 从上图可以看出，需要 4 个 TCP 报文段才可以携带一个单独的 HTTP 响应报文体和报文 body
+
 
