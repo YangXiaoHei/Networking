@@ -34,25 +34,33 @@
 * How many bytes of content are being returned to your browser? 
 
 >
-> ![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl6.png)
+> ![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl7.png)
 > 从上图可以看出，返回了 128 个字节
 
 ### 2.The HTTP CONDITIONAL GET/response interaction 
 
 * Inspect the contents of the first HTTP GET request from your browser to the server.  Do you see an “IF-MODIFIED-SINCE” line in the HTTP GET? 
 
+>
+> ![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl8.png)
 > 从上图可以看出，第一个 GET 请求报文中没有 "IF-MODIFIED-SINCE" 首部行
 
 * Inspect the contents of the server response. Did the server explicitly return the contents of the file?  How can you tell? 
 
+>
+>![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl9.png)
 > 从上图可以看出，GET 响应报文显示返回了文件内容
 
 * Now inspect the contents of the second HTTP GET request from your browser to the server.  Do you see an “IF-MODIFIED-SINCE:” line in the HTTP GET? If so, what information follows the “IF-MODIFIED-SINCE:” header? 
 
+>
+>![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl10.png)
 > 从上图可以看出，第二个 GET 请求报文中包含了 "IF-MODIFIED-SINCE" 首部行，该首部行包含了上次响应报文中缓存的服务器中该文件的最后修改时间。
 
 * What is the HTTP status code and phrase returned from the server in response to this second HTTP GET?  Did the server explicitly return the contents of the file? Explain. 
 
+>
+>![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl11.png)
 > 从上图可以看出，状态码是 304，短语是 "Not Modified"，该请求中未包含文件的内容。因为当前浏览器缓存的文件在服务器中还未被修改，已经是最新的，不必再次返回一模一样的文件。
 
 ### 3. Retrieving Long Documents 
