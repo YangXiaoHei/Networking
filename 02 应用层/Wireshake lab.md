@@ -100,8 +100,21 @@
 * Can you tell whether your browser downloaded the two images serially, or whether they were downloaded from the two web sites in parallel?  Explain. 
 
 >
-> ![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl15.png)
+> ![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl16.png)
 > 并行下载，从上图可以看出，在一张图片下载完成之前，已经发出了第二个 GET 请求报文。
 
+### 5. HTTP Authentication
+
+* What is the server’s response (status code and phrase) in response to the initial HTTP GET message from your browser? 
+
+> 
+> ![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl17.png)
+> 从上图可以看出，401 Authorization Required
+
+* When your browser’s sends the HTTP GET message for the second time, what new field is included in the HTTP GET message? 
+
+> 
+> ![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wl18.png)
+> 从上图可以看出，新首部行 “Authorization: ” 被加入到 GET 请求报文中。
 
 
