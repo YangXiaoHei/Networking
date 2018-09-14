@@ -48,3 +48,17 @@
 >
 > ![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wldns9.png)
 > 两条 A 记录，每条都提供一个 IP 地址
+
+* Consider the subsequent TCP SYN packet sent by your host. Does the destination  IP address of the SYN packet correspond to any of the IP addresses provided in the DNS response message? 
+
+>
+>![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wldns10.png)
+>![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wldns11.png)
+>
+> 从上图可以看出，浏览器与服务器建立 TCP 连接所发送的握手报文的目的 IP 地址就是从 DNS 响应报文中得到的 IP 地址。
+
+* This web page contains images. Before retrieving each image, does your host issue new DNS queries? 
+
+>
+>![](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/images/wldns12.png)
+> 从上图可以看出，没有发出新的 DNS 请求，查看其他几个获取图片的 GET 请求分析，这是因为图片资源和网页资源都在同一台主机上，所以直接使用最先请求到的 IP 地址即可。
