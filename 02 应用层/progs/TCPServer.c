@@ -46,6 +46,7 @@ int main(int argc, char const *argv[])
     socklen_t len;
     int connfd;
     ssize_t rdlen;
+    char ipbuf[128];
     while (1)
     {
         len = sizeof(cliaddr);
@@ -55,7 +56,7 @@ int main(int argc, char const *argv[])
             perror("accpet error");
             exit(1);
         }
-        const char *ip = inet_ntop(AF_INET, &cliaddr.sin_addr, buf, sizeof(buf));
+        const char *ip = inet_ntop(AF_INET, &cliaddr.sin_addr, ipbuf, sizeof(ipbuf));
         unsigned short port = cliaddr.sin_port;
         printf("accpet succ! connnection from %s:%d\n", ip, port);
         
@@ -74,7 +75,7 @@ int main(int argc, char const *argv[])
                 break;
             }
             buf[rdlen] = 0; 
-            printf("received data following:\n");
+            printf("received data from [%s:%d] \n", ip, port);
             printf("*************************************************************\n");
             printf("%s", buf);
             printf("*************************************************************\n");

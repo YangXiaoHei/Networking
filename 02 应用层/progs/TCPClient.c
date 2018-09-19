@@ -30,6 +30,7 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
+    /* 指定了 dst_port 和 dst_IP，但没有指定 src_port 和 src_IP */
     if (connect(fd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0)
     {
         perror("connect error");
@@ -40,7 +41,7 @@ int main(int argc, char const *argv[])
     FILE *fp = NULL;
     if ((fp = fdopen(fd, "w")) == NULL)
     {
-        printf("fdopen error");
+        printf("fdopen error\n");
         exit(1);
     }
     setbuf(fp, NULL);
@@ -50,13 +51,13 @@ int main(int argc, char const *argv[])
     {
         if (fputs(buf, fp) == EOF)
         {
-            printf("fputs error");
+            printf("fputs error\n");
             exit(1);
         }
     }
     if (ferror(stdin))
     {
-        printf("fgets error");
+        printf("fgets error\n");
         exit(1);
     }
     close(fd);
