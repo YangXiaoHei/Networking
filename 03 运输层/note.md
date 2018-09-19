@@ -63,12 +63,12 @@
 	* 3.4.1 构造可靠数据传输协议
 
 		* 1. 经完全可靠信道的可靠数据传输: rdt 1.0
-![rdt_1_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_1_0.png)
+	![rdt_1_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_1_0.png)
 		
 		* 2. 经具有比特差错信道的可靠数据传输：rdt 2.0
-![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
+	![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
 		----
-![rdt_2_1](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_1.png)
+	![rdt_2_1](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_1.png)
 		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0
 	
 	* 3.4.2 流水线可靠数据传输协议
