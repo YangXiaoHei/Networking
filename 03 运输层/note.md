@@ -113,6 +113,7 @@
 			
 		* **SR** 的问题
 			* 序号范围有限时，发送方和接收方窗口缺乏同步会产生严重的后果。接收方有时无法判断一个分组是新分组还是重传。
+			![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/sr_dilemma.png)
 
 
 	
