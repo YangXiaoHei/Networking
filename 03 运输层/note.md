@@ -65,12 +65,13 @@
 		* 1. 经完全可靠信道的可靠数据传输: rdt 1.0
 	![rdt_1_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_1_0.png)
 		
-		* 2. 经具有比特差错信道的可靠数据传输：rdt 2.0
-	![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
-		----
-	![rdt_2_1](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_1.png)
-		----
-	![rdt_2_2](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_2.png)	
+		* 2. 经具有比特差错信道的可靠数据传输：
+			* rdt 2.0 未考虑 **ACK** 或 **NAK** 包也会损坏
+			![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
+			* rdt 2.1 考虑了 **ACK** 和 **NAK** 会损坏的情况
+			![rdt_2_1](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_1.png)
+			* rdt 2.2 考虑了 **ACK** 和 **NAK** 会损坏的情况，不使用 **NAK** 从而减少接收端一个状态
+			![rdt_2_2](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_2.png)
 		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0
 	
 	* 3.4.2 流水线可靠数据传输协议
