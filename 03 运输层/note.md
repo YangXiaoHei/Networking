@@ -76,7 +76,8 @@
 		![rdt_3_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_3_0.png)
 	* 3.4.2 流水线可靠数据传输协议
 		* 定义发送方的信道利用率为：发送方实际忙于将比特发送进信道的那部分时间与发送时间之比
-
+		
+		* ![stop_wait_vs_pipeline](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/stop_wait_vs_pipeline.png)
 		
 		* 采用流水线技术对可靠数据传输协议带来如下影响：
 			1. 必须增加序号范围，每个传输中的分组必须有一个唯一的序号，而且也许有许多个在输送中未确认的报文。
@@ -88,16 +89,28 @@
 			3. 所需序号范围和对缓存的要求取决于如何处理丢失、损坏及延时过大的分组。流水线差错恢复有两种基本方法：**回退 N 步 (Go-Back-N, GBN)** 和 **选择重传 (Selective Repeat, SR)**
 	
 	* 3.4.3 回退 N 步
-	
+		* 点击该交互动画并体会 **GBN** 的每个细节。[GBN interactive-animation](https://media.pearsoncmg.com/aw/ecs_kurose_compnetwork_7/cw/content/interactiveanimations/go-back-n-protocol/index.html)
+		
+		* **GBN 扩展FSM**
+		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/GBN.png)
 	* 3.4.4 选择重传
+	
+		* 试玩该交互动画并体会 **SR** 的每个细节 [SR_interative-animation](https://media.pearsoncmg.com/aw/ecs_kurose_compnetwork_7/cw/content/interactiveanimations/selective-repeat-protocol/index.html)
+		
 		* **SR** 发送方的事件与动作
 			1. **从上层收到数据**。若序号在窗口内，则将数据打包发送；否则要么将数据缓存，要么返回给上层以便以后传输。
+			
 			2. **超时**。定时器用来防治分组丢失，每个分组都有自己的定时器，因为超时发生时只能发送一个分组。
+			
 			3. **收到 ACK**。若分组序号在窗口内，**SR** 将该分组标记为已接收，如果该分组序号等于 `send_base`，则窗口的 `send_base` 移动到最小未确认序号处，如果窗口移动了并且新窗口内有未确认分组，则发送这些分组。
+			
 		* **SR** 接收方的事件与动作
 			1. **序号在 `[rcv_base, rcv_base + N - 1]` 内的分组被正确接收**。若收到分组在窗口内，则回传一个 `ACK` 给发送方。如果以前没接收过，缓存该分组。若分组序号等于 `recv_base`，则将从 `recv_base` 开始连续的分组交付给上层，然后窗口向前移动。
+			
 			2. **序号在 `[recv_base - N, recv_base - 1]` 内的分组被正确收到**。必须产生一个 `ACK` 给发送方，即使该分组是接收方以前已经确认过的分组。（如果接收方已经收到该分组，但不回传 ACK 的话，发送方将永远不能向前滑动）
+			
 			3. **其他情况**。忽略该分组
+			
 		* **SR** 的问题
 			* 序号范围有限时，发送方和接收方窗口缺乏同步会产生严重的后果。接收方有时无法判断一个分组是新分组还是重传。
 
