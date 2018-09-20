@@ -73,7 +73,7 @@
 			* rdt 2.2 考虑了 **ACK** 和 **NAK** 会损坏的情况，不使用 **NAK** 从而减少接收端一个状态
 			![rdt_2_2](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_2.png)
 		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0
-	
+		![rdt_3_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_3_0.png)
 	* 3.4.2 流水线可靠数据传输协议
 	
 	* 3.4.3 回退 N 步
