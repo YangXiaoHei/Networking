@@ -75,7 +75,7 @@
 		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0
 		![rdt_3_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_3_0.png)
 	* 3.4.2 流水线可靠数据传输协议
-		* 定义发送方的信道利用率为：发送方实际忙于将比特发送进信道的那部分时间与发送时间之比
+		* 定义发送方的信道利用率为：发送方实际忙于将比特发送进信道的那部分时间与发送时间之比。从下图可以看出 `stop-wait` 具有极低的信道利用率，因此采用流水线技术改善信道利用率。
 		
 		* ![stop_wait_vs_pipeline](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/stop_wait_vs_pipeline.png)
 		
@@ -89,7 +89,7 @@
 			3. 所需序号范围和对缓存的要求取决于如何处理丢失、损坏及延时过大的分组。流水线差错恢复有两种基本方法：**回退 N 步 (Go-Back-N, GBN)** 和 **选择重传 (Selective Repeat, SR)**
 	
 	* 3.4.3 回退 N 步
-		* 点击该交互动画并体会 **GBN** 的每个细节。[GBN interactive-animation](https://media.pearsoncmg.com/aw/ecs_kurose_compnetwork_7/cw/content/interactiveanimations/go-back-n-protocol/index.html)
+		* 试玩该交互动画并体会 **GBN** 的每个细节。[GBN interactive-animation](https://media.pearsoncmg.com/aw/ecs_kurose_compnetwork_7/cw/content/interactiveanimations/go-back-n-protocol/index.html)
 		
 		* **GBN 扩展FSM**
 		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/GBN.png)
