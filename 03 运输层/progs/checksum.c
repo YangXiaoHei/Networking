@@ -121,29 +121,26 @@ int main(int argc, char const *argv[])
     const char *s2 = "0101 0101 0101 0101";
     const char *s3 = "1000 1111 0000 1100";
 
-    char *s3_bad[] = {
+    char *s3_case[] = {
         "1000 1111 0000 1101", 
         "1000 1111 0001 1100", 
         "1000 1111 0100 1100",
         "1000 1011 1000 1100",
+        "1000 1111 0000 1100",
         "1011 1001 0000 1100",
-        "1100 1101 0000 1100"
+        "1100 1101 0000 1100",
+        "1000 1111 0000 1100"
     };
-    int size = sizeof(s3_bad) / sizeof(s3_bad[0]);
+    int size = sizeof(s3_case) / sizeof(s3_case[0]);
 
     short checksum = check_add(3, s1, s2, s3);
 
-    if (check_add(4, ntop(checksum), s1, s2, s3) != 0)
-        printf("0 ---- bit error!\n");
-    else
-        printf("0 ---- no error!\n");
-
     for (int i = 0; i < size; i++)
     {
-        if (check_add(4, ntop(checksum), s1, s2, s3_bad[i]) != 0)
+        if (check_add(4, ntop(checksum), s1, s2, s3_case[i]) != 0)
             printf("%d ---- bit error!\n", i + 1);
         else
-            printf("0 ---- no error!\n");
+            printf("%d ---- no error!\n", i + 1);
     }
     
     return 0;
