@@ -69,6 +69,8 @@
 	![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
 		----
 	![rdt_2_1](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_1.png)
+		----
+	![rdt_2_2](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_2.png)	
 		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0
 	
 	* 3.4.2 流水线可靠数据传输协议
