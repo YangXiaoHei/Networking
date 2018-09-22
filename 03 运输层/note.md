@@ -297,6 +297,8 @@
 			![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/TCP_congestion_control_alg.png)
 			
 			1. 慢启动
+				cwnd 的值以 1 个 MSS 开始并且每当传输的报文段首次被确认就增加一个 MSS，因此，TCP 发送速率起始慢，但在慢启动阶段以指数增长。
+			 
 			2. 拥塞避免
 			3. 快速恢复
 			4. TCP 拥塞控制：回顾
@@ -304,7 +306,7 @@
 			6. 经高带宽路径的 TCP
 			7. 公平性与 TCP
 			8. 公平性与 UDP
-			9. 公平性和并行 TCP 连接
+			9. 公平性与并行 TCP 连接
 			
 		
 			
