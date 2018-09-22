@@ -56,9 +56,11 @@
 		* 分组首部开销小
 		
 	* 3.3.1 **UDP** 报文段结构如下
-	![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/UDP_segment.png)
+	
+	 ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/UDP_segment.png)
 	
 	* 3.3.2 **UDP** 校验和代码实例如下
+	
 	[checksum.c](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/progs/checksum.c)
 	
 * 3.4 可靠数据传输原理：
