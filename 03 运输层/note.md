@@ -245,11 +245,11 @@
 	
 		* **TCP** 三次握手
 		
-		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/three_handshake.png)
+		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/TCP_three_handshake.png)
 
 		* **TCP** 四次握手 
 			
-		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/four_handshake.png)
+		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/TCP_four_handshake.png)
 		
 * 3.6 拥塞控制原理
 
