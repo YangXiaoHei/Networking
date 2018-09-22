@@ -235,9 +235,27 @@
 		
 			`LastByteSent - LastByteAcked <= RcvBuffer - [ LastByteRcvd - LastByteRead ]` 即 `LastByteSent - LastByteAcked <= rwnd`
 			
-		
-		
+		* **流量控制** 的注意点
+			
+			* 若接收方的接收缓存已经存满，使得 `rwnd = 0`, 在将 `rwnd = 0` 通告给发送方后，此时假设接收方不会传送数据给发送方，那么发送方将不能知道接收方何时接收缓存中腾出了空闲空间出来。为了解决该问题，**TCP** 规范中要求：当接收方接收窗口为 0 时，主机 A 继续发送只有一个字节数据报文段。这些报文段将会被接收方确认。等到缓存开始清空，接收方回传的确认报文里将包含一个非 0 的 `rwnd` 值。
+			
+			* UDP 不提供流量控制，因此会导致缓存溢出，最终丢失报文。
 
+	* 3.5.6 **TCP** 连接管理
+	
+		* **TCP** 三次握手
+		
+		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/three_handshake.png)
+
+		* **TCP** 四次握手 
+			
+		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/four_handshake.png)
+		
+* 3.6 拥塞控制原理
+
+	* 丢包一般是当网络变得拥塞时由于路由器缓存溢出引起的，分组重传因此作为网络拥塞的征兆。
+		
+	* 3.6.1 拥塞原因与代价
 	
 	
 		
