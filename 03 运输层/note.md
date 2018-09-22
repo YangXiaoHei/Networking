@@ -140,9 +140,107 @@
 		
 		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/tcp_sendbuf_recvbuf.png)
 		
-		* TCP 报文段结构如下：
+	* 3.5.2 TCP 报文段结构：
 		
 		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/TCP_segment.png)
+	
+		* Telnet: 序号和确认号的一个学习案例
+		
+		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/Telnet.png)
+		
+	* 3.5.3 往返时间的估计与超时
+	
+		1. 估计往返时间
+		
+			* `EstimatedRTT = (1 - a) x EstimatedRTT + a x SampleRTT`
+			
+			* `DevRTT = (1 - b) x DevRTT + b x | SampleRTT - EstimatedRTT |`
+			
+		2. 设置和管理重传超时间隔
+			
+			* 超时间隔应该大于等于 `EstimatedRTT`，否则将造成不必要的重传。但是超时间隔不应该比 `EstimatedRTT` 大太多，否则当报文段丢失时，**TCP** 不能很快地重传该报文段，导致数据传输时延大。因此要求将超时间隔设为 `EstimatedRTT` 加上一定余量，当 `SampleRTT` 值波动大时，这个余量大一些；当波动小时，这个余量小一些。
+			
+			* `TimeoutInterval = EstimatedRTT + 4 x DevRTT`
+			
+	* 3.5.4 可靠数据传输
+		1. 简化的 TCP 发送方
+		
+			~~~C
+			NextSeqNum = InitialSeqNumber
+			SendBase = InitalSeqNumber
+				
+			loop (forever) {
+			    
+			switch(event)
+		
+		   event: data received from application above 
+	            create TCP segment with sequence number NextSeqNum
+	            if (timer currently not running)
+	                start timer
+	            pass segment to IP
+	            NextSeqNum = NextSeqNum + length(data)
+	            break;
+		
+		   event: timer timeout
+	            retransmit not-yet-acknowledged segment with smallest sequence number
+	            start timer
+	            break;
+		
+		   event: ACK received, with ACK field value of y
+	            if (y > SendBase) {
+	                SendBase = y
+	                if (there are currently any not-yet-acknowledged segments)
+	                    start timer
+	            }
+	            else { /* a duplicate ACK for already ACKed segment */
+	            		increment number of duplicate ACKs received by y
+	            		if (number of duplicate ACKs received for y == 3)
+	            			/* TCP fast retransmit */
+	            			resend segment with sequence number y
+	            }
+	     
+	            break;
+		
+			} /* forever 循环结束 */
+			~~~
+			
+		2. 一些有趣的情况
+		
+			![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/Interesting_case.png)
+		
+		3. 超时间隔加倍
+		
+			* 每当超时事件发生，**TCP** 重传具有最小序号的还未被确认的报文段。只是每次 **TCP** 重传时都会将下一次的超时间隔设为先前的两倍，而不是用从 `EstimatedRTT` 和 `DevRTT` 推算出的值。
+			
+		4. 快速重传
+			
+			* 超时出发重传存在的问题之一是超时周期可能相对较长。当一个报文段丢失时，这种长超时周期迫使发送方延迟重传丢失的分组，因而增加了端到端时延。其实完全可以在超时事件发生之前通过注意到冗余 **ACK** 来较好地检测到丢包情况。如果 **TCP** 发送方姐收到对相同数据的 3 个冗余 **ACK**，就说明跟在这个已被确认 3 次的报文段之后的报文段丢失，此时，**TCP** 执行**快速重传**。
+			
+		5. 是回退 N 步还是选择重传？
+		
+			* **TCP** 确认是累积式的，正确接收但失序的报文段是不会被接收方逐个确认的，因此，**TCP** 发送方仅需维持 **已发送但未被确认的字节的最小序号 (SendBase)** 和 **下一个要发送的字节的序号 (NextSeqNum)**。此时 **TCP** 看起来更像一个 **GBN** 风格的协议，但是许多 **TCP** 的实现会将正确接收但失序的报文段缓存起来，因此当 **GBN** 协议发送方未接收到对于 `n` 的确认时，会重传 `n，n+1，n+2，n+3 ...` 的所有已发送但未确认报文，但是 **TCP** 只会重传 `n`。对 **TCP** 提出的一种修改意见是所谓的选择确认，它允许 **TCP** 接收方有选择地确认失序报文段，而不是累积地确认最后一个正确接收的有序报文段。此时 **TCP** 看起来又像 **SR** 协议。因此，**TCP** 的差错恢复也许最好被分类为 **GBN** 协议与 **SR** 协议的混合体。
+		
+	* 3.5.5 流量控制
+	
+		* ⚠️注意区分 **流量控制** 和 **拥塞控制** !!
+		
+			1. 拥塞控制：TCP 发送方因为 IP 网络的拥塞而被遏制。
+			2. 流量控制：消除发送方使接收方缓存溢出的可能性，即使发送方的发送速率和接收方接收速率相匹配。
+		
+		* TCP 通过让发送方维护一个称为 **接收窗口** 的变量来提供流量控制。该 **接收窗口** 用于给发送方一个提示 —— 该接收方还有多少可用的缓存空间。
+
+		* 发送方需要保证发送速率在该连接的整个生命周期内满足下列不等式约束：
+		
+			`LastByteSent - LastByteAcked <= RcvBuffer - [ LastByteRcvd - LastByteRead ]` 即 `LastByteSent - LastByteAcked <= rwnd`
+			
+		
+		
+
+	
+	
+		
+	
+	
 		
 
 
