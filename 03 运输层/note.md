@@ -121,12 +121,22 @@
 * 3.5 面向连接的运输：**TCP**
 
 	* 3.5.1 **TCP** 连接
+	
 		* **TCP** 被称为是 **面向连接的**，这是因为建立 **TCP** 连接必须先收发握手报文，发送方和接收方都在发送报文时初始化 **TCP** 的状态变量（比如套接字、接收缓存、发送缓存、LastByteRecved、LastByteSent、LastByteAcked、LastByteRead 等）。
+		
 		* **TCP** 面向连接仅仅指的是在端系统中维护与 **TCP** 连接有关的状态变量，而不是说在发送方和接收方沿途的路由器和通信链路中维护有该连接的状态信息，实际上，中间路由器对连接视而不见。	
+		
 		* **TCP** 连接提供**全双工服务**：即 A 主机上进程 a 向 B 主机上进程 b 通过同一条 TCP 连接发送数据时，b 也可以同时在该条 **TCP** 连接上将数据发给 a，**TCP** 连接总是**点对点（单个发送方和单个接收方）**，而非**多播（一个发送方，多个接收方）**。
+		
 		* **MSS (Maximum Segment Size)** 和 **MTU (Maximum Transmission Unit)**：**MTU** 指发送主机发送的最大链路层帧长度，**MSS** 指的是单个 **TCP** 报文段允许容纳的最大应用层报文长度，**MSS** 受制于 **MTU**，一般 **TCP/IP** 报文首部字段总共 40 字节，所以假如 **MTU** 为 1500 字节，那么 **MSS** 为 `MTU - 40 = 1460` 字节。
+		
 		* TCP 构建的图示如下：
+		
+		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/tcp_sendbuf_recvbuf.png)
+		
 		* TCP 报文段结构如下：
+		
+		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/TCP_segment.png)
 		
 
 
