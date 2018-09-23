@@ -46,7 +46,8 @@ int main(int argc, char const *argv[])
     socklen_t len;
     int connfd;
     ssize_t rdlen;
-    char ipbuf[128];
+    char cli_ipbuf[128];
+    char conn_ipbuf[128];
     while (1)
     {
         len = sizeof(cliaddr);
@@ -56,9 +57,22 @@ int main(int argc, char const *argv[])
             perror("accpet error");
             exit(1);
         }
-        const char *ip = inet_ntop(AF_INET, &cliaddr.sin_addr, ipbuf, sizeof(ipbuf));
-        unsigned short port = cliaddr.sin_port;
-        printf("accpet succ! connnection from %s:%d\n", ip, port);
+        struct sockaddr_in connaddr;
+        len = sizeof(connaddr);
+        if (getsockname(connfd, (struct sockaddr *)&connaddr, &len) < 0)
+        {
+            perror("getsockname error!");
+            exit(1);
+        }
+        const char *cli_ip = inet_ntop(AF_INET, &cliaddr.sin_addr, cli_ipbuf, sizeof(cli_ipbuf));
+        unsigned short cli_port = ntohs(cliaddr.sin_port);
+        const char *svr_ip = inet_ntop(AF_INET, &connaddr.sin_addr, conn_ipbuf, sizeof(conn_ipbuf));
+        unsigned short svr_port = ntohs(svraddr.sin_port);
+        
+        printf("accpet succ! connnection from [%s:%d]\n"
+               "OS assign a new connfd for this connection [%s:%d]\n",
+               cli_ip, cli_port,
+               svr_ip, svr_port);
         
         while (1)
         {
@@ -75,7 +89,7 @@ int main(int argc, char const *argv[])
                 break;
             }
             buf[rdlen] = 0; 
-            printf("received data from [%s:%d] \n", ip, port);
+            printf("received data from [%s:%d] \n", cli_ip, cli_port);
             printf("*************************************************************\n");
             printf("%s", buf);
             printf("*************************************************************\n");
