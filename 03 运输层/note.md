@@ -71,21 +71,36 @@
 	* 3.4.1 构造可靠数据传输协议
 
 		* 1. 经完全可靠信道的可靠数据传输: rdt 1.0
-	![rdt_1_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_1_0.png)
+		
+		![rdt_1_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_1_0.png)
 		
 		* 2. 经具有比特差错信道的可靠数据传输：
 			* rdt 2.0 未考虑 **ACK** 或 **NAK** 包也会损坏
+			
 			![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
-			* rdt 2.1 考虑了 **ACK** 和 **NAK** 会损坏的情况
+			
+			* rdt 2.1 考虑了 **ACK** 和 **NAK** 会损坏的情况：我们采用的解决方法是，若发送方收到损坏的分组，那么重传当前数据分组即可。
+			
+			**冗余分组的根本困难：在于接收方不知道它上次所发送的 ACK 或 NAK 是否被发送方正确地接收到，因此接收方无法事先知道它接收到的分组是新分组还是第一次重传。**
+			
+			**解决方法：在数据分组中添加新字段——序号，这样接收方只要检查序号便可知道到达的分组是否是一次重传，还是新的分组到达。对于停等协议，1 比特序号就足够了。这样的话，当接收方重复接收到序号为 0 的分组，它便知道它向发送方发送的对 0 分组的确认报文已经损坏，于是它重传对 0 分组的确认报文。对于发送方来说，它刚刚发送了 0 分组，但却得到接收方回传的一个损坏的确认报文，这个报文本来可能是 ACK，也可能是 NAK，发送方不能武断地肯定此 0 分组已经被接收方正确接收，于是它选择重传 0 分组。直到收到一个完整的对 0 分组的 ACK 报文。**
+			
 			![rdt_2_1](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_1.png)
-			* rdt 2.2 考虑了 **ACK** 和 **NAK** 会损坏的情况，不使用 **NAK** 从而减少接收端一个状态
+			
+			* rdt 2.2 考虑了 **ACK** 和 **NAK** 会损坏的情况，不使用 **NAK** 而是使用 **带序号的 ACK**
+			
+			* **rdt 2.1 的接收方当收到损坏分组时向发送方回传一个 NAK，但不用 NAK，而是对上次正确接收的分组发送一个 ACK，也能达到同样的效果。发送方本来在等待 ACK 0，却等来了 ACK 1，那么它便知道它发送的 0 分组没有被接收端正确接收，于是它选择重传 0 分组。对于接收方，若它已经成功接收了 0 分组，但是它又收到 0 分组，它便知道它发送的 ACK 0 没有被发送方正确接收，于是它选择重传 ACK 0 报文。** 
+			
 			![rdt_2_2](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_2.png)
+			
 		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0
+		
 		![rdt_3_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_3_0.png)
+		
 	* 3.4.2 流水线可靠数据传输协议
 		* 定义发送方的信道利用率为：发送方实际忙于将比特发送进信道的那部分时间与发送时间之比。从下图可以看出 `stop-wait` 具有极低的信道利用率，因此采用流水线技术改善信道利用率。
 		
-		* ![stop_wait_vs_pipeline](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/stop_wait_vs_pipeline.png)
+		![stop_wait_vs_pipeline](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/stop_wait_vs_pipeline.png)
 		
 		* 采用流水线技术对可靠数据传输协议带来如下影响：
 			1. 必须增加序号范围，每个传输中的分组必须有一个唯一的序号，而且也许有许多个在输送中未确认的报文。
