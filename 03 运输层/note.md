@@ -63,13 +63,15 @@
 	 ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/UDP_segment.png)
 	
 	* 3.3.2 **UDP** 校验和代码实例如下
-	
-	[checksum.c](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/progs/checksum.c)
+		
+		* ⚠️⚠️⚠️**这种方法的校验只能检测出所有 1 比特的差错，如果出现两比特以上的差错，可能无法被校验出来。比如 0010，0001 变为乐 0011，0000。在改变前后这两个 4 比特数的加和相同。同理，两个 16 比特的数相加时，调换其中某两个对应位置的比特位，调换前后加和结果不会发生改变，则 checksum 的值也不会发生改变。**
+		
+		* [checksum.c](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/progs/checksum.c)
 	
 * 3.4 可靠数据传输原理：
 	* **基于假设：分组将以发送的次序进行交付，某些分组可能会丢失，但底层信道不会对分组重排序**
 	
-	* ⚠️⚠️⚠️**如果分组重新排序会发生，那么一个具有序号或确认号 x 的分组的旧副本可能会出现，即使发送方或接收方的窗口中都没有包含 x，实际中采用的处理方法是，确保一个序号不被重新使用，直到发送方 “确信” 任何先前发送的序号为 x 的分组都不再在网络中为止。通过假定一个分组在网络中的 “存活” 时间不会超过某个固定最大时间量来做到这一点。在高速网络的 **TCP** 扩展中，最长的分组寿命被假定为大约 3 分钟。**
+	* ⚠️⚠️⚠️**如果分组重新排序会发生，那么一个具有序号或确认号 x 的分组的旧副本可能会出现，即使发送方或接收方的窗口中都没有包含 x，实际中采用的处理方法是，确保一个序号不被重新使用，直到发送方 “确信” 任何先前发送的序号为 x 的分组都不再在网络中为止。通过假定一个分组在网络中的 “存活” 时间不会超过某个固定最大时间量来做到这一点。在高速网络的 TCP 扩展中，最长的分组寿命被假定为大约 3 分钟。**
 
 	* 3.4.1 构造可靠数据传输协议
 
@@ -79,10 +81,11 @@
 		
 		* 2. 经具有比特差错信道的可靠数据传输：
 			* rdt 2.0 未考虑 **ACK** 或 **NAK** 包也会损坏
+
+			* [为何引入序号？](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题-习题解答_34.md)
 			
-			![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
+			* ![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
 			
-			[为何引入序号？](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题-习题解答_34.md)
 			* rdt 2.1 考虑了 **ACK** 和 **NAK** 会损坏的情况：我们采用的解决方法是，若发送方收到损坏的分组，那么重传当前数据分组即可。
 			
 			**冗余分组的根本困难：在于接收方不知道它上次所发送的 ACK 或 NAK 是否被发送方正确地接收到，因此接收方无法事先知道它接收到的分组是新分组还是第一次重传。**
@@ -97,8 +100,15 @@
 			
 			![rdt_2_2](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_2.png)
 			
-		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0 [为何引入定时器？](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题-习题解答_34.md)
-		![rdt_3_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_3_0.png)
+		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0 
+		
+			* [为何引入定时器？](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题-习题解答_34.md)
+
+			* ![rdt_3_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_3_0.png)
+
+			* **思考:** 列举两种 rdt 3.0 发送方处于【等待 **ACK** 0】 状态却收到  **ACK** 1 分组的情况？
+				* 接收方收到损坏的分组 0
+				* 发送方过早超时，在冗余  **ACK** 1 到达前提前转入了【等待  **ACK** 0】状态。
 		
 	* 3.4.2 流水线可靠数据传输协议
 		* 定义发送方的信道利用率为：发送方实际忙于将比特发送进信道的那部分时间与发送时间之比。从下图可以看出 `stop-wait` 具有极低的信道利用率，因此采用流水线技术改善信道利用率。
