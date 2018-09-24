@@ -82,6 +82,7 @@
 			
 			![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
 			
+			[为何引入序号？](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题-习题解答_34.md)
 			* rdt 2.1 考虑了 **ACK** 和 **NAK** 会损坏的情况：我们采用的解决方法是，若发送方收到损坏的分组，那么重传当前数据分组即可。
 			
 			**冗余分组的根本困难：在于接收方不知道它上次所发送的 ACK 或 NAK 是否被发送方正确地接收到，因此接收方无法事先知道它接收到的分组是新分组还是第一次重传。**
@@ -96,8 +97,7 @@
 			
 			![rdt_2_2](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_2.png)
 			
-		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0
-		
+		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0 [为何引入定时器？](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题-习题解答_34.md)
 		![rdt_3_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_3_0.png)
 		
 	* 3.4.2 流水线可靠数据传输协议
