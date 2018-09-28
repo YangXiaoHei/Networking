@@ -179,6 +179,9 @@
 		
 			* `EstimatedRTT = (1 - a) x EstimatedRTT + a x SampleRTT`
 			
+			* 对于连续 n 个 SampleRTT 计算的 EstimatedRTT
+				* ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/nEstimatedRTT.png)
+			
 			* `DevRTT = (1 - b) x DevRTT + b x | SampleRTT - EstimatedRTT |`
 			
 		2. 设置和管理重传超时间隔
@@ -218,10 +221,10 @@
 	                    start timer
 	            }
 	            else { /* a duplicate ACK for already ACKed segment */
-	            		increment number of duplicate ACKs received by y
-	            		if (number of duplicate ACKs received for y == 3)
-	            			/* TCP fast retransmit */
-	            			resend segment with sequence number y
+			increment number of duplicate ACKs received by y
+			if (number of duplicate ACKs received for y == 3)
+				/* TCP fast retransmit */
+				resend segment with sequence number y
 	            }
 	     
 	            break;
