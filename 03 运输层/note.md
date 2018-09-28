@@ -221,8 +221,8 @@
 	                    start timer
 	            }
 	            else { /* a duplicate ACK for already ACKed segment */
-			increment number of duplicate ACKs received by y
-			if (number of duplicate ACKs received for y == 3)
+			        increment number of duplicate ACKs received by y
+			        if (number of duplicate ACKs received for y == 3)
 				/* TCP fast retransmit */
 				resend segment with sequence number y
 	            }
