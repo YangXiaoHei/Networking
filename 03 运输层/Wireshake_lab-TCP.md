@@ -85,13 +85,78 @@
 		> xx.51.475429  --> 第 6 个数据包的确认
 	
 	* 4、what is the RTT value for each of the six segments?
-	* 5、What is the EstimatedRTT value (see Section 3.5.3, page 239 in text) after the receipt of each ACK?
+		
+	 	> 第 1 个包的 RTT：
+	 	> 
+	 	> `168351 us + (1000000 us - 861068 us) = 307283 us = 307.283 ms`
+	 	> 
+	 	> 第 2 个包的 RTT:
+	 	> 
+	 	> `168355 us + (1000000 us - 862648 us) = 305707 us = 305.707 ms`
+	 	> 
+	 	> 第 3 个包的 RTT: 
+	 	> 
+	 	> `168355 us + (1000000 us - 862812 us) = 305543 us = 305.543 ms`
+	 	> 
+	 	>第 4 个包的 RTT: 
+	 	> 
+	 	> `475423 us + (1000000 us - 862813 us) = 612610 us = 612.61 ms`
+	 	>
+	 	>第 5 个包的 RTT: 
+	 	> 
+	 	> `475428 us - 168450 us = 306978 us = 306.978 ms`
+	 	>
+	 	> 第 6 个包的 RTT: 
+	 	> 
+	 	> `475429 us - 168451 us = 306.978 ms`
+	 	>
+	 	
+	* 5、What is the EstimatedRTT value (see Section 3.5.3, page 239 in text) after the receipt of each ACK ? ***Assume that the value of the EstimatedRTT is equal to the measured RTT for the first segment***
+		
+		> 
+		> `EstimatedRTT = 0.875 x EstimatedRTT + 0.125 x SampleRTT` 
+		>
+		> 第 1 个包: 
+		> 
+		> `EstimatedRTT = SampleRTT = 307.283 ms`
+		>
+		> 第 2 个包：
+		>
+		> `EstimatedRTT = 0.875 x 307.283 + 0.125 x 305.707 = 307.040 ms`
+		>
+		> 第 3 个包：
+		>
+		> `EstimatedRTT = 0.875 x 307.04 + 0.125 x 305.543 = 306.853 ms`
+		>
+		> 第 4 个包：
+		>
+		> `EstimatedRTT = 0.875 x 306.853 + 0.125 x 612.61 = 345.073 ms`
+		>
+		> 第 5 个包：
+		>
+		> `EstimatedRTT = 0.875 x 345.073 + 0.125 x 306.978 = 340.311 ms`
+		>
+		> 第 6 个包：
+		>
+		> `EstimatedRTT = 0.875 x 340.311 + 0.125 x 306.987 ms = 336.1455 ms`
 
-* 8.What is the length of each of the first six TCP segments?4 
-
+* 8.What is the length of each of the first six TCP segments?
+	
+	> 第 1 个包：614 bytes
+	>
+	> 第 2 个包：139 bytes
+	>
+	> 第 3 个包：1428 bytes
+	>
+	> 第 4 个包：1428 bytes
+	>
+	> 第 5 个包：1428 bytes
+	>
+	> 第 6 个包：1428 bytes
 
 * 9.What is the minimum amount of available buffer space advertised at the received for the entire trace?  Does the lack of receiver buffer space ever throttle the sender? 
 
+	> 
 
 * 10.Are there any retransmitted segments in the trace file? What did you check for (in the trace) in order to answer this question? 
 
