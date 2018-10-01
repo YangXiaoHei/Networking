@@ -205,7 +205,25 @@
 
 * 13.Use the Time-Sequence-Graph(Stevens) plotting tool to view the sequence number versus time plot of segments being sent from the client to the gaia.cs.umass.edu server.  Can you identify where TCP’s slowstart phase begins and ends, and where congestion avoidance takes over?  Comment on ways in which the measured data differs from the idealized behavior of TCP that we’ve studied in the text.
 
+	> 见下图
+	> 
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.15.png) 
+	> 
+	> 从图中并不能看出慢启动是何时结束，拥塞避免是何时开始的
+	>
+	> 但是我们有不等式如下
+	> 
+	> `LastByteSent - LastByteAcked <= min{rwnd, cwnd}`
+	>
+	> 由于在这里接收窗口并不是瓶颈，因此我们可以通过计算每时每刻已发送但还未被确认的字节数来推算拥塞窗口的大小。
+	>
+	> 然后根据 ACK 到达时，拥塞窗口是增加一个 MSS 还是增加 `1/cwnd` 来判断
+	> 此时是拥塞避免的哪个阶段
+	>
+	>
  
 * 14.Answer each of two questions above for the trace that you have gathered when you transferred a file from your computer to gaia.cs.umass.edu
+
+ 	> 见上
 
 
