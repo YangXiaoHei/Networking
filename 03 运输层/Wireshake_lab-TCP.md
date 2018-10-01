@@ -156,14 +156,56 @@
 
 * 9.What is the minimum amount of available buffer space advertised at the received for the entire trace?  Does the lack of receiver buffer space ever throttle the sender? 
 
-	> 
-
+	> 是用筛选宏 `tcp && ((ip.src == 128.119.245.12 && ip.dst == 192.168.1.101))` 得到如下图所示的接收方的确认包，从中观察接收窗口字段可以看出接收缓存的变化趋势。
+	>
+	>![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.9.png) 
+	>
+	>![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.10.png) 
+	>
+	> 从中可以看到，接收方会扩充自己的缓存大小，从而使得发送方从始至终没有被接收方的接收缓存遏制发送速率
+ 
 * 10.Are there any retransmitted segments in the trace file? What did you check for (in the trace) in order to answer this question? 
+
+	>
+	> 使用筛选宏 `tcp && ((ip.src == 192.168.1.101 && ip.dst == 128.119.245.12))` 得到发送方发送的所有数据包
+	>
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.11.png) 
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.12.png) 
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.13.png) 
+	> 
+	> 没有重传的分组，通过检查分组序号是否有重复的来推断。
 
 
 * 11.How much data does the receiver typically acknowledge in an ACK?  Can you identify cases where the receiver is ACKing every other received segment (see Table 3.2 on page 247 in the text). 
 
-
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.14.png) 
+	> 从中可以看出，有两个冗余 ACK 产生，但是发送方并没有任何重传分组，因此可以推断出到达接收方的某两个分组发生了失序。
+	
 * 12.What is the throughput (bytes transferred per unit time) for the TCP connection? Explain how you calculated this value. 
+	
+	> 总吞吐量可以由总传输字节除以总耗时来计算
+	>
+	> 最后一个 ACK 的确认号为 149339，因此从发送方接收到的总字节数为 149338
+	>
+	> 第一个数据包发送的时间为 13:54:50.861068
+	> 
+	> 总耗时为最后一个 ACK 的时间 13:54:52.704054
+	>
+	> 
+	>
+	> 因此总耗时为 (1000000 us - 861068 us) + 1000000 us + 704054 us = 1842.986 ms
+	>
+	>
+	> 吞吐量为 1499339 bytes / 1.843 s = 813531.7 bps = 813.5 kbps
+	> 
 
 *  **The TCP segments in the tcp-ethereal-trace-1 trace file are all less that 1460 bytes. This is because the computer on which the trace was gathered has an Ethernet card that limits the length of the maximum IP packet to 1500 bytes (40 bytes of TCP/IP header data and 1460 bytes of TCP payload). This 1500 byte value is the standard maximum length allowed by Ethernet. If your trace indicates a TCP length greater than 1500 bytes, and your computer is using an Ethernet connection, then Wireshark is reporting the wrong TCP segment length; it will likely also show only one large TCP segment rather than multiple smaller segments. Your computer is indeed probably sending multiple smaller segments, as indicated by the ACKs it receives.  This inconsistency in reported segment lengths is due to the interaction between the Ethernet driver and the Wireshark software. We recommend that if you have this inconsistency, that you perform this lab using the provided trace file.**
+
+### 4. TCP congestion control in action
+
+* 13.Use the Time-Sequence-Graph(Stevens) plotting tool to view the sequence number versus time plot of segments being sent from the client to the gaia.cs.umass.edu server.  Can you identify where TCP’s slowstart phase begins and ends, and where congestion avoidance takes over?  Comment on ways in which the measured data differs from the idealized behavior of TCP that we’ve studied in the text.
+
+ 
+* 14.Answer each of two questions above for the trace that you have gathered when you transferred a file from your computer to gaia.cs.umass.edu
+
+
