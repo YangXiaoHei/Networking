@@ -62,7 +62,8 @@
 		
 	* 3.3.1 **UDP** 报文段结构如下
 	
-	 ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/UDP_segment.png)
+	 	* ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/UDP_segment.png)
+	 
 	 	* 源端口号，目的端口号，长度，校验和这些字段都是 2 字节，即最大值为 65535
 	
 	* 3.3.2 **UDP** 校验和代码实例如下
