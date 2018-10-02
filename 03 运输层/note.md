@@ -83,13 +83,11 @@
 		![rdt_1_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_1_0.png)
 		
 		* 2. 经具有比特差错信道的可靠数据传输：
-			* rdt 2.0 未考虑 **ACK** 或 **NAK** 包也会损坏
-
-			* [为何引入序号？](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题-习题解答_34.md)
+			* rdt 2.0 (未考虑 **ACK** 或 **NAK** 包也会损坏)
 			
 			* ![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
 			
-			* rdt 2.1 考虑了 **ACK** 和 **NAK** 会损坏的情况：我们采用的解决方法是，若发送方收到损坏的分组，那么重传当前数据分组即可。
+			* rdt 2.1 (考虑了 **ACK** 和 **NAK** 会损坏的情况：我们采用的解决方法是，若发送方收到损坏的分组，那么重传当前数据分组即可。)
 			
 			**冗余分组的根本困难：在于接收方不知道它上次所发送的 ACK 或 NAK 是否被发送方正确地接收到，因此接收方无法事先知道它接收到的分组是新分组还是第一次重传。**
 			
@@ -97,7 +95,7 @@
 			
 			![rdt_2_1](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_1.png)
 			
-			* rdt 2.2 考虑了 **ACK** 和 **NAK** 会损坏的情况，不使用 **NAK** 而是使用 **带序号的 ACK**
+			* rdt 2.2 (考虑了 **ACK** 和 **NAK** 会损坏的情况，不使用 **NAK** 而是使用 **带序号的 ACK**)
 			
 			* **rdt 2.1 的接收方当收到损坏分组时向发送方回传一个 NAK，但不用 NAK，而是对上次正确接收的分组发送一个 ACK，也能达到同样的效果。发送方本来在等待 ACK 0，却等来了 ACK 1，那么它便知道它发送的 0 分组没有被接收端正确接收，于是它选择重传 0 分组。对于接收方，若它已经成功接收了 0 分组，但是它又收到 0 分组，它便知道它发送的 ACK 0 没有被发送方正确接收，于是它选择重传 ACK 0 报文。** 
 			
@@ -105,8 +103,8 @@
 			
 		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0 
 		
-			* [为何引入定时器？](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题-习题解答_34.md)
-
+			* 为何引入定时器？
+				* 假设信道即会产生比特差错，也会丢包，那么此时我们的停等协议可能会永远卡死，而无法进入到下一个状态重传分组。卡死的困境可以被描述如下：发送方的分组丢失了，此时发送方等待接收方的确认信息，而接收方什么都没接收到，因此等待着发送方的分组到达，这便陷入了死锁。
 			* ![rdt_3_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_3_0.png)
 
 			* **思考:** 列举两种 rdt 3.0 发送方处于【等待 **ACK** 0】 状态却收到  **ACK** 1 分组的情况？
