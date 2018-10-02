@@ -150,7 +150,10 @@
 		* **SR** 的问题
 
 			* 序号范围有限时，发送方和接收方窗口缺乏同步会产生严重的后果。接收方有时无法判断一个分组是新分组还是重传。
-			![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/sr_dilemma.png)
+			* ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/sr_dilemma.png)
+			* 解决办法：限制发送方和接收方的窗口范围
+				* ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/p23.png)
+				* 由上图可知，序号范围需要大于发送方和接收方窗口长度的最大使用范围，即 `Range of Sequence Number > k + N - 1 - (k - N) => 2N - 1`，即序号范围需要至少是窗口长度的两倍。 
 
 * 3.5 面向连接的运输：**TCP**
 
