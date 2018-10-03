@@ -1,4 +1,4 @@
-#include "common.h"
+#include "comm.h"
 
 int sockfd;
 struct packet_t packetbuf;

@@ -1,4 +1,4 @@
-#include "common.h"
+#include "comm.h"
 
 int sockfd;
 struct packet_t packetbuf;
@@ -45,17 +45,10 @@ void udt_send(struct packet_t *packet)
     /* 为了简化该仿真程序，
        直接用不发包来当作丢包效果 */
     if (probability(0.2))
-    {
-        // LOG("packet %d is lost!", packet->seq);
         return;
-    } 
-
     /* 产生 1 比特的差错 */
-    if (probability(0.3)) 
-    {
+    if (probability(0.3))
         gen_one_bit_error((char *)packet->data, sizeof(packet->data));
-        // LOG("packet %d is corrupt!", packet->seq);
-    }
 
     /* 经由可靠信道传输 */
     TCP_send(sockfd, (char *)packet, sizeof(struct packet_t));
