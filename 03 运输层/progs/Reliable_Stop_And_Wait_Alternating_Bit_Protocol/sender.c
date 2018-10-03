@@ -3,13 +3,14 @@
 #include <time.h>
 #include <unistd.h>
 #include <string.h>
+#include <fcntl.h>
 #include "TCP.h"
 #include "log.h"
 #include "tool.h"
 #include "common.h"
 
-struct packet_t packetbuf;
 int sockfd;
+struct packet_t packetbuf;
 unsigned long start_timestamp;
 
 enum sender_state current_state = sender_wait_0;
@@ -18,7 +19,7 @@ int timeout(void);
 void start_timer(void);
 void rdt_send(char *data, size_t datalen, int seq);
 void udt_send(struct packet_t *packet);
-int rdt_recv(struct packet_t *packet);
+void rdt_recv(struct packet_t *packet, ssize_t offset);
 
 int timeout(void)
 {
@@ -34,17 +35,15 @@ void rdt_send(char *data, size_t datalen, int seq)
 {
     /* 清空缓冲区内容 */
     bzero(&packetbuf, sizeof(packetbuf));
-    struct packet_t *packet = &packetbuf;
-
-    /* 获取待发送数据长度 */
-    size_t maxlen = sizeof(packet->data);
-    size_t validlen = datalen > maxlen ? maxlen : datalen;
 
     /* 将数据打包 */
+    struct packet_t *packet = &packetbuf;
     packet->isACK = 0;
     packet->seq = seq;
-    packet->checksum = calculate_checksum(packet->data, validlen);
+    size_t maxlen = sizeof(packet->data);
+    size_t validlen = datalen > maxlen ? maxlen : datalen;
     memcpy(packet->data, data, validlen);
+    packet->checksum = calculate_checksum(packet->data, sizeof(packet->data));
 
     /* 经由不可靠信道传输 */
     udt_send(packet);
@@ -52,58 +51,66 @@ void rdt_send(char *data, size_t datalen, int seq)
 
 void udt_send(struct packet_t *packet)
 {
-    /* 0.7 概率损坏，产生 1 比特的差错 */
-    if (probability(0.7)) 
-        gen_one_bit_error((unsigned char *)packet->data, sizeof(packet->data));
-
     /* 0.5 概率丢包，为了简化该仿真程序，
        直接用不发包来当作丢包效果 */
-    if (probability(0.5)) 
+    if (probability(0.5))
+    {
+        LOG("packet %d is lost!", packet->seq);
         return;
+    } 
+
+    /* 0.5 概率损坏，产生 1 比特的差错 */
+    if (probability(0.5)) 
+    {
+        gen_one_bit_error((char *)packet->data, sizeof(packet->data));
+        LOG("packet %d is corrupt!", packet->seq);
+    }
 
     /* 经由可靠信道传输 */
     TCP_send(sockfd, (char *)packet, sizeof(struct packet_t));
 }
 
-void rdt_recv(struct packet_t *packet)
+void rdt_recv(struct packet_t *packet, ssize_t offset)
 {   
     /* 如果没有收到一个完整的包, 当作损坏 */
-    if (TCP_recv(sockfd, (char *)packet, sizeof(struct packet_t)) != sizeof(struct packet_t))
+    if (TCP_recv(sockfd, (char *)packet + offset, sizeof(struct packet_t) - offset) != sizeof(struct packet_t) - offset)
     {
         LOG("收到不完整的 packet 包! 为了简化判断，禁止这种事发生...");
         exit(1); /* 直接退出 */
     }
 }
 
-int checkcorrupt(struct packet_t *packet)
+int corrupt(struct packet_t *packet)
 {
     /* 如果校验和不通过, 当作损坏 */
     char tmp[sizeof(packet->data) + 2];
     memcpy(tmp, packet->data, sizeof(packet->data));
     memcpy(tmp + sizeof(packet->data), &packet->checksum, 2);
     if (calculate_checksum(tmp, sizeof(tmp)) != 0)
-        return 0;
+        return 1;
 
     /* 无损坏 */
-    return 1;
+    return 0;
 }
 
-int main(int argc, char *argv[])
-{
-    if (argc != 2)
+int main(int argc, char *argv[]) {
+
+    if (argc != 3)
     {
         LOG("usage : %s <#receiver_ip> <#receiver_port>", argv[0]);
         exit(1);
     }
 
+    /* 随机数 */
     init_rand();
 
     /* 与接收方建立连接 */
     const char *receiver_ip = argv[1];
     unsigned short receiver_port = atoi(argv[2]);
     sockfd = TCP_connect(receiver_ip, receiver_port);
+    LOG("connect to receiver succ!");
 
-    long data = 0x1234567887654321L;
+    long data = 0x1234567887654321L;  /* 8 字节 */
 
     while (1)
     {
@@ -112,76 +119,113 @@ int main(int argc, char *argv[])
             /* wait 0 */
             case sender_wait_0:
             {
-                LOG("sender enter wait 0...");
-                sleep(yh_random(1, 3));
+                LOG("-------- wait 0 begin -------");
+                sleep(yh_random(3, 6));
 
                 LOG("sender send packet 0");
                 rdt_send((char *)&data, sizeof(data), 0);
 
                 current_state = sender_wait_ACK_0;
+                LOG("-------- wait 0 end -------");
             } 
             break;
 
             /* wait ACK 0 */
             case sender_wait_ACK_0:
             {
-                LOG("sender enter wait ACK 0...");
+                LOG("-------- wait ACK 0 begin -------");
+                ssize_t nread = 0;
 
             wait_ACK_0_timeout_again:
                 while (!timeout())
                 {
-                    /* TODO 将 TCP_recv 中的接收 n 字节才退出的逻辑删除，把忙轮询裸露在此处 */
+                    /* 先读 4 个字节，看读不读得到 */
+                    setflags(sockfd, O_NONBLOCK);
+                    if ((nread = read(sockfd, &packetbuf, 4)) <= 0)
+                    {
+                        /* do nothing, wait timeout */
+                        clrflags(sockfd, O_NONBLOCK);
+                        continue;
+                    }
 
-                    if (!rdt_recv(&packetbuf) || (packetbuf.isACK && packetbuf.seq == 1))
+                    /* 如果能读到，就把完整的包读出来 */
+                    rdt_recv(&packetbuf, nread);
+
+                    /* 如果收到一个损坏的包，或者是对分组 1 的应答，那么啥都不做 */
+                    if (corrupt(&packetbuf) || (packetbuf.isACK && packetbuf.seq == 1))
                     {
                         /* do nothing, wait timeout */
                         if (packetbuf.isACK && packetbuf.seq == 1)
                             LOG("sender receive a ACK 1");
-
-                        if ()
+                        else
+                            LOG("sender receive a corrupt packet");
                     }
                     else
                     {
+                        /* 收到对分组 0 的确认，进入下一状态 */
+                        LOG("sender receive not corrupt ACK 0");
                         current_state = sender_wait_1;
                         goto wait_ACK_0_end;
                     }
                 }
+                LOG("[timeout]!! retransmit packet 0");
                 rdt_send((char *)&data, sizeof(data), 0);
                 start_timer();
                 current_state = sender_wait_ACK_0;
                 goto wait_ACK_0_timeout_again;
 
             wait_ACK_0_end:
-                LOG("haha");
-            }; 
+                LOG("-------- wait ACK 0 end -------");
+            }
             break;
 
             /* wait 1 */
             case sender_wait_1:
             {
-                LOG("sender enter wait 1...");
-                sleep(yh_random(1, 3));
+                LOG("-------- wait 1 begin -------");
+                sleep(yh_random(3, 6));
 
                 rdt_send((char *)&data, sizeof(data), 1);
 
                 current_state = sender_wait_ACK_1;
-            }; 
+                LOG("-------- wait 1 end -------");
+            }
             break;
 
             /* wait ACK 1 */
             case sender_wait_ACK_1:
             {
-                LOG("sender enter wait ACK 1...");
+                LOG("-------- wait ACK 1 begin -------");
+                ssize_t nread = 0;
 
             wait_ACK_1_timeout_again:
                 while (!timeout())
                 {
-                    if (!rdt_recv(&packetbuf) || packetbuf.seq == 0)
+                   /* 先读 4 个字节，看读不读得到 */
+                    setflags(sockfd, O_NONBLOCK);
+                    if ((nread = read(sockfd, &packetbuf, 4)) <= 0)
                     {
                         /* do nothing, wait timeout */
+                        clrflags(sockfd, O_NONBLOCK);
+                        continue;
+                    }
+
+                    /* 如果能读到，就把完整的包读出来 */
+                    rdt_recv(&packetbuf, nread);
+
+                    /* 如果收到一个损坏的包，或者是对分组 0 的应答，那么啥都不做 */
+                    if (corrupt(&packetbuf) || (packetbuf.isACK && packetbuf.seq == 0))
+                    {
+                        /* do nothing, wait timeout */
+                        if (packetbuf.isACK && packetbuf.seq == 0)
+                            LOG("sender receive a ACK 0");
+                        else
+                            LOG("sender receive a corrupt packet");
                     }
                     else
                     {
+                        /* 收到对分组 1 的确认，进入下一状态 */
+                        LOG("sender receive not corrupt ACK 1");
                         current_state = sender_wait_0;
                         goto wait_ACK_1_end;
                     }
@@ -192,7 +236,7 @@ int main(int argc, char *argv[])
                 goto wait_ACK_1_timeout_again;
 
             wait_ACK_1_end:
-                LOG("haha");
+                LOG("------ wait ACK 1 end ---------");
             } 
             break;
 

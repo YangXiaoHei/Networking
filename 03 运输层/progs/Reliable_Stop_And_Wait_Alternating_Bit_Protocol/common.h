@@ -22,15 +22,9 @@ struct packet_t {
     unsigned short seq;
     unsigned short checksum;
     unsigned short isACK;
-    char data[32];
+    char data[8];
 };
 
-struct packet_header {
-    unsigned short seq;
-    unsigned short checksum;
-    unsigned short isACK;
-};
-
-#define TIMEOUT_INTERVAL 1
+#define TIMEOUT_INTERVAL 3
 
 #endif

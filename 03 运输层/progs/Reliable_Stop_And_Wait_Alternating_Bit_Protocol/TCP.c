@@ -71,14 +71,14 @@ try_again:
     return fd;
 }
 
-static void clrflags(int fd, int flag)
+void clrflags(int fd, int flag)
 {
     int flags = fcntl(fd, F_GETFL);
     flags &= ~flag;
     fcntl(fd, F_SETFL, flags);
 }
 
-static void setflags(int fd, int flag)
+void setflags(int fd, int flag)
 {
     int flags = fcntl(fd, F_GETFL);
     flags |= flag;

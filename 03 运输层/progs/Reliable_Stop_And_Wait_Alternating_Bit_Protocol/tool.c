@@ -69,7 +69,7 @@ int probability(double pro)
     return (rand() * 1.0 / RAND_MAX) <= pro;
 }
 
-void gen_one_bit_error(unsigned char *msg, size_t msg_len)
+void gen_one_bit_error(char *msg, size_t msg_len)
 {
     int index = yh_random(0, (msg_len << 3) - 1);
     int row = index / 8;
