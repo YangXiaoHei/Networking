@@ -55,7 +55,7 @@ void udt_send(struct packet_t *packet)
        直接用不发包来当作丢包效果 */
     if (probability(0.2))
     {
-        LOG("packet %d is lost!", packet->seq);
+        // LOG("packet %d is lost!", packet->seq);
         return;
     } 
 
@@ -63,7 +63,7 @@ void udt_send(struct packet_t *packet)
     if (probability(0.3)) 
     {
         gen_one_bit_error((char *)packet->data, sizeof(packet->data));
-        LOG("packet %d is corrupt!", packet->seq);
+        // LOG("packet %d is corrupt!", packet->seq);
     }
 
     /* 经由可靠信道传输 */
@@ -153,13 +153,14 @@ int main(int argc, char *argv[]) {
                     rdt_recv(&packetbuf, nread);
 
                     /* 如果收到一个损坏的包，或者是对分组 1 的应答，那么啥都不做 */
-                    if (corrupt(&packetbuf) || (packetbuf.isACK && packetbuf.seq == 1))
+                    int wrong = 0;
+                    if ((wrong = corrupt(&packetbuf)) || (packetbuf.isACK && packetbuf.seq == 1))
                     {
                         
-                        if (packetbuf.isACK && packetbuf.seq == 1)
-                            LOG("receive a ACK 1");
+                        if (wrong)
+                            LOG("receive a corrupt ACK while waiting ACK 0!");
                         else
-                            LOG("receive a corrupt ACK");
+                            LOG("receive ACK 1 while waiting ACK 0!");
 
                         /* do nothing, wait timeout */
                         continue;
@@ -219,13 +220,14 @@ int main(int argc, char *argv[]) {
                     rdt_recv(&packetbuf, nread);
 
                     /* 如果收到一个损坏的包，或者是对分组 0 的应答，那么啥都不做 */
-                    if (corrupt(&packetbuf) || (packetbuf.isACK && packetbuf.seq == 0))
+                    int wrong = 0;
+                    if ((wrong = corrupt(&packetbuf)) || (packetbuf.isACK && packetbuf.seq == 0))
                     {
                         /* do nothing, wait timeout */
-                        if (packetbuf.isACK && packetbuf.seq == 0)
-                            LOG("receive a ACK 0");
+                        if (wrong)
+                            LOG("receive a corrupt ACK while waiting ACK 1!");
                         else
-                            LOG("receive a corrupt packet");
+                            LOG("receive ACK 0 while waiting ACK 1!");
 
                         /* do nothing, wait timeout */
                         continue;

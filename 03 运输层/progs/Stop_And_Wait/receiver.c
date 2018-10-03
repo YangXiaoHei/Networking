@@ -41,7 +41,7 @@ void udt_send(struct packet_t *packet)
        直接用不发包来当作丢包效果 */
     if (probability(0.2))
     {
-        LOG("ACK %d is lost!", packet->seq);
+        // LOG("ACK %d is lost!", packet->seq);
         return;
     } 
 
@@ -49,7 +49,7 @@ void udt_send(struct packet_t *packet)
     if (probability(0.3)) 
     {
         gen_one_bit_error((char *)packet->data, sizeof(packet->data));
-        LOG("ACK %d is corrupt!", packet->seq);
+        // LOG("ACK %d is corrupt!", packet->seq);
     }
 
     /* 经由可靠信道传输 */
@@ -117,12 +117,13 @@ int main(int argc, char const *argv[])
             reentry_current_wait_0:
                 rdt_recv(&packetbuf);
 
-                if (corrupt(&packetbuf) || packetbuf.seq == 1)
+                int wrong = 0;
+                if ((wrong = corrupt(&packetbuf)) || packetbuf.seq == 1)
                 {
-                    if (packetbuf.seq == 1)
-                        LOG("receive a packet 1 at wait 0!");
+                    if (wrong)
+                        LOG("receive a corrupt packet while waiting 0!");
                     else
-                        LOG("receive a corrupt packet at wait 0!");
+                        LOG("receive packet 1 while waiting 0!");
 
                     LOG("retransmit ACK 1 for sender");
                     rdt_send(1);
@@ -147,12 +148,13 @@ int main(int argc, char const *argv[])
             reentry_current_wait_1:
                 rdt_recv(&packetbuf);
 
-                if (corrupt(&packetbuf) || packetbuf.seq == 0)
+                int wrong = 0;
+                if ((wrong = corrupt(&packetbuf)) || packetbuf.seq == 0)
                 {
-                    if (packetbuf.seq == 0)
-                        LOG("receive a packet 0 at wait 1!");
+                    if (wrong)
+                        LOG("receive a corrupt packet while waiting 1!");
                     else
-                        LOG("receive a corrupt packet at wait 1!");
+                        LOG("receive packet 0 while waiting 1!");
 
                     LOG("retransmit ACK 0 for sender");
                     rdt_send(0);
