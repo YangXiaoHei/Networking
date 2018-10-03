@@ -75,7 +75,7 @@ void rdt_recv(struct packet_t *packet, ssize_t offset)
     /* 如果没有收到一个完整的包, 当作损坏 */
     if (TCP_recv(sockfd, (char *)packet + offset, sizeof(struct packet_t) - offset) != sizeof(struct packet_t) - offset)
     {
-        LOG("收到不完整的 packet 包! 为了简化判断，禁止这种事发生...");
+        LOG("incomplete packet! exit directly!");
         exit(1); /* 直接退出 */
     }
 }
@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
 
                 current_state = sender_wait_ACK_0;
                 start_timer();
-                LOG("-------- wait 0 end -------");
+                LOG("-------- wait 0 end -------\n");
             } 
             break;
 
@@ -155,16 +155,19 @@ int main(int argc, char *argv[]) {
                     /* 如果收到一个损坏的包，或者是对分组 1 的应答，那么啥都不做 */
                     if (corrupt(&packetbuf) || (packetbuf.isACK && packetbuf.seq == 1))
                     {
-                        /* do nothing, wait timeout */
+                        
                         if (packetbuf.isACK && packetbuf.seq == 1)
-                            LOG("sender receive a ACK 1");
+                            LOG("receive a ACK 1");
                         else
-                            LOG("sender receive a corrupt packet");
+                            LOG("receive a corrupt ACK");
+
+                        /* do nothing, wait timeout */
+                        continue;
                     }
                     else
                     {
                         /* 收到对分组 0 的确认，进入下一状态 */
-                        LOG("sender receive not corrupt ACK 0");
+                        LOG("receive a valid ACK 0");
                         current_state = sender_wait_1;
                         goto wait_ACK_0_end;
                     }
@@ -172,11 +175,10 @@ int main(int argc, char *argv[]) {
                 LOG("[timeout]!! retransmit packet 0");
                 rdt_send((char *)&data, sizeof(data), 0);
                 start_timer();
-                current_state = sender_wait_ACK_0;
                 goto wait_ACK_0_timeout_again;
 
             wait_ACK_0_end:
-                LOG("-------- wait ACK 0 end -------");
+                LOG("-------- wait ACK 0 end -------\n");
             }
             break;
 
@@ -186,11 +188,12 @@ int main(int argc, char *argv[]) {
                 LOG("-------- wait 1 begin -------");
                 sleep(yh_random(3, 6));
 
+                LOG("sender send packet 1");
                 rdt_send((char *)&data, sizeof(data), 1);
 
                 current_state = sender_wait_ACK_1;
                 start_timer();
-                LOG("-------- wait 1 end -------");
+                LOG("-------- wait 1 end -------\n");
             }
             break;
 
@@ -220,25 +223,28 @@ int main(int argc, char *argv[]) {
                     {
                         /* do nothing, wait timeout */
                         if (packetbuf.isACK && packetbuf.seq == 0)
-                            LOG("sender receive a ACK 0");
+                            LOG("receive a ACK 0");
                         else
-                            LOG("sender receive a corrupt packet");
+                            LOG("receive a corrupt packet");
+
+                        /* do nothing, wait timeout */
+                        continue;
                     }
                     else
                     {
                         /* 收到对分组 1 的确认，进入下一状态 */
-                        LOG("sender receive not corrupt ACK 1");
+                        LOG("receive a valid ACK 1");
                         current_state = sender_wait_0;
                         goto wait_ACK_1_end;
                     }
                 }
-                rdt_send((char *)&data, sizeof(data), 0);
+                LOG("[timeout]!! retransmit packet 1");
+                rdt_send((char *)&data, sizeof(data), 1);
                 start_timer();
-                current_state = sender_wait_ACK_1;
                 goto wait_ACK_1_timeout_again;
 
             wait_ACK_1_end:
-                LOG("------ wait ACK 1 end ---------");
+                LOG("------ wait ACK 1 end ---------\n");
             } 
             break;
 

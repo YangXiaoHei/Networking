@@ -61,7 +61,7 @@ void rdt_recv(struct packet_t *packet)
     /* 如果没有收到一个完整的包, 当作损坏 */
     if (TCP_recv(sockfd, (char *)packet, sizeof(struct packet_t)) != sizeof(struct packet_t))
     {
-        LOG("收到不完整的 packet 包! 为了简化判断，禁止这种事发生...");
+        LOG("incomplete packet! exit directly");
         exit(1); /* 直接退出 */
     }
 }
@@ -104,7 +104,7 @@ int main(int argc, char const *argv[])
         exit(1);
     }
     sender_port = ntohs(senderaddr.sin_port);
-    LOG("accept connection from [%s:%d] succ!", sender_ip, sender_port);
+    LOG("accept conn from [%s:%d] succ!", sender_ip, sender_port);
 
     while (1)
     {
@@ -120,9 +120,9 @@ int main(int argc, char const *argv[])
                 if (corrupt(&packetbuf) || packetbuf.seq == 1)
                 {
                     if (packetbuf.seq == 1)
-                        LOG("receiver receive a packet 1 at wait 0!");
+                        LOG("receive a packet 1 at wait 0!");
                     else
-                        LOG("receiver receive a corrupt packet at wait 0!");
+                        LOG("receive a corrupt packet at wait 0!");
 
                     LOG("retransmit ACK 1 for sender");
                     rdt_send(1);
@@ -130,11 +130,13 @@ int main(int argc, char const *argv[])
                 }
                 else
                 {
+                    LOG("receive a valid packet %d", packetbuf.seq);
+                    LOG("send ACK 0 for sender");
+                    rdt_send(0);
                     current_state = receiver_state_wait_1;
-                    LOG("receiver receive a not corrupt packet %d, enter next state", packetbuf.seq);
                 }
 
-                LOG("------- wait packet 0 end --------");
+                LOG("------- wait packet 0 end --------\n");
 
             } break;
 
@@ -148,9 +150,9 @@ int main(int argc, char const *argv[])
                 if (corrupt(&packetbuf) || packetbuf.seq == 0)
                 {
                     if (packetbuf.seq == 0)
-                        LOG("receiver receive a packet 0 at wait 1!");
+                        LOG("receive a packet 0 at wait 1!");
                     else
-                        LOG("receiver receive a corrupt packet at wait 1!");
+                        LOG("receive a corrupt packet at wait 1!");
 
                     LOG("retransmit ACK 0 for sender");
                     rdt_send(0);
@@ -158,11 +160,13 @@ int main(int argc, char const *argv[])
                 }
                 else
                 {
-                    current_state = receiver_state_wait_1;
-                    LOG("receiver receive a not corrupt packet %d, enter next state", packetbuf.seq);
+                    LOG("receive a valid packet %d", packetbuf.seq);
+                    LOG("send ACK 1 for sender");
+                    rdt_send(1);
+                    current_state = receiver_state_wait_0;
                 }
 
-                LOG("------- wait packet 1 end --------");
+                LOG("------- wait packet 1 end --------\n");
 
             } break;
 
