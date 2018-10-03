@@ -4,8 +4,6 @@
 
 int sockfd;
 struct packet_t my_packets[20];
-unsigned long start_timestamp;
-
 struct packet_t packetbuf;
 
 unsigned short sender_base = 0;
@@ -25,24 +23,19 @@ void init_data(void)
         my_packets[i].seq = i;
         my_packets[i].isACK = 0;
         my_packets[i].isACKed = 0;
-        my_packets[i].data = 0x1234567887654321;
+        my_packets[i].isTransmited = 0;
+        unsigned long data = 0x1234567887654321;
+        memcpy(&my_packets[i].data, &data, sizeof(data));
+        my_packets[i].timeout_timestamp = 0;
         my_packets[i].checksum = calculate_checksum(my_packets[i].data, sizeof(my_packets[i].data));
     }
-}
-
-int timeout(void)
-{
-    return (curtime_us() - start_timestamp) >= TIMEOUT_INTERVAL;
-}
-
-void start_timer(void)
-{
-    start_timestamp = curtime_us();
 }
 
 void rdt_send(int seq)
 {
     /* 经由不可靠信道传输 */
+    my_packets[seq].timeout_timestamp = curtime_us() + TIMEOUT_INTERVAL;
+    my_packets[seq].isTransmited = 1;
     udt_send(&my_packets[seq]);
 }
 
@@ -84,6 +77,14 @@ int corrupt(struct packet_t *packet)
     return 0;
 }
 
+int check_all_finished(void)
+{
+    for (int i = 0; i < ARRSIZE(my_packets); i++)
+        if (!my_packets[i].isACKed)
+            return 0;
+    return 1;
+}
+
 
 int main(int argc, char const *argv[])
 {
@@ -103,9 +104,17 @@ int main(int argc, char const *argv[])
     LOG("connect to receiver succ!");
 
     int received_one = 0;
+    int nread;
     while (1) 
     {
         received_one = 0;
+
+        /* 如果所有发送分组都已被确认，那么跳出循环 */
+        if (check_all_finished())
+        {
+            LOG("all packet transmit finished!");
+            break;
+        }
 
         /* 先读 4 个字节，看读不读得到 */
         setflags(sockfd, O_NONBLOCK);
@@ -113,9 +122,9 @@ int main(int argc, char const *argv[])
         {
             /* 如果能读到，就把完整的包读出来 */
             rdt_recv(&packetbuf, nread);
-            clrflags(sockfd, O_NONBLOCK);
             received_one = 1;
         }
+        clrflags(sockfd, O_NONBLOCK);
 
         /* 如果收到一个损坏的包，或者是对分组 1 的应答，那么啥都不做 */
         if (received_one)
@@ -126,26 +135,44 @@ int main(int argc, char const *argv[])
             }
             else
             {
-                sender_base = packetbuf.seq + 1;
-                LOG("receive a valid ACK for packet %d", packetbuf.seq);
-                LOG("move window base to %d", sender_base);
+                if (packetbuf.seq > sender_base)
+                {
+                    for (int i = sender_base; i <= packetbuf.seq; i++)
+                    {
+                        my_packets[i].isACKed= 1;
+                        my_packets[i].timeout_timestamp = 0;
+                        my_packets[i].isTransmited = 0;
+                    }
+                    sender_base = packetbuf.seq + 1;
+                    LOG("receive a valid ACK for packet %d", packetbuf.seq);
+                    LOG("move window base to %d", sender_base);
+                }
+                /* ignore ACK of seq smaller than sender_base */
             }
         }
 
-        /* 这里应该要有超时判断 */   
+        /* 判断是否应该重传 */   
+        for (int i = sender_base; i <= sender_base + SENDER_WIN_SZ; i++)
+        {
+            if (my_packets[i].isTransmited && curtime_us() > my_packets[i].timeout_timestamp)
+            {
+                rdt_send(i);
+                LOG("[timeout]!! retransmit packet %d", i);
+            }
+        }
     
         /* 不发送 */
         if (next_seqnum > sender_base + SENDER_WIN_SZ)
         {
-            LOG("there are avaliable packets to send [base=%d][nextseq=%d]", sender_base, next_seqnum);
+            // LOG("there are avaliable packets to send [base=%d][nextseq=%d]", sender_base, next_seqnum);
         }
         else
         {
-            // for (int i = next_seqnum; i <= sender_base + SENDER_WIN_SZ; i++)
-            // {
-            //     rdt_send(i);
-            //     LOG("send packet %d [base=%d][nextseq=%d]", i, sender_base, next_seqnum);
-            // }
+            while (next_seqnum <= sender_base + SENDER_WIN_SZ)
+            {
+                rdt_send(next_seqnum++);
+                LOG("send packet %d [base=%d][nextseq=%d]", next_seqnum - 1, sender_base, next_seqnum);
+            }
         }
     }
     
