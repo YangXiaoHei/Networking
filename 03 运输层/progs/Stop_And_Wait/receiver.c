@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <string.h>
-#include "TCP.h"
-#include "log.h"
 #include "common.h"
-#include "tool.h"
-#include <arpa/inet.h>
 
 int sockfd;
 struct packet_t packetbuf;
@@ -40,17 +32,11 @@ void udt_send(struct packet_t *packet)
     /* 为了简化该仿真程序，
        直接用不发包来当作丢包效果 */
     if (probability(0.2))
-    {
-        // LOG("ACK %d is lost!", packet->seq);
         return;
-    } 
 
     /* 产生 1 比特的差错 */
     if (probability(0.3)) 
-    {
         gen_one_bit_error((char *)packet->data, sizeof(packet->data));
-        // LOG("ACK %d is corrupt!", packet->seq);
-    }
 
     /* 经由可靠信道传输 */
     TCP_send(sockfd, (char *)packet, sizeof(struct packet_t));
@@ -114,7 +100,7 @@ int main(int argc, char const *argv[])
             {
                 LOG("------- wait packet 0 begin --------");
 
-            reentry_current_wait_0:
+            reentry_wait_0:
                 rdt_recv(&packetbuf);
 
                 int wrong = 0;
@@ -127,7 +113,7 @@ int main(int argc, char const *argv[])
 
                     LOG("retransmit ACK 1 for sender");
                     rdt_send(1);
-                    goto reentry_current_wait_0;
+                    goto reentry_wait_0;
                 }
                 else
                 {
@@ -145,7 +131,7 @@ int main(int argc, char const *argv[])
             {
                 LOG("------- wait packet 1 begin --------");
 
-            reentry_current_wait_1:
+            reentry_wait_1:
                 rdt_recv(&packetbuf);
 
                 int wrong = 0;
@@ -158,7 +144,7 @@ int main(int argc, char const *argv[])
 
                     LOG("retransmit ACK 0 for sender");
                     rdt_send(0);
-                    goto reentry_current_wait_1;
+                    goto reentry_wait_1;
                 }
                 else
                 {
@@ -167,7 +153,6 @@ int main(int argc, char const *argv[])
                     rdt_send(1);
                     current_state = receiver_state_wait_0;
                 }
-
                 LOG("------- wait packet 1 end --------\n");
 
             } break;

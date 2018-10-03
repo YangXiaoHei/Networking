@@ -2,6 +2,18 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <time.h>
+#include <string.h>
+#include <sys/time.h>
+#include <fcntl.h>
+#include "log.h"
+#include "tool.h"
+#include "TCP.h"
+
 enum sender_state {
     sender_begin = 100,
     sender_wait_ACK_0,
