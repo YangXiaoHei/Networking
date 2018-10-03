@@ -37,16 +37,16 @@ void rdt_send(int seq)
 
 void udt_send(struct packet_t *packet)
 {
-    /* 0.5 概率丢包，为了简化该仿真程序，
+    /* 为了简化该仿真程序，
        直接用不发包来当作丢包效果 */
-    if (probability(0.5))
+    if (probability(0.2))
     {
         LOG("ACK %d is lost!", packet->seq);
         return;
     } 
 
-    /* 0.5 概率损坏，产生 1 比特的差错 */
-    if (probability(0.5)) 
+    /* 产生 1 比特的差错 */
+    if (probability(0.3)) 
     {
         gen_one_bit_error((char *)packet->data, sizeof(packet->data));
         LOG("ACK %d is corrupt!", packet->seq);
@@ -114,6 +114,7 @@ int main(int argc, char const *argv[])
             {
                 LOG("------- wait packet 0 begin --------");
 
+            reentry_current_wait_0:
                 rdt_recv(&packetbuf);
 
                 if (corrupt(&packetbuf) || packetbuf.seq == 1)
@@ -125,6 +126,7 @@ int main(int argc, char const *argv[])
 
                     LOG("retransmit ACK 1 for sender");
                     rdt_send(1);
+                    goto reentry_current_wait_0;
                 }
                 else
                 {
@@ -140,6 +142,7 @@ int main(int argc, char const *argv[])
             {
                 LOG("------- wait packet 1 begin --------");
 
+            reentry_current_wait_1:
                 rdt_recv(&packetbuf);
 
                 if (corrupt(&packetbuf) || packetbuf.seq == 0)
@@ -151,6 +154,7 @@ int main(int argc, char const *argv[])
 
                     LOG("retransmit ACK 0 for sender");
                     rdt_send(0);
+                    goto reentry_current_wait_1;
                 }
                 else
                 {

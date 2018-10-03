@@ -110,7 +110,7 @@ ssize_t TCP_send(int fd, const char *send_buf, ssize_t send_len)
     }
 SEND_END:
     clrflags(fd, O_NONBLOCK);
-    LOG("TCP_send finished! [loop_count=%d][finished_percentage=%.3f%%]", counter, (nfinished * 1.0 / send_len) * 100);
+    // LOG("TCP_send finished! [loop_count=%d][finished_percentage=%.3f%%]", counter, (nfinished * 1.0 / send_len) * 100);
     return nfinished;
 }
 
@@ -139,7 +139,7 @@ ssize_t TCP_recv(int fd, char *recv_buf, ssize_t recvlen)
     }
 RECV_END:
     clrflags(fd, O_NONBLOCK);
-    LOG("TCP_recv finished! [loop_count=%d][total_read=%d]", counter, nfinished);
+    // LOG("TCP_recv finished! [loop_count=%d][total_read=%d]", counter, nfinished);
     return nfinished;
 }
 

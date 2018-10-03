@@ -25,6 +25,6 @@ struct packet_t {
     char data[8];
 };
 
-#define TIMEOUT_INTERVAL 3
+#define TIMEOUT_INTERVAL (3000000)
 
 #endif
