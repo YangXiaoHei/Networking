@@ -3,7 +3,7 @@
 #define ARRSIZE(_arr_) (sizeof(_arr_) / sizeof(_arr_[0]))
 
 int sockfd;
-struct packet_t my_packets[20];
+struct packet_t my_packets[10];
 struct packet_t packetbuf;
 
 unsigned short sender_base = 0;
@@ -34,8 +34,10 @@ void init_data(void)
 void rdt_send(int seq)
 {
     /* 经由不可靠信道传输 */
+    my_packets[seq].seq = seq;
     my_packets[seq].timeout_timestamp = curtime_us() + TIMEOUT_INTERVAL;
     my_packets[seq].isTransmited = 1;
+    my_packets[seq].checksum = calculate_checksum((char *)&my_packets[seq].data, sizeof(my_packets[seq].data));
     udt_send(&my_packets[seq]);
 }
 
@@ -144,15 +146,19 @@ int main(int argc, char const *argv[])
                         my_packets[i].isTransmited = 0;
                     }
                     sender_base = packetbuf.seq + 1;
-                    LOG("receive a valid ACK for packet %d", packetbuf.seq);
+                    LOG("receive a valid ACK %d", packetbuf.seq);
                     LOG("move window base to %d", sender_base);
+                }
+                else
+                {
+                    LOG("ignore ACK %d, [base=%d][nextseq=%d]",packetbuf.seq, sender_base, next_seqnum);
                 }
                 /* ignore ACK of seq smaller than sender_base */
             }
         }
 
         /* 判断是否应该重传 */   
-        for (int i = sender_base; i <= sender_base + SENDER_WIN_SZ; i++)
+        for (int i = sender_base; i <= min(sender_base + SENDER_WIN_SZ, ARRSIZE(my_packets)); i++)
         {
             if (my_packets[i].isTransmited && curtime_us() > my_packets[i].timeout_timestamp)
             {
@@ -160,20 +166,16 @@ int main(int argc, char const *argv[])
                 LOG("[timeout]!! retransmit packet %d", i);
             }
         }
+
+        if (next_seqnum >= ARRSIZE(my_packets))
+            continue;
     
-        /* 不发送 */
-        if (next_seqnum > sender_base + SENDER_WIN_SZ)
+        while (next_seqnum < min(sender_base + SENDER_WIN_SZ, ARRSIZE(my_packets)))
         {
-            // LOG("there are avaliable packets to send [base=%d][nextseq=%d]", sender_base, next_seqnum);
+            rdt_send(next_seqnum++);
+            LOG("send packet %d [base=%d][nextseq=%d]", next_seqnum - 1, sender_base, next_seqnum);
         }
-        else
-        {
-            while (next_seqnum <= sender_base + SENDER_WIN_SZ)
-            {
-                rdt_send(next_seqnum++);
-                LOG("send packet %d [base=%d][nextseq=%d]", next_seqnum - 1, sender_base, next_seqnum);
-            }
-        }
+        
     }
     
     return 0;

@@ -3,6 +3,7 @@
 #define _TOOL_H_
 
 void init_rand(void);
+int min(int a, int b);
 char *to_bin(unsigned long num);
 int yh_random(int n, int m);
 int probability(double pro);

@@ -10,6 +10,11 @@ void init_rand()
     srand((unsigned)time(NULL));
 }
 
+int min(int a, int b)
+{
+    return a < b ? a : b;
+}
+
 unsigned long curtime_us()
 {
     struct timeval tv;

@@ -4,7 +4,7 @@
 
 int sockfd;
 struct packet_t packetbuf;
-struct packet_t my_packets[20];
+struct packet_t my_packets[10];
 int expected_seq = 0;
 char sender_ip[128];
 unsigned short sender_port;
@@ -19,6 +19,7 @@ void rdt_send(int seq)
     bzero(&packetbuf, sizeof(packetbuf));
     packetbuf.seq = seq;
     packetbuf.isACK = 1;
+    packetbuf.checksum = calculate_checksum((char *)&packetbuf.data, sizeof(packetbuf.data));
 
     /* 经由不可靠信道传输 */
     udt_send(&packetbuf);
@@ -95,6 +96,7 @@ int main(int argc, char const *argv[])
         setflags(sockfd, O_NONBLOCK);
         if ((nread = read(sockfd, &packetbuf, 4)) <= 0)
             continue;
+
         clrflags(sockfd, O_NONBLOCK);
 
         rdt_recv(&packetbuf, nread);
@@ -105,16 +107,17 @@ int main(int argc, char const *argv[])
             if (wrong)
                 LOG("receive a corrupt packet");
             else
-                LOG("receive a inorder packet %d, ignore it [expected=%d]", packetbuf.seq, expected_seq);
+                LOG("ignore inorder packet %d [expected=%d]", packetbuf.seq, expected_seq);
 
-            LOG("retransmit ACK %d", expected_seq);
-            rdt_send(expected_seq);
+            LOG("retransmit ACK %d", expected_seq - 1);
+            rdt_send(expected_seq - 1);
 
             continue;
         }
 
         LOG("receive valid packet %d [exptected=%d]", packetbuf.seq, expected_seq);
         memcpy(&my_packets[expected_seq].data, packetbuf.data, sizeof(packetbuf.data));
+        LOG("Acked packet %d", expected_seq);
         rdt_send(expected_seq);
         expected_seq++;
     }
