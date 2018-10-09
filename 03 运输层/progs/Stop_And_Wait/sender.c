@@ -42,10 +42,10 @@ void rdt_send(char *data, size_t datalen, int seq)
 
 void udt_send(struct packet_t *packet)
 {
-    /* 为了简化该仿真程序，
-       直接用不发包来当作丢包效果 */
+    /* 用不发包来当作丢包效果 */
     if (probability(0.2))
         return;
+    
     /* 产生 1 比特的差错 */
     if (probability(0.3))
         gen_one_bit_error((char *)packet->data, sizeof(packet->data));
@@ -56,11 +56,11 @@ void udt_send(struct packet_t *packet)
 
 void rdt_recv(struct packet_t *packet, ssize_t offset)
 {   
-    /* 如果没有收到一个完整的包, 当作损坏 */
+    /* 如果没有收到一个完整的包, 直接退出 */
     if (TCP_recv(sockfd, (char *)packet + offset, sizeof(struct packet_t) - offset) != sizeof(struct packet_t) - offset)
     {
         LOG("incomplete packet! exit directly!");
-        exit(1); /* 直接退出 */
+        exit(1); 
     }
 }
 
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     sockfd = TCP_connect(receiver_ip, receiver_port);
     LOG("connect to receiver succ!");
 
-    long data = 0x1234567887654321L;  /* 8 字节 */
+    long data = 0x1234567887654321L; 
 
     while (1)
     {
@@ -140,13 +140,11 @@ int main(int argc, char *argv[]) {
                     int wrong = 0;
                     if ((wrong = corrupt(&packetbuf)) || (packetbuf.isACK && packetbuf.seq == 1))
                     {
-                        
                         if (wrong)
                             LOG("receive a corrupt ACK while waiting ACK 0!");
                         else
                             LOG("receive ACK 1 while waiting ACK 0!");
 
-                        /* do nothing, wait timeout */
                         continue;
                     }
                     else
@@ -207,13 +205,11 @@ int main(int argc, char *argv[]) {
                     int wrong = 0;
                     if ((wrong = corrupt(&packetbuf)) || (packetbuf.isACK && packetbuf.seq == 0))
                     {
-                        /* do nothing, wait timeout */
                         if (wrong)
                             LOG("receive a corrupt ACK while waiting ACK 1!");
                         else
                             LOG("receive ACK 0 while waiting ACK 1!");
 
-                        /* do nothing, wait timeout */
                         continue;
                     }
                     else

@@ -29,8 +29,7 @@ void rdt_send(int seq)
 
 void udt_send(struct packet_t *packet)
 {
-    /* 为了简化该仿真程序，
-       直接用不发包来当作丢包效果 */
+    /* 用不发包来当作丢包效果 */
     if (probability(0.2))
         return;
 
@@ -44,7 +43,7 @@ void udt_send(struct packet_t *packet)
 
 void rdt_recv(struct packet_t *packet)
 {   
-    /* 如果没有收到一个完整的包, 当作损坏 */
+    /* 如果没有收到一个完整的包, 直接退出 */
     if (TCP_recv(sockfd, (char *)packet, sizeof(struct packet_t)) != sizeof(struct packet_t))
     {
         LOG("incomplete packet! exit directly");
@@ -122,7 +121,6 @@ int main(int argc, char const *argv[])
                     rdt_send(0);
                     current_state = receiver_state_wait_1;
                 }
-
                 LOG("------- wait packet 0 end --------\n");
 
             } break;

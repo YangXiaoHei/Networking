@@ -43,8 +43,7 @@ void rdt_send(int seq)
 
 void udt_send(struct packet_t *packet)
 {
-    /* 为了简化该仿真程序，
-       直接用不发包来当作丢包效果 */
+    /* 用不发包来当作丢包效果 */
     if (probability(0.2))
         return;
 
@@ -132,9 +131,7 @@ int main(int argc, char const *argv[])
         if (received_one)
         {
             if (corrupt(&packetbuf))
-            {   
                 LOG("receive a corrupt ACK while waiting ACK %d!", sender_base);
-            }
             else
             {
                 if (packetbuf.seq > sender_base)
@@ -150,10 +147,7 @@ int main(int argc, char const *argv[])
                     LOG("move window base to %d", sender_base);
                 }
                 else
-                {
                     LOG("ignore ACK %d, [base=%d][nextseq=%d]",packetbuf.seq, sender_base, next_seqnum);
-                }
-                /* ignore ACK of seq smaller than sender_base */
             }
         }
 
