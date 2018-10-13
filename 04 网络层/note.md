@@ -74,7 +74,16 @@
 
   * 4.3 **路由器工作原理**
   	
-  	* 
+  	* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/Router_structure.png)
+  	
+  	* 4.3.1 **输入端口**
+  		* **物理层和链路层处理**
+  		* **检查分组版本号，检查并重写校验和以及寿命字段**
+  		* **更新用于网络管理的计数器**
+  		* **搜索转发表查找最长前缀匹配，决定分组的输出链路**
+  	
+  	* 4.3.2 交换结构
+  		* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/Switching_3_structure.png)
 
 
 
