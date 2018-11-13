@@ -157,8 +157,9 @@
 				* DHCP 允许主机自动获取一个 IP 地址，网络管理员能够配置 DHCP 使得主机每次与网络连接能否获得一个相同 IP 地址，或者某主机将被分配一个临时的 IP 地址，除了获得 IP 地址，DHCP 还允许一台主机得知其他信息，比如：子网掩码、第一跳路由器地址，本地 DNS 服务器地址。
 				
 				* 通过 DHCP 获取 IP 地址的步骤如下图所示
-					![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DHCP_interaction.png)
 				
+				  ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DHCP_interaction.png)
+		
 			* **3、网络地址转换 NAT**
 			
 				* 具有 NAT 功能的路由器修改分组的 IP/Port 地址，使得子网内部的 IP 地址都可以自由分配，只需要在 NAT 表中完成到因特网 IP/Port 地址的映射关系即可。
@@ -170,10 +171,27 @@
 				* UPnP 允许外部主机使用 TCP 或 UDP 向 NAT 化的主机发起通信会话，UPnP 由于提供了有效和健壮的 NAT 穿越解决方案，可能成为 P2P 应用程序的救世主。
 		
 	* **4.4.3 因特网控制报文协议 ICMP**  
+	
 	* **4.4.4 IPv6** 
+	
 		* 1、IPv6 数据报格式
+		
 		* 2、从 IPv4 到 IPv6 的迁移
-	* **4.4.5 路由选择算法**
+		
+	* **4.5 路由选择算法**
+		
+		* **4.5.1 链路状态路由选择算法**
+			
+			* 核心 : `Dijkstra` 算法
+			
+			* 振荡现象
+			
+			 * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/Oscillations.png)
+			  
+			 * 避免路由器自同步的方法 : 让每台路由器发送链路通告的时间随机化
+			
+		* **4.5.2 距离向量路由选择算法**
+			
 	 
   		
 
