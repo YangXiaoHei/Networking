@@ -249,6 +249,9 @@
 	   * 下面总结了路由器对转发表增加一个表项所采取的动作
 	   
 	   	* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/configure_AS_internal_forward_table.png) 
+	   	
+	   	* 某个 AS 从相邻 AS 处知道了一个目的地，该 AS 能够向它相邻的 AS 继续通告该路由选择信息，一个 AS 决定向相邻 AS 通告哪些目的地具有很大的灵活性，这取决于经济问题而非技术。
+	   	* ISP 与 AS 的关系 : 一个 ISP 内部可能划分为多个互联的 AS，或者一个 ISP 本身就是一个 AS。
 		
 		
 				
