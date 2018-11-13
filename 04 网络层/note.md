@@ -248,7 +248,7 @@
 	   
 	   * 下面总结了路由器对转发表增加一个表项所采取的动作
 	   
-	   	 
+	   	* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/configure_AS_internal_forward_table.png) 
 		
 		
 				
