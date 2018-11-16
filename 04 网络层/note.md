@@ -151,7 +151,7 @@
 		 	
 		 	* ⚠️ 路由器中可能会执行 IP 数据报的分片操作，当下一段链路的 MTU 小于路由器接收到的 IP 数据报长度时。但是数据报的组装工作只在端系统的网络层进行，而不会在路由器的网络层进行。如果一个或多个片没有到达目的地，则该不完整的数据报会被接收方的网络层丢弃。
 		 	
-		 	* ![](https://gith ub.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/分片和组装.png)
+		 	* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/分片和组装.png)
 
 		 	* 可以通过设置片的偏移量从而使数据报无法恰当的重建来攻击，IPv6 禁止分片，从而简化了 IP 分组的处理，并使得 IP 不太容易收到攻击。
 		 	
