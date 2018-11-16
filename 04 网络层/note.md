@@ -14,6 +14,7 @@
 			* **转发** : 路由器将到达它某条输入链路的分组移动到适当的输出链路。
 		
 			* **路由选择** : 在路由器图结构中决定分组从源端到目的端的路径的算法。
+			* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/network_layer_outline.png)
 	
 	* 4.1.2 **网络层服务模型**
 	
