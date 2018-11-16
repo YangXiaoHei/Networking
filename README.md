@@ -25,7 +25,7 @@
   * [Wireshake lab-DNS](https://github.com/YangXiaoHei/Networking/blob/master/02%20应用层/Wireshake_lab-DNS.md)  ✅
   
  * 第 3 章 运输层
-   * [note.md](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/note.md) ✅
+   * [note.md](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/README.md) ✅
    * [复习题 3.1 ~ 3.3](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题_31_33.md) ✅
    * [复习题 3.4](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题_34.md) ✅
    * [复习题 3.5](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题_35.md) ✅
@@ -42,7 +42,7 @@
    * [Wireshake lab-UDP](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/Wireshake_lab-UDP.md) ✅
    
 * 第 4 章 网络层
-   * [note.md](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/note.md) 
+   * [note.md](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/README.md) 
    * [复习题 4.1 ~ 4.2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/复习题_41_42.md) 
    
    
