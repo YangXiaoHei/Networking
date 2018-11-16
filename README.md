@@ -26,7 +26,7 @@
   
  * 第 3 章 运输层
    * [note.md](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/note.md) ✅
-   * [复习题 3.1~3.3](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题_31_33.md) ✅
+   * [复习题 3.1 ~ 3.3](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题_31_33.md) ✅
    * [复习题 3.4](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题_34.md) ✅
    * [复习题 3.5](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题_35.md) ✅
    * [复习题 3.7](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题_37.md) ✅
@@ -43,7 +43,7 @@
    
 * 第 4 章 网络层
    * [note.md](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/note.md) 
-   * [复习题.md](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/复习题.md) 
+   * [复习题 4.1 ~ 4.2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/复习题_41_42.md) 
    
    
    
