@@ -2,6 +2,9 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include<stdlib.h>
+#include <stdio.h>
+
 ssize_t YHLog(const char *file, int line, const char *fun, const char *format, ...);
 ssize_t YHLog_err(const char *file, int line, const char *fun, const char *format, ...);
 

@@ -1,3 +1,3 @@
 #! /bin/bash
 
-cc Graph.c main.c log.c -o test && ./test
+cc DynamicArray.c main.c log.c -o test && ./test

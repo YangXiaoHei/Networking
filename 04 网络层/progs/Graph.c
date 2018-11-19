@@ -16,6 +16,17 @@ static int randomBetween(int v, int w)
     return rand() % (w - v) + v;
 }
 
+int other(struct edge_t *e, int v)
+{
+    if (e == NULL) {
+        LOG("invalid argument : e == NULL!");
+        return -1;
+    }
+    if (e->v == v) return e->w;
+    if (e->w == v) return e->v;
+    LOG("invalid argument : v=%d is not the vertices of edge", v);
+}
+
 struct G* createGraph(int V) 
 {
     if (V <= 0) {
@@ -71,31 +82,31 @@ void addEdge(struct G *g, int v, int w, double weight)
         LOG("invalid parameter: ");
         return;
     }
-    struct vertex_t *vertexv = NULL, *vertexw = NULL;
-    if ((vertexv = malloc(sizeof(struct vertex_t))) == NULL) {
+    struct edge_t *edgev = NULL, *edgew = NULL;
+    if ((edgev = malloc(sizeof(struct edge_t))) == NULL) {
         LOG("malloc error for new vertex : {%d %d %.2f}", v, w, weight);
         return;
     }
-    if ((vertexw = malloc(sizeof(struct vertex_t))) == NULL) {
+    if ((edgew = malloc(sizeof(struct edge_t))) == NULL) {
         LOG("malloc error for new vertex : {%d %d %.2f}", v, w, weight);
         return;
     }
 
-    vertexv->v = v;
-    vertexv->w = w;
-    vertexv->weight = weight;
+    edgev->v = v;
+    edgev->w = w;
+    edgev->weight = weight;
 
-    vertexw->v = v;
-    vertexw->w = w;
-    vertexw->weight = weight;
+    edgew->v = v;
+    edgew->w = w;
+    edgew->weight = weight;
 
     g->E++;
     struct adj_list_t *adjv = &g->adjs[v];
     struct adj_list_t *adjw = &g->adjs[w];
-    vertexv->next = adjv->first;
-    adjv->first = vertexv;
-    vertexw->next = adjw->first;
-    adjw->first = vertexw;
+    edgev->next = adjv->first;
+    adjv->first = edgev;
+    edgew->next = adjw->first;
+    adjw->first = edgew;
 }
 
 void destroyGraph(struct G** gg) 
@@ -106,10 +117,10 @@ void destroyGraph(struct G** gg)
     }
     struct G *g = *gg;
     for (int i = 0; i < g->V; i++) {
-        for (struct vertex_t *cur = g->adjs[i].first; cur != NULL; ) {
-            struct vertex_t *tmp = cur;
-            g->adjs[i].first = cur->next;
-            cur = cur->next;
+        for (struct edge_t *e = g->adjs[i].first; e != NULL; ) {
+            struct edge_t *tmp = e;
+            g->adjs[i].first = e->next;
+            e = e->next;
             free(tmp);
         }
     }
@@ -131,7 +142,7 @@ const char *toString(struct G *g)
     APPEND("E = %d\n", g->E);
     for (int i = 0; i < g->V; i++) {
         APPEND("%d :", i);
-        for (struct vertex_t *cur = g->adjs[i].first; cur != NULL; cur = cur->next) 
+        for (struct edge_t *cur = g->adjs[i].first; cur != NULL; cur = cur->next) 
             APPEND(" { %d %d %.0f }", cur->v, cur->w, cur->weight);
         APPEND("\n");
     }
