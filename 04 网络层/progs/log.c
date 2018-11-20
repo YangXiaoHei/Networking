@@ -7,7 +7,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-ssize_t YHLog(const char *file, int line, const char *fun, const char *format, ...)
+ssize_t logForDebug(const char *file, int line, const char *fun, const char *format, ...)
 {
     va_list ap;
     va_start(ap, format);
@@ -28,7 +28,7 @@ ssize_t YHLog(const char *file, int line, const char *fun, const char *format, .
     return len;
 }
 
-ssize_t YHLog_err(const char *file, int line, const char *fun, const char *format, ...)
+ssize_t errLogForDebug(const char *file, int line, const char *fun, const char *format, ...)
 {
     va_list ap;
     va_start(ap, format);
