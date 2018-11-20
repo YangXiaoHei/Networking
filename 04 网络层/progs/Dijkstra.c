@@ -3,101 +3,162 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <float.h>
+#include <string.h>
 
-/*
- * struct DijkstraSP {
-    double *disTo;
-    struct edge_t *edgeTo;
-    struct G *g;
-};
-
-struct edge_t {
-    struct edge_t *next;
-    double weight;
-    int v, w;
-};
-
-struct *DijkstraInit(struct G *g);
-int hasPathTo(struct DijkstraSP *sp, int v);
-struct Stack *pathTo(struct DijkstraSP *sp, int v);
-double disTo(struct DijkstraSP *sp, int v);
- */
-
-static inline int isDijkstraValid(struct DijkstraSP *sp) 
+static inline int dijkstraIsValid(struct DijkstraSP *sp) 
 {
-    return sp->disTo != NULL && sp->edgeTo != NULL && sp->g != NULL;
+    return sp != NULL && sp->disTo != NULL && sp->edgeTo != NULL && sp->g != NULL;
 }
 
-static void relax(struct DijkstraSP *sp, int v)
+static void dijkstraRelaxVertex(struct DijkstraSP *sp, int v) 
 {
     struct G *g = sp->g;
-    for (struct edge_t *e = g->adjs[v].first; e != NULL; e = e->next) {
-        int w = other(e, v);
+    struct edge_t *e = NULL;
+    EWG_FOREACH(g, e, v) {
+        int w = weightedEdgeGetOther(e, v);
         if (sp->disTo[w] > sp->disTo[v] + e->weight) {
             sp->disTo[w] = sp->disTo[v] + e->weight;
-            sp->edgeTo[w].next = NULL;
-            sp->edgeTo[w].weight = e->weight;
-            sp->edgeTo[w].v = e->v;
-            sp->edgeTo[w].w = e->w;
+            memcpy(&sp->edgeTo[w], e, sizeof(struct edge_t));
         }
     }
 }
 
-struct *DijkstraInit(struct G *g, int s)
+static int dijkstraFindNextVertexNeedToRelax(struct DijkstraSP *sp, struct Array *arr) 
+{
+    int minv = -1;
+    double min = DBL_MAX;
+    int V = edgeWeightedGraphGetVertexCount(sp->g);
+    for (int i = 0; i < V; i++) {
+
+        if (arrayContainsElement(arr, i))
+            continue;
+
+        if (sp->disTo[i] < min) {
+            min = sp->disTo[i];
+            minv = i;
+        }
+    }
+    return minv;
+}
+
+struct DijkstraSP *dijkstraInitWithEdgeWeightedGraph(struct G *g, int s)
 {
     struct DijkstraSP *sp = NULL;
+    int *indexes = NULL;
+    int V = 0;
+    struct edge_t *e = NULL;
+    struct Array *arr = NULL;
+    int minv = -1;
+
+    V = edgeWeightedGraphGetVertexCount(g);
     if ((sp = malloc(sizeof(struct DijkstraSP))) == NULL)
         goto err;
-    if ((sp->edgeTo = malloc(sizeof(struct edge_t) * g->V)) == NULL)
+    if ((sp->edgeTo = malloc(sizeof(struct edge_t) * V)) == NULL)
         goto err_1;
-    if ((sp->disTo = malloc(sizeof(double) * g->V)) == NULL)
+    if ((sp->disTo = malloc(sizeof(double) * V)) == NULL)
         goto err_2;
+    bzero(sp->disTo, sizeof(double) * V);
+
     sp->g = g;
+    
+    /* 将所有边初始化为无效状态 */    
+    for (int i = 0; i < V; i++) 
+        weightedEdgeInvalidate(&sp->edgeTo[i]);
 
-    int *indexes = NULL;
-    if ((indexes = malloc(sizeof(int) * g->V)) == NULL)
-        goto err_3;
-
-    bzero(indexes, sizeof(int) * g->V);
-    bzero(sp->edgeTo, sizeof(struct edge_t) * g->V);
-
+    /* dijkstra 起点距离为 0 */
     sp->disTo[s] = 0.0;
-    indexes[s] = 1;
-    for (struct edge_t *e = g->adjs[s].first; e != NULL; e = e->next) {
-        int w = other(e, s);
+
+    /* 将起点到所有顶点的距离初始化为无穷大 */
+    for (int i = 0; i < V; i++) 
+        sp->disTo[i] = DBL_MAX;
+    
+    /* 遍历起点的所有邻接点 */
+    EWG_FOREACH(g, e, s) {
+
+        /* 获取邻接点 */
+        int w = weightedEdgeGetOther(e, s);
+
+        /* 更新起点到所有邻接点的距离 */
         if (sp->disTo[w] > e->weight) {
             sp->disTo[w] = e->weight;
-            sp->edgeTo[w].next = NULL;
-            sp->edgeTo[w].weight = e->weight;
-            sp->edgeTo[w].v = s;
-            sp->edgeTo[w].w = w;
+            memcpy(&sp->edgeTo[w], e, sizeof(struct edge_t));
         }
-        indexes[w] = 1;
     }
-    
-    for (int i = 0; i < g->V; i++) 
-        if (indexes[i] != 1) 
-            sp->disTo[i] = DBL_MAX;
         
-    
+    arr = arrayInit();
+    while (arrayGetSize(arr) < V) {
 
+        if ((minv = dijkstraFindNextVertexNeedToRelax(sp, arr)) < 0)
+            break;
 
+        printf("HansonTest --- %d\n", minv);
+
+        arrayAddElement(arr, minv);
+        dijkstraRelaxVertex(sp, minv);
+    }
+    arrayRelease(&arr);
+    return sp;
+
+err_2:
+    free(sp->edgeTo);
+err_1:
+    free(sp);
+err:
+    return NULL;
 }
-int hasPathTo(struct DijkstraSP *sp, int v)
+
+int dijkstraHasPathTo(struct DijkstraSP *sp, int v)
 {
-    
+    if (!dijkstraIsValid(sp)) {
+       LOG("dijkstraGetPathTo fail!: dijkstraSP is invalid");
+        return 0; 
+    }
+    return sp->disTo[v] < DBL_MAX;
 }
 
-struct Stack *pathTo(struct DijkstraSP *sp, int v)
+void dijkstraRelease(struct DijkstraSP **ssp) 
 {
-
+    if (ssp == NULL) {
+        LOG("dijkstraRelease fail!: ssp == NULL");
+        return;
+    }
+    struct DijkstraSP *sp = *ssp;
+    if (!dijkstraIsValid(sp)) {
+        LOG("dijkstraRelease fail!: dijkstraSP is invalid");
+        return; 
+    }
+    free(sp->disTo);
+    free(sp->edgeTo);
+    free(sp);
+    *ssp = NULL;
 }
 
-double disTo(struct DijkstraSP *sp, int v)
+struct Stack *dijkstraGetPathTo(struct DijkstraSP *sp, int v)
 {
-    if (!isDijkstraValid(sp)) {
+    if (!dijkstraIsValid(sp)) {
+       LOG("dijkstraGetPathTo fail!: dijkstraSP is invalid");
+        return NULL; 
+    }
+
+    if (!dijkstraHasPathTo(sp, v)) {
+        LOG("dijkstraGetPathTo fail!: no path to %d", v);
+        return NULL;
+    }
+    struct Stack *s = stackInit();
+    for (struct edge_t *e = &sp->edgeTo[v]; weightedEdgeIsValid(e); v = weightedEdgeGetOther(e, v), e = &sp->edgeTo[v]) {
+        stackPush(s, e);
+        printf("v = %d\n", v);
+        sleep(1);
+    }
+        
+    return s;
+}
+
+double dijkstraGetDistanceTo(struct DijkstraSP *sp, int v)
+{
+    if (!dijkstraIsValid(sp)) {
         LOG("invalid argument : sp is not invalid!");
-        return -1;
+        return DBL_MAX;
     }
     return sp->disTo[v];
 }

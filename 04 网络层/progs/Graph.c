@@ -1,22 +1,14 @@
 #include<stdio.h>
-#include "Graph.h"
-#include "log.h"
 #include <time.h>
 #include <stdlib.h>
+#include "Graph.h"
+#include "log.h"
+#include "tool.h"
 
 #define MAX_BUF (1 << 10)
 static char _internal_buffer[MAX_BUF];
 
-static int randomBetween(int v, int w) 
-{
-    if (v > w) {
-        LOG("invalid argument : v=%d w=%d", v, w);
-        return -1;
-    }
-    return rand() % (w - v) + v;
-}
-
-int other(struct edge_t *e, int v)
+int weightedEdgeGetOther(struct edge_t *e, int v)
 {
     if (e == NULL) {
         LOG("invalid argument : e == NULL!");
@@ -25,9 +17,47 @@ int other(struct edge_t *e, int v)
     if (e->v == v) return e->w;
     if (e->w == v) return e->v;
     LOG("invalid argument : v=%d is not the vertices of edge", v);
+    return -1;
 }
 
-struct G* createGraph(int V) 
+int weightedEdgeIsValid(struct edge_t *e)
+{
+    return e->v >= 0 && e->w >= 0;
+}
+
+void weightedEdgeSet(struct edge_t *e, int v, int w, double weight, struct edge_t *next)
+{
+    e->v = v;
+    e->w = w;
+    e->weight = weight;
+    e->next = next;
+}
+
+void weightedEdgeInvalidate(struct edge_t *e)
+{
+    e->v = e->w = -1;
+    e->weight = 0;
+    e->next = NULL;
+}
+
+int edgeWeightedGraphGetVertexCount(struct G *g)
+{
+    if (g == NULL) {
+        LOG("invalid argument : g == NULL!");
+        return -1;
+    }
+    return g->E;
+}
+int edgeWeightedGraphGetEdgeCount(struct G *g)
+{
+    if (g == NULL) {
+        LOG("invalid argument : g == NULL!");
+        return -1;
+    }
+    return g->V;
+}
+
+struct G* edgeWeightedGraphInit(int V) 
 {
     if (V <= 0) {
         LOG("invalid argument : V=%d", V);
@@ -56,7 +86,7 @@ err:
     return NULL;
 }
 
-struct G* createRandomGraph(int V, int E)
+struct G* edgeWeightedGraphRandomInit(int V, int E)
 {
     if (V <= 0 || E < 0) {
         LOG("invalid argument : V=%d E=%d", V, E);
@@ -66,17 +96,17 @@ struct G* createRandomGraph(int V, int E)
     srand((unsigned)time(NULL));
 
     struct G* g = NULL;
-    if ((g = createGraph(V)) == NULL)
+    if ((g = edgeWeightedGraphInit(V)) == NULL)
         return NULL;
 
     while (E--) 
-        addEdge(g, randomBetween(0, V), 
-                   randomBetween(0, V), 
-                   randomBetween(1, 100));
+        edgeWeightedGraphAddEdge(g, randomBetween(0, V), 
+                                    randomBetween(0, V), 
+                                    randomBetween(1, 100));
     return g;
 }
 
-void addEdge(struct G *g, int v, int w, double weight)
+void edgeWeightedGraphAddEdge(struct G *g, int v, int w, double weight)
 {
     if (g == NULL || v < 0 || v >= g->V || w < 0 || w >= g->V) {
         LOG("invalid parameter: ");
@@ -109,7 +139,7 @@ void addEdge(struct G *g, int v, int w, double weight)
     adjw->first = edgew;
 }
 
-void destroyGraph(struct G** gg) 
+void edgeWeightedGraphRelease(struct G** gg) 
 {
     if (gg == NULL || *gg == NULL) {
         LOG("invalid parameter : g == NULL!");
@@ -129,7 +159,7 @@ void destroyGraph(struct G** gg)
     *gg = NULL;
 }
 
-const char *toString(struct G *g) 
+const char *edgeWeightedGraphToString(struct G *g) 
 {
     if (g == NULL) {
         _internal_buffer[0] = 0;

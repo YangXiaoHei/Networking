@@ -18,11 +18,22 @@ struct G {
     int E;
 };
 
-struct G* createGraph(int V);
-struct G* createRandomGraph(int V, int E);
-void destroyGraph(struct G** g); 
-void addEdge(struct G *g, int v, int w, double weight);
-const char *toString(struct G *g);
-int other(struct edge_t *e, int v);
+#define EWG_FOREACH(_G_, _var_, _vertex_) \
+for ((_var_) = (_G_)->adjs[(_vertex_)].first; \
+     (_var_) != NULL;                       \
+     (_var_) = (_var_)->next)               
+
+struct G*   edgeWeightedGraphInit(int V);
+struct G*   edgeWeightedGraphRandomInit(int V, int E);
+void        edgeWeightedGraphRelease(struct G** g); 
+int         edgeWeightedGraphGetVertexCount(struct G *g);
+int         edgeWeightedGraphGetEdgeCount(struct G *g);
+void        edgeWeightedGraphAddEdge(struct G *g, int v, int w, double weight);
+const char *edgeWeightedGraphToString(struct G *g);
+
+int     weightedEdgeGetOther(struct edge_t *e, int v);
+int     weightedEdgeIsValid(struct edge_t *e);
+void    weightedEdgeInvalidate(struct edge_t *e);
+void    weightedEdgeSet(struct edge_t *e, int v, int w, double weight, struct edge_t *next);
 
 #endif

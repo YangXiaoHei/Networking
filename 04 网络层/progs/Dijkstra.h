@@ -3,6 +3,9 @@
 
 #include "Graph.h"
 #include "Stack.h"
+#include "tool.h"
+#include "log.h"
+#include "Array.h"
 
 struct DijkstraSP {
     double *disTo;
@@ -10,10 +13,10 @@ struct DijkstraSP {
     struct G *g;
 };
 
-struct *DijkstraInit(struct G *g);
-int hasPathTo(struct DijkstraSP *sp, int v);
-struct Stack *pathTo(struct DijkstraSP *sp, int v);
-double disTo(struct DijkstraSP *sp, int v);
-
+struct DijkstraSP *dijkstraInitWithEdgeWeightedGraph(struct G *g, int s);
+void               dijkstraRelease(struct DijkstraSP **ssp);
+int                dijkstraHasPathTo(struct DijkstraSP *sp, int v);
+struct Stack *     dijkstraGetPathTo(struct DijkstraSP *sp, int v);
+double             dijkstraGetDistanceTo(struct DijkstraSP *sp, int v);
 
 #endif 
