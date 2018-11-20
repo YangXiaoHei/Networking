@@ -8,8 +8,8 @@ enum sender_state current_state = sender_wait_0;
 
 int timeout(void);
 void start_timer(void);
-void rdt_send(char *data, size_t datalen, int seq);
-void udt_send(struct packet_t *packet);
+int  rdt_send(char *data, size_t datalen, int seq);
+int  udt_send(struct packet_t *packet);
 void rdt_recv(struct packet_t *packet, ssize_t offset);
 
 int timeout(void)
@@ -22,7 +22,7 @@ void start_timer(void)
     start_timestamp = curtime_us();
 }
 
-void rdt_send(char *data, size_t datalen, int seq)
+int rdt_send(char *data, size_t datalen, int seq)
 {
     /* 清空缓冲区内容 */
     bzero(&packetbuf, sizeof(packetbuf));
@@ -37,21 +37,31 @@ void rdt_send(char *data, size_t datalen, int seq)
     packet->checksum = calculate_checksum(packet->data, sizeof(packet->data));
 
     /* 经由不可靠信道传输 */
-    udt_send(packet);
+    return udt_send(packet);
 }
 
-void udt_send(struct packet_t *packet)
+int udt_send(struct packet_t *packet)
 {
+    int retcode = 0;
+
     /* 用不发包来当作丢包效果 */
-    if (probability(0.2))
-        return;
+    if (probability(0.2)) {
+        retcode = -1;
+        goto dismiss;
+    }
     
     /* 产生 1 比特的差错 */
-    if (probability(0.3))
+    if (probability(0.3)) {
         gen_one_bit_error((char *)packet->data, sizeof(packet->data));
+        retcode = -2;
+        goto biterror;
+    }
 
+biterror:
     /* 经由可靠信道传输 */
     TCP_send(sockfd, (char *)packet, sizeof(struct packet_t));
+dismiss:
+    return retcode;
 }
 
 void rdt_recv(struct packet_t *packet, ssize_t offset)
@@ -105,10 +115,22 @@ int main(int argc, char *argv[]) {
             {
                 LOG("-------- wait 0 begin -------");
                 sleep(yh_random(3, 6));
-
-                LOG("sender send packet 0");
-                rdt_send((char *)&data, sizeof(data), 0);
-
+                int retcode = rdt_send((char *)&data, sizeof(data), 0);
+                switch (retcode)
+                {
+                    case -1:
+                    {
+                        LOG("send packet 0 dismiss!!  ❌");
+                    } break;
+                    case -2:
+                    {
+                        LOG("send packet 0 biterror!! ❌");
+                    } break;
+                    default:
+                    {
+                        LOG("send packet 0 ✅");
+                    } break;
+                }
                 current_state = sender_wait_ACK_0;
                 start_timer();
                 LOG("-------- wait 0 end -------\n");
@@ -155,8 +177,22 @@ int main(int argc, char *argv[]) {
                         goto wait_ACK_0_end;
                     }
                 }
-                LOG("[timeout]!! retransmit packet 0");
-                rdt_send((char *)&data, sizeof(data), 0);
+                int retcode = rdt_send((char *)&data, sizeof(data), 0);
+                switch (retcode)
+                {
+                    case -1:
+                    {
+                        LOG("[timeout]!! retransmit packet 0 dismiss!!  ❌");
+                    } break;
+                    case -2:
+                    {
+                        LOG("[timeout]!! retransmit packet 0 biterror!! ❌");
+                    } break;
+                    default:
+                    {
+                        LOG("[timeout]!! retransmit packet 0 ✅");
+                    } break;
+                }
                 start_timer();
                 goto wait_ACK_0_timeout_again;
 
@@ -170,10 +206,22 @@ int main(int argc, char *argv[]) {
             {
                 LOG("-------- wait 1 begin -------");
                 sleep(yh_random(3, 6));
-
-                LOG("sender send packet 1");
-                rdt_send((char *)&data, sizeof(data), 1);
-
+                int retcode = rdt_send((char *)&data, sizeof(data), 1);
+                switch (retcode)
+                {
+                    case -1:
+                    {
+                        LOG("sender send packet 1 dismiss!!  ❌");
+                    } break;
+                    case -2:
+                    {
+                        LOG("sender send packet 1 biterror!! ❌");
+                    } break;
+                    default:
+                    {
+                        LOG("sender send packet 1 ✅");
+                    } break;
+                }
                 current_state = sender_wait_ACK_1;
                 start_timer();
                 LOG("-------- wait 1 end -------\n");
@@ -220,8 +268,22 @@ int main(int argc, char *argv[]) {
                         goto wait_ACK_1_end;
                     }
                 }
-                LOG("[timeout]!! retransmit packet 1");
-                rdt_send((char *)&data, sizeof(data), 1);
+                int retcode = rdt_send((char *)&data, sizeof(data), 1);
+                switch (retcode)
+                {
+                    case -1:
+                    {
+                        LOG("[timeout]!! retransmit packet 1 dismiss!!  ❌");
+                    } break;
+                    case -2:
+                    {
+                        LOG("[timeout]!! retransmit packet 1 biterror!! ❌");
+                    } break;
+                    default:
+                    {
+                        LOG("[timeout]!! retransmit packet 1 ✅");
+                    } break;
+                }
                 start_timer();
                 goto wait_ACK_1_timeout_again;
 
