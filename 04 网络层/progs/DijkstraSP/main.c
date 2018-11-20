@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "Dijkstra.h"
 
-int main(int argc, char const *argv[])
+void test()
 {
     struct G *g = edgeWeightedGraphRandomInit(20, 50);
     printf("%s", edgeWeightedGraphToString(g));
@@ -20,5 +20,10 @@ int main(int argc, char const *argv[])
     }
     dijkstraRelease(&sp);
     edgeWeightedGraphRelease(&g);
+}
+
+int main(int argc, char const *argv[])
+{
+    test();
     return 0;
 }

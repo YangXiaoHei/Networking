@@ -30,6 +30,7 @@ int         edgeWeightedGraphGetVertexCount(struct G *g);
 int         edgeWeightedGraphGetEdgeCount(struct G *g);
 void        edgeWeightedGraphAddEdge(struct G *g, int v, int w, double weight);
 const char *edgeWeightedGraphToString(struct G *g);
+const char *edgeWeightedGraphToStringWithMapping(struct G *g, unsigned char(*mapper)(int v));
 
 int     weightedEdgeGetOther(struct edge_t *e, int v);
 int     weightedEdgeIsValid(struct edge_t *e);

@@ -178,6 +178,28 @@ void edgeWeightedGraphRelease(struct G** gg)
     *gg = NULL;
 }
 
+const char *edgeWeightedGraphToStringWithMapping(struct G *g, unsigned char(*mapper)(int v))
+{
+    if (g == NULL) {
+        _internal_buffer[0] = 0;
+        return _internal_buffer;
+    }
+
+#define APPEND(_format_, ...) (len += snprintf(_internal_buffer + len, MAX_BUF - len, _format_, ##__VA_ARGS__));
+    ssize_t len = 0;
+    APPEND("V = %d\n", g->V);
+    APPEND("E = %d\n", g->E);
+    for (int i = 0; i < g->V; i++) {
+        APPEND("%d :", i);
+        for (struct edge_t *cur = g->adjs[i].first; cur != NULL; cur = cur->next) 
+            APPEND(" { %c %c %.0f }", mapper(cur->v), mapper(cur->w), cur->weight);
+        APPEND("\n");
+    }
+    _internal_buffer[len] = 0;
+    return _internal_buffer;
+#undef APPEND
+}
+
 const char *edgeWeightedGraphToString(struct G *g) 
 {
     if (g == NULL) {
@@ -192,7 +214,7 @@ const char *edgeWeightedGraphToString(struct G *g)
     for (int i = 0; i < g->V; i++) {
         APPEND("%d :", i);
         for (struct edge_t *cur = g->adjs[i].first; cur != NULL; cur = cur->next) 
-            APPEND(" { %d %d %.0f }", cur->v, cur->w, cur->weight);
+            APPEND(" { %d %d %.2f }", cur->v, cur->w, cur->weight);
         APPEND("\n");
     }
     _internal_buffer[len] = 0;

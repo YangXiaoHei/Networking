@@ -16,11 +16,17 @@ struct Stack *stackInit()
     return s;
 }
 
+void stackDisplayWithMapping(struct Stack *s, unsigned char(*mapper)(int v))
+{
+    for (struct stack_node_t *n = s->first; n != NULL; n = n->next) 
+        printf(" { %c %c %.0f } ", mapper(n->edge.v), mapper(n->edge.w), n->edge.weight);
+    printf("\n");
+}
+
 void stackDisplay(struct Stack *s)
 {
-    for (struct stack_node_t *n = s->first; n != NULL; n = n->next) {
+    for (struct stack_node_t *n = s->first; n != NULL; n = n->next) 
         printf(" { %d %d %.2f } ", n->edge.v, n->edge.w, n->edge.weight);
-    }
     printf("\n");
 }
 

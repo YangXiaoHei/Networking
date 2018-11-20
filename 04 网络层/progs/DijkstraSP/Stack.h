@@ -21,5 +21,6 @@ void            stackPush(struct Stack *s, struct edge_t *e);
 void            stackPop(struct Stack *s);
 int             stackIsEmpty(struct Stack *s);
 void            stackDisplay(struct Stack *s);
+void            stackDisplayWithMapping(struct Stack *s, unsigned char(*mapper)(int v));
 
 #endif
