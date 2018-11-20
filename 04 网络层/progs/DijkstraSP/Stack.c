@@ -44,13 +44,11 @@ void stackPush(struct Stack *s, struct edge_t *e)
         LOG("stackPush error: invalid argument s or e equal to null!");
         return;
     }
-
     struct stack_node_t *node = NULL;
     if ((node = malloc(sizeof(struct stack_node_t))) == NULL) {
         LOG("newnode create fail: memory malloc error!");
         return;
     }
-
     memcpy(&node->edge, e, sizeof(struct edge_t));
     node->next = s->first;
     s->first = node;

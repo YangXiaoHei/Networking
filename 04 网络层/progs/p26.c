@@ -57,7 +57,7 @@ int main(int argc, char const *argv[])
     for (int v = 0; v < edgeWeightedGraphGetVertexCount(g); v++) {
         if (dijkstraHasPathTo(sp, v)) {
             struct Stack *s = dijkstraGetPathTo(sp, v);
-            printf("path from %c to %c : [distance = %.0f]", valueOf(src), valueOf(v), dijkstraGetDistanceTo(sp, v));
+            printf("shortest path from %c to %c : [distance = %.0f]", valueOf(src), valueOf(v), dijkstraGetDistanceTo(sp, v));
             stackDisplayWithMapping(s, valueOf);
             stackRelease(&s);
         } else 
