@@ -8,8 +8,11 @@
 static void arrayResize(struct Array *arr, int newSize) 
 {
     int *old = arr->elem;
-    if ((arr->elem = malloc(sizeof(int) * newSize)) == NULL)
-        return;
+    if ((arr->elem = malloc(sizeof(int) * newSize)) == NULL) {
+        LOG("arrayResize fail : malloc memory error");
+        exit(1);
+    }
+    bzero(arr->elem, sizeof(int) * newSize);
 
     for (int i = 0; i < arr->size; i++) 
         arr->elem[i] = old[i];
@@ -20,11 +23,23 @@ static void arrayResize(struct Array *arr, int newSize)
 
 int arrayGetElementAtIndex(struct Array *arr, int i)
 {
+    if (arr == NULL) {
+        LOG("arrayGetElementAtIndex fail: arr == NULL");
+        return 0;
+    }
+    if (i < 0 || i >= arr->size) {
+        LOG("arrayGetElementAtIndex fail: index=%d invalid", i);
+        return 0;
+    }
     return arr->elem[i];
 }
 
-int arrayGetElementIndex(struct Array *arr, int e)
+int arrayGetIndexOfElement(struct Array *arr, int e)
 {
+    if (arr == NULL) {
+        LOG("arrayGetIndexOfElement fail: arr == NULL");
+        return 0;
+    }
     for (int i = 0; i < arr->size; i++)
         if (arr->elem[i] == e)
             return i;
@@ -33,11 +48,19 @@ int arrayGetElementIndex(struct Array *arr, int e)
 
 int arrayContainsElement(struct Array *arr, int e)
 {
-    return arrayGetElementIndex(arr, e) != -1;
+    if (arr == NULL) {
+        LOG("arrayContainsElement fail: arr == NULL");
+        return 0;
+    }
+    return arrayGetIndexOfElement(arr, e) != -1;
 }
 
 void arrayDisplay(struct Array *arr)
 {
+    if (arr == NULL) {
+        LOG("arrayDisplay fail: arr == NULL");
+        return;
+    }
     printf("size=%d capacity=%d\n", arr->size, arr->capacity);
     for (int i = 0; i < arr->capacity; i++)
         printf("%-4d", i);
@@ -53,13 +76,17 @@ void arrayDisplay(struct Array *arr)
 struct Array *arrayInit()
 {
     struct Array *arr = NULL;
-    if ((arr = malloc(sizeof(struct Array))) == NULL)
+    if ((arr = malloc(sizeof(struct Array))) == NULL) {
+        LOG("arrayInit fail : malloc error");
         goto err;
+    }
 
     arr->size = 0;
     arr->capacity = 8;
-    if ((arr->elem = malloc(sizeof(int) * arr->capacity)) == NULL)
+    if ((arr->elem = malloc(sizeof(int) * arr->capacity)) == NULL) {
+        LOG("arrayInit fail : malloc error");
         goto err_1;
+    }
     bzero(arr->elem, sizeof(int) * arr->capacity);
 
     return arr;
@@ -71,21 +98,37 @@ err:
 
 int arrayGetSize(struct Array *arr)
 {
+    if (arr == NULL) {
+        LOG("arrayGetSize fail: arr == NULL");
+        return 0;
+    }
     return arr->size;
 }
 
 int arrayIsFull(struct Array *arr)
 {
+    if (arr == NULL) {
+        LOG("arrayIsFull fail: arr == NULL");
+        return 0;
+    }
     return arr->size == arr->capacity;
 }
 
 int arrayIsEmpty(struct Array *arr) 
 {
+    if (arr == NULL) {
+        LOG("arrayIsEmpty fail: arr == NULL");
+        return 0;
+    }
     return arr->size == 0;
 }
 
 void arrayRelease(struct Array **arr)
 {
+    if (arr == NULL || *arr == NULL) {
+        LOG("arrayRelease fail: arr == NULL");
+        return;
+    }
     struct Array *a = *arr;
     if (a->elem != NULL) {
         free(a->elem);
@@ -97,6 +140,10 @@ void arrayRelease(struct Array **arr)
 
 void arrayAddElement(struct Array *arr, int e)
 {
+    if (arr == NULL) {
+        LOG("arrayAddElement fail: arr == NULL");
+        return;
+    }
     if (arrayIsFull(arr)) 
         arrayResize(arr, arr->size * 2);
     arr->elem[arr->size++] = e;
@@ -104,13 +151,25 @@ void arrayAddElement(struct Array *arr, int e)
 
 int arrayRemoveLastElement(struct Array *arr)
 {
+    if (arr == NULL) {
+        LOG("arrayRemoveLastElement fail: arr == NULL");
+        return 0;
+    }
     return arrayRemoveElementAtIndex(arr, arr->size - 1);
 }
 
 int arrayRemoveElementAtIndex(struct Array *arr, int i)
 {
+    if (arr == NULL) {
+        LOG("arrayRemoveElementAtIndex fail: arr == NULL");
+        return 0;
+    }
+    if (i < 0 || i >= arr->size) {
+        LOG("arrayRemoveElementAtIndex fail: index=%d invalid", i);
+        return 0;
+    }
     if (arrayIsEmpty(arr)) {
-        LOG("arr is empty!");
+        LOG("arrayRemoveElementAtIndex fail : arr is empty!");
         return -1;
     }
     int toRemove = arr->elem[i];

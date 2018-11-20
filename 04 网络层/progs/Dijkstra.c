@@ -10,6 +10,30 @@ static inline int dijkstraIsValid(struct DijkstraSP *sp)
     return sp != NULL && sp->disTo != NULL && sp->edgeTo != NULL && sp->g != NULL;
 }
 
+static void dijkstraDisplayDisTo(struct DijkstraSP *sp)
+{
+    for (int i = 0; i < sp->g->V; i++) {
+        double disTo = sp->disTo[i];
+        if (disTo == DBL_MAX) 
+            printf("%-10s", "infinite");
+        else 
+            printf("%-10.2f", disTo);
+    }
+    printf("\n");
+}
+
+static void dijkstraDisplayEdgeTo(struct DijkstraSP *sp)
+{
+    for (int i = 0; i < sp->g->V; i++) {
+        struct edge_t *e = &sp->edgeTo[i];
+        if (weightedEdgeIsValid(e)) 
+            printf(" { %d %d %.2f } ", e->v, e->w, e->weight);
+         else 
+            printf("%-10s", "null");
+    }
+    printf("\n");
+}
+
 static void dijkstraRelaxVertex(struct DijkstraSP *sp, int v) 
 {
     struct G *g = sp->g;
@@ -50,6 +74,11 @@ struct DijkstraSP *dijkstraInitWithEdgeWeightedGraph(struct G *g, int s)
     struct Array *arr = NULL;
     int minv = -1;
 
+    if (g == NULL || s < 0 || s > g->V) {
+        LOG("dijkstraInitWithEdgeWeightedGraph fail! invalid argument g == NULL or s = %d\n", s);
+        return NULL;
+    }
+
     V = edgeWeightedGraphGetVertexCount(g);
     if ((sp = malloc(sizeof(struct DijkstraSP))) == NULL)
         goto err;
@@ -65,12 +94,12 @@ struct DijkstraSP *dijkstraInitWithEdgeWeightedGraph(struct G *g, int s)
     for (int i = 0; i < V; i++) 
         weightedEdgeInvalidate(&sp->edgeTo[i]);
 
-    /* dijkstra 起点距离为 0 */
-    sp->disTo[s] = 0.0;
-
     /* 将起点到所有顶点的距离初始化为无穷大 */
     for (int i = 0; i < V; i++) 
         sp->disTo[i] = DBL_MAX;
+
+    /* dijkstra 起点距离为 0 */
+    sp->disTo[s] = 0.0;
     
     /* 遍历起点的所有邻接点 */
     EWG_FOREACH(g, e, s) {
@@ -84,14 +113,12 @@ struct DijkstraSP *dijkstraInitWithEdgeWeightedGraph(struct G *g, int s)
             memcpy(&sp->edgeTo[w], e, sizeof(struct edge_t));
         }
     }
-        
+
     arr = arrayInit();
     while (arrayGetSize(arr) < V) {
 
         if ((minv = dijkstraFindNextVertexNeedToRelax(sp, arr)) < 0)
             break;
-
-        printf("HansonTest --- %d\n", minv);
 
         arrayAddElement(arr, minv);
         dijkstraRelaxVertex(sp, minv);
@@ -145,12 +172,8 @@ struct Stack *dijkstraGetPathTo(struct DijkstraSP *sp, int v)
         return NULL;
     }
     struct Stack *s = stackInit();
-    for (struct edge_t *e = &sp->edgeTo[v]; weightedEdgeIsValid(e); v = weightedEdgeGetOther(e, v), e = &sp->edgeTo[v]) {
+    for (struct edge_t *e = &sp->edgeTo[v]; weightedEdgeIsValid(e); v = weightedEdgeGetOther(e, v), e = &sp->edgeTo[v])
         stackPush(s, e);
-        printf("v = %d\n", v);
-        sleep(1);
-    }
-        
     return s;
 }
 

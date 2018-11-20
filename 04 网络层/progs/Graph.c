@@ -10,31 +10,46 @@ static char _internal_buffer[MAX_BUF];
 
 int weightedEdgeGetOther(struct edge_t *e, int v)
 {
-    if (e == NULL) {
-        LOG("invalid argument : e == NULL!");
+    if (!weightedEdgeIsValid(e)) {
+        LOG("weightedEdgeGetOther fail: edge is invalid!");
         return -1;
     }
     if (e->v == v) return e->w;
     if (e->w == v) return e->v;
-    LOG("invalid argument : v=%d is not the vertices of edge", v);
+    LOG("weightedEdgeGetOther fail: v=%d is not the vertex of edge", v);
     return -1;
 }
 
 int weightedEdgeIsValid(struct edge_t *e)
 {
-    return e->v >= 0 && e->w >= 0;
+    return e != NULL && e->v >= 0 && e->w >= 0;
 }
 
 void weightedEdgeSet(struct edge_t *e, int v, int w, double weight, struct edge_t *next)
 {
+    int oldv = e->v;
+    int oldw = e->w;
+    double oldweight = e->weight;
+    struct edge_t *oldnext = e->next;
     e->v = v;
     e->w = w;
     e->weight = weight;
     e->next = next;
+    if (!weightedEdgeIsValid(e)) {
+        e->v = oldv;
+        e->w = oldw;
+        e->weight = oldweight;
+        e->next = oldnext;
+        LOG("weightedEdgeSet fail: v or w is invalid! edge will not change!");
+    }
 }
 
 void weightedEdgeInvalidate(struct edge_t *e)
 {
+    if (e == NULL) {
+        LOG("weightedEdgeInvalidate fail: e == NULL!");
+        return;
+    }
     e->v = e->w = -1;
     e->weight = 0;
     e->next = NULL;
@@ -43,35 +58,39 @@ void weightedEdgeInvalidate(struct edge_t *e)
 int edgeWeightedGraphGetVertexCount(struct G *g)
 {
     if (g == NULL) {
-        LOG("invalid argument : g == NULL!");
+        LOG("edgeWeightedGraphGetVertexCount fail: g == NULL!");
         return -1;
     }
-    return g->E;
+    return g->V;
 }
 int edgeWeightedGraphGetEdgeCount(struct G *g)
 {
     if (g == NULL) {
-        LOG("invalid argument : g == NULL!");
+        LOG("edgeWeightedGraphGetEdgeCount fail: g == NULL!");
         return -1;
     }
-    return g->V;
+    return g->E;
 }
 
 struct G* edgeWeightedGraphInit(int V) 
 {
     if (V <= 0) {
-        LOG("invalid argument : V=%d", V);
+        LOG("edgeWeightedGraphInit fail: V=%d", V);
         return NULL;
     }
 
     struct G *g = NULL;
-    if ((g = malloc(sizeof(struct G))) == NULL)
+    if ((g = malloc(sizeof(struct G))) == NULL) {
+        LOG("edgeWeightedGraphInit fail: malloc memory error");
         goto err;
+    }
 
     g->V = V;
     g->E = 0;
-    if ((g->adjs = malloc(sizeof(struct adj_list_t) * V)) == NULL)
+    if ((g->adjs = malloc(sizeof(struct adj_list_t) * V)) == NULL) {
+        LOG("edgeWeightedGraphInit fail: malloc memory error");
         goto err_1;
+    }
 
     for (int i = 0; i < V; i++) {
         g->adjs[i].size = 0;
@@ -89,7 +108,7 @@ err:
 struct G* edgeWeightedGraphRandomInit(int V, int E)
 {
     if (V <= 0 || E < 0) {
-        LOG("invalid argument : V=%d E=%d", V, E);
+        LOG("edgeWeightedGraphRandomInit fail: V=%d E=%d", V, E);
         return NULL;
     }
 
@@ -109,16 +128,16 @@ struct G* edgeWeightedGraphRandomInit(int V, int E)
 void edgeWeightedGraphAddEdge(struct G *g, int v, int w, double weight)
 {
     if (g == NULL || v < 0 || v >= g->V || w < 0 || w >= g->V) {
-        LOG("invalid parameter: ");
+        LOG("edgeWeightedGraphAddEdge: g == NULL or v=%d w=%d weight=%.2f", v, w, weight);
         return;
     }
     struct edge_t *edgev = NULL, *edgew = NULL;
     if ((edgev = malloc(sizeof(struct edge_t))) == NULL) {
-        LOG("malloc error for new vertex : {%d %d %.2f}", v, w, weight);
+        LOG("edgeWeightedGraphAddEdge fail: malloc error for new vertex : {%d %d %.2f}", v, w, weight);
         return;
     }
     if ((edgew = malloc(sizeof(struct edge_t))) == NULL) {
-        LOG("malloc error for new vertex : {%d %d %.2f}", v, w, weight);
+        LOG("edgeWeightedGraphAddEdge fail : malloc error for new vertex : {%d %d %.2f}", v, w, weight);
         return;
     }
 
@@ -142,7 +161,7 @@ void edgeWeightedGraphAddEdge(struct G *g, int v, int w, double weight)
 void edgeWeightedGraphRelease(struct G** gg) 
 {
     if (gg == NULL || *gg == NULL) {
-        LOG("invalid parameter : g == NULL!");
+        LOG("edgeWeightedGraphRelease fail : g == NULL!");
         return;
     }
     struct G *g = *gg;

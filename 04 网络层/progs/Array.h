@@ -15,7 +15,7 @@ int             arrayGetSize(struct Array *arr);
 void            arrayRelease(struct Array **arr);
 void            arrayDisplay(struct Array *arr);
 int             arrayContainsElement(struct Array *arr, int e);
-int             arrayGetElementIndex(struct Array *arr, int e);
+int             arrayGetIndexOfElement(struct Array *arr, int e);
 int             arrayGetElementAtIndex(struct Array *arr, int i);
 void            arrayAddElement(struct Array *arr, int e);
 int             arrayRemoveLastElement(struct Array *arr);

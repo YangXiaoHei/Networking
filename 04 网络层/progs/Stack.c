@@ -27,7 +27,7 @@ void stackDisplay(struct Stack *s)
 int stackGetSize(struct Stack *s)
 {
     if (s == NULL) {
-        LOG("stackGetSize fail!: s == NULL!");
+        LOG("stackGetSize fail: s == NULL!");
         return 0;
     }
     return s->size;
@@ -35,13 +35,13 @@ int stackGetSize(struct Stack *s)
 void stackPush(struct Stack *s, struct edge_t *e)
 {
     if (s == NULL || e == NULL) {
-        LOG("stackPush error!: invalid argument s or e equal to null!");
+        LOG("stackPush error: invalid argument s or e equal to null!");
         return;
     }
 
     struct stack_node_t *node = NULL;
     if ((node = malloc(sizeof(struct stack_node_t))) == NULL) {
-        LOG("newnode create fail!: memory malloc error!");
+        LOG("newnode create fail: memory malloc error!");
         return;
     }
 
@@ -53,7 +53,7 @@ void stackPush(struct Stack *s, struct edge_t *e)
 void stackPop(struct Stack *s)
 {
     if (stackIsEmpty(s)) {
-        LOG("stackPop fail!: stack is empty!");
+        LOG("stackPop fail: stack is empty!");
         return;
     }
     struct stack_node_t *node = s->first;
@@ -64,7 +64,7 @@ void stackPop(struct Stack *s)
 struct edge_t *stackGetTop(struct Stack *s)
 {
     if (stackIsEmpty(s)) {
-        LOG("stackTop fail!: stack is empty!");
+        LOG("stackTop fail: stack is empty!");
         return NULL;
     }
     return &s->first->edge;
@@ -72,7 +72,7 @@ struct edge_t *stackGetTop(struct Stack *s)
 int stackIsEmpty(struct Stack *s)
 {
     if (s == NULL) {
-        LOG("stackIsEmpty fail!: s == NULL!");
+        LOG("stackIsEmpty fail: s == NULL!");
         return 1;
     }
     return s->size == 0;
@@ -80,7 +80,7 @@ int stackIsEmpty(struct Stack *s)
 void stackRelease(struct Stack **ss)
 {
     if (ss == NULL || *ss == NULL) {
-        LOG("stackRelease fail!: s or *s == NULL!");
+        LOG("stackRelease fail: s or *s == NULL!");
         return;
     }
     struct Stack *s = *ss;
