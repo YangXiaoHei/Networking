@@ -9,12 +9,12 @@ int expected_seq = 0;
 char sender_ip[128];
 unsigned short sender_port;
 
-void rdt_send(int seq);
-void udt_send(struct packet_t *packet);
+int rdt_send(int seq);
+int udt_send(struct packet_t *packet);
 void rdt_recv(struct packet_t *packet, ssize_t offset);
 int corrupt(struct packet_t *packet);
 
-void rdt_send(int seq)
+int rdt_send(int seq)
 {
     bzero(&packetbuf, sizeof(packetbuf));
     packetbuf.seq = seq;
@@ -22,21 +22,30 @@ void rdt_send(int seq)
     packetbuf.checksum = calculate_checksum((char *)&packetbuf.data, sizeof(packetbuf.data));
 
     /* 经由不可靠信道传输 */
-    udt_send(&packetbuf);
+    return udt_send(&packetbuf);
 }
 
-void udt_send(struct packet_t *packet)
+int udt_send(struct packet_t *packet)
 {
+    int retcode = 0;
     /* 用不发包来当作丢包效果 */
-    if (probability(0.2))
-        return;
+    if (probability(0.2)) {
+        retcode = -1;
+        goto dismiss;
+    }
 
     /* 产生 1 比特的差错 */
-    if (probability(0.3))
+    if (probability(0.3)) {
         gen_one_bit_error((char *)packet->data, sizeof(packet->data));
+        retcode = -2;
+        goto biterror;
+    }
 
+biterror:
     /* 经由可靠信道传输 */
     TCP_send(sockfd, (char *)packet, sizeof(struct packet_t));
+dismiss:
+    return retcode;
 }
 
 void rdt_recv(struct packet_t *packet, ssize_t offset)
@@ -107,18 +116,46 @@ int main(int argc, char const *argv[])
             else
                 LOG("ignore inorder packet %d [expected=%d]", packetbuf.seq, expected_seq);
 
-            LOG("retransmit ACK %d", expected_seq - 1);
-            rdt_send(expected_seq - 1);
-
+            if (expected_seq != 0)
+            {
+                int retcode = rdt_send(expected_seq - 1);
+                switch (retcode) 
+                {
+                    case -1 :
+                    {
+                        LOG("retransmit ACK %d dismiss!! [recvpkt=%d][expected=%d] ❌", expected_seq - 1, packetbuf.seq, expected_seq);
+                    } break;
+                    case -2 :
+                    {
+                        LOG("retransmit ACK %d biterror!! [recvpkt=%d][expected=%d] ❌", expected_seq - 1, packetbuf.seq, expected_seq);
+                    } break;
+                    default :
+                    {
+                        LOG("retransmit ACK %d [recvpkt=%d][expected=%d] ✅", expected_seq - 1, packetbuf.seq, expected_seq);
+                    } break;
+                }
+            }
             continue;
         }
 
         LOG("receive valid packet %d [exptected=%d]", packetbuf.seq, expected_seq);
         memcpy(&my_packets[expected_seq].data, packetbuf.data, sizeof(packetbuf.data));
-        LOG("Acked packet %d", expected_seq);
-        rdt_send(expected_seq);
-        expected_seq++;
+        int retcode = rdt_send(expected_seq++);
+        switch (retcode) 
+        {
+            case -1 :
+            {
+                LOG("Acked packet %d dismiss!! ❌", packetbuf.seq);
+            } break;
+            case -2 :
+            {
+                LOG("Acked packet %d biterror!! ❌", packetbuf.seq);
+            } break;
+            default :
+            {
+                LOG("Acked packet %d ✅", packetbuf.seq);
+            } break;
+        }
     }
-
     return 0;
 }

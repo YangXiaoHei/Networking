@@ -9,11 +9,11 @@ struct packet_t packetbuf;
 unsigned short sender_base = 0;
 unsigned short next_seqnum = 0;
 
-int timeout(void);
+int yytimeout(void);
 void init_data(void);
 void start_timer(void);
-void rdt_send(int seq);
-void udt_send(struct packet_t *packet);
+int  rdt_send(int seq);
+int  udt_send(struct packet_t *packet);
 void rdt_recv(struct packet_t *packet, ssize_t offset);
 
 void init_data(void)
@@ -31,28 +31,38 @@ void init_data(void)
     }
 }
 
-void rdt_send(int seq)
+int rdt_send(int seq)
 {
     /* 经由不可靠信道传输 */
     my_packets[seq].seq = seq;
     my_packets[seq].timeout_timestamp = curtime_us() + TIMEOUT_INTERVAL;
     my_packets[seq].isTransmited = 1;
     my_packets[seq].checksum = calculate_checksum((char *)&my_packets[seq].data, sizeof(my_packets[seq].data));
-    udt_send(&my_packets[seq]);
+    return udt_send(&my_packets[seq]);
 }
 
-void udt_send(struct packet_t *packet)
+int udt_send(struct packet_t *packet)
 {
+    int retcode = 0;
+    
     /* 用不发包来当作丢包效果 */
-    if (probability(0.2))
-        return;
+    if (probability(0.2)) {
+        retcode = -1;
+        goto dismiss;
+    }
 
     /* 产生 1 比特的差错 */
-    if (probability(0.3))
+    if (probability(0.3)) {
         gen_one_bit_error((char *)packet->data, sizeof(packet->data));
+        retcode = -2;
+        goto biterror;
+    }
 
+biterror:
     /* 经由可靠信道传输 */
     TCP_send(sockfd, (char *)packet, sizeof(struct packet_t));
+dismiss:
+    return retcode;
 }
 
 void rdt_recv(struct packet_t *packet, ssize_t offset)
@@ -105,7 +115,7 @@ int main(int argc, char const *argv[])
     LOG("connect to receiver succ!");
 
     int received_one = 0;
-    int nread;
+    ssize_t nread;
     while (1) 
     {
         received_one = 0;
@@ -134,7 +144,7 @@ int main(int argc, char const *argv[])
                 LOG("receive a corrupt ACK while waiting ACK %d!", sender_base);
             else
             {
-                if (packetbuf.seq > sender_base)
+                if (packetbuf.seq >= sender_base)
                 {
                     for (int i = sender_base; i <= packetbuf.seq; i++)
                     {
@@ -143,8 +153,7 @@ int main(int argc, char const *argv[])
                         my_packets[i].isTransmited = 0;
                     }
                     sender_base = packetbuf.seq + 1;
-                    LOG("receive a valid ACK %d", packetbuf.seq);
-                    LOG("move window base to %d", sender_base);
+                    LOG("receive a valid ACK %d, move window base to %d ✅", packetbuf.seq, sender_base);
                 }
                 else
                     LOG("ignore ACK %d, [base=%d][nextseq=%d]",packetbuf.seq, sender_base, next_seqnum);
@@ -156,8 +165,22 @@ int main(int argc, char const *argv[])
         {
             if (my_packets[i].isTransmited && curtime_us() > my_packets[i].timeout_timestamp)
             {
-                rdt_send(i);
-                LOG("[timeout]!! retransmit packet %d", i);
+                int retcode = rdt_send(i);
+                switch (retcode)
+                {
+                    case -1:
+                    {
+                        LOG("[timeout]!! retransmit packet %d dismiss!! [base=%d][nextseq=%d] ❌", i, sender_base, next_seqnum);
+                    } break;
+                    case -2:
+                    {
+                        LOG("[timeout]!! retransmit packet %d biterror!! [base=%d][nextseq=%d] ❌", i, sender_base, next_seqnum);
+                    } break;
+                    default:
+                    {
+                        LOG("[timeout]!! retransmit packet %d [base=%d][nextseq=%d]", i, sender_base, next_seqnum);
+                    } break;
+                }
             }
         }
 
@@ -166,10 +189,23 @@ int main(int argc, char const *argv[])
     
         while (next_seqnum < min(sender_base + SENDER_WIN_SZ, ARRSIZE(my_packets)))
         {
-            rdt_send(next_seqnum++);
-            LOG("send packet %d [base=%d][nextseq=%d]", next_seqnum - 1, sender_base, next_seqnum);
+            int retcode = rdt_send(next_seqnum++);
+            switch (retcode)
+            {
+                case -1:
+                {
+                    LOG("send packet %d dismiss!! [base=%d][nextseq=%d] ❌", next_seqnum - 1, sender_base, next_seqnum);
+                } break;
+                case -2:
+                {
+                    LOG("send packet %d biterror!! [base=%d][nextseq=%d] ❌", next_seqnum - 1, sender_base, next_seqnum);
+                } break;
+                default:
+                {
+                    LOG("send packet %d [base=%d][nextseq=%d]", next_seqnum - 1, sender_base, next_seqnum);
+                } break;
+            }
         }
-        
     }
     
     return 0;
