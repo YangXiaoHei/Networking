@@ -47,6 +47,7 @@
    * [复习题 4.3 ~ 4.4](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/复习题_43_44.md) 
    * [复习题 4.5 ~ 4.7](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/复习题_45_47.md) 
    * [习题 P1 ~ P19](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_01_19.md) 
+   * [习题 P20 ~ P39](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_20_39.md) 
    
    
    
