@@ -16,6 +16,7 @@ struct G {
     struct adj_list_t *adjs;
     int V;
     int E;
+    int(*mapper)(unsigned char);
 };
 
 #define EWG_FOREACH(_G_, _var_, _vertex_) \
@@ -24,11 +25,13 @@ for ((_var_) = (_G_)->adjs[(_vertex_)].first; \
      (_var_) = (_var_)->next)               
 
 struct G*   edgeWeightedGraphInit(int V);
+struct G*   edgeWeightedGraphInitWithMapping(int V, int(*mapper)(unsigned char));
 struct G*   edgeWeightedGraphRandomInit(int V, int E);
 void        edgeWeightedGraphRelease(struct G** g); 
 int         edgeWeightedGraphGetVertexCount(struct G *g);
 int         edgeWeightedGraphGetEdgeCount(struct G *g);
 void        edgeWeightedGraphAddEdge(struct G *g, int v, int w, double weight);
+void        edgeWeightedGraphAddEdgeByMapping(struct G *g, unsigned char v, unsigned char w, double weight);
 const char *edgeWeightedGraphToString(struct G *g);
 const char *edgeWeightedGraphToStringWithMapping(struct G *g, unsigned char(*mapper)(int v));
 

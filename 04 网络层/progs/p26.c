@@ -35,19 +35,19 @@ int main(int argc, char const *argv[])
 {
     setbuf(stdout, NULL);
 
-    struct G *g = edgeWeightedGraphInit(7);
-    edgeWeightedGraphAddEdge(g, indexOf('z'), indexOf('y'), 12);
-    edgeWeightedGraphAddEdge(g, indexOf('z'), indexOf('x'), 8);
-    edgeWeightedGraphAddEdge(g, indexOf('y'), indexOf('x'), 6);
-    edgeWeightedGraphAddEdge(g, indexOf('y'), indexOf('t'), 7);
-    edgeWeightedGraphAddEdge(g, indexOf('y'), indexOf('v'), 8);
-    edgeWeightedGraphAddEdge(g, indexOf('v'), indexOf('t'), 4);
-    edgeWeightedGraphAddEdge(g, indexOf('v'), indexOf('x'), 3);
-    edgeWeightedGraphAddEdge(g, indexOf('v'), indexOf('u'), 3);
-    edgeWeightedGraphAddEdge(g, indexOf('v'), indexOf('w'), 4);
-    edgeWeightedGraphAddEdge(g, indexOf('x'), indexOf('w'), 6);
-    edgeWeightedGraphAddEdge(g, indexOf('u'), indexOf('w'), 3);
-    edgeWeightedGraphAddEdge(g, indexOf('u'), indexOf('t'), 2);
+    struct G *g = edgeWeightedGraphInitWithMapping(7, indexOf);
+    edgeWeightedGraphAddEdgeByMapping(g, 'z', 'y', 12);
+    edgeWeightedGraphAddEdgeByMapping(g, 'z', 'x', 8);
+    edgeWeightedGraphAddEdgeByMapping(g, 'y', 'x', 6);
+    edgeWeightedGraphAddEdgeByMapping(g, 'y', 't', 7);
+    edgeWeightedGraphAddEdgeByMapping(g, 'y', 'v', 8);
+    edgeWeightedGraphAddEdgeByMapping(g, 'v', 't', 4);
+    edgeWeightedGraphAddEdgeByMapping(g, 'v', 'x', 3);
+    edgeWeightedGraphAddEdgeByMapping(g, 'v', 'u', 3);
+    edgeWeightedGraphAddEdgeByMapping(g, 'v', 'w', 4);
+    edgeWeightedGraphAddEdgeByMapping(g, 'x', 'w', 6);
+    edgeWeightedGraphAddEdgeByMapping(g, 'u', 'w', 3);
+    edgeWeightedGraphAddEdgeByMapping(g, 'u', 't', 2);
     printf("**************** print structure of graph ***************\n");
     printf("%s", edgeWeightedGraphToStringWithMapping(g, valueOf));
     printf("*********************************************************\n");

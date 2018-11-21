@@ -105,6 +105,17 @@ err:
     return NULL;
 }
 
+struct G* edgeWeightedGraphInitWithMapping(int V, int(*mapper)(unsigned char))
+{
+    struct G *g = NULL;
+    if ((g = edgeWeightedGraphInit(V)) == NULL) {
+        LOG("edgeWeightedGraphInitWithMapping fail!");
+        return NULL;
+    }
+    g->mapper = mapper;
+    return g;
+}
+
 struct G* edgeWeightedGraphRandomInit(int V, int E)
 {
     if (V <= 0 || E < 0) {
@@ -156,6 +167,15 @@ void edgeWeightedGraphAddEdge(struct G *g, int v, int w, double weight)
     adjv->first = edgev;
     edgew->next = adjw->first;
     adjw->first = edgew;
+}
+
+void edgeWeightedGraphAddEdgeByMapping(struct G *g, unsigned char v, unsigned char w, double weight)
+{
+    if (g == NULL || g->mapper == NULL) {
+        LOG("edgeWeightedGraphAddEdgeByMapping fail: g == NULL or g->mapper == NULL");
+        return;
+    }
+    edgeWeightedGraphAddEdge(g, g->mapper(v), g->mapper(w), weight);
 }
 
 void edgeWeightedGraphRelease(struct G** gg) 
