@@ -3,13 +3,13 @@
 #include "DijkstraSP/Dijkstra.h"
 
 static unsigned char vertices[] = {
-    'z', 
-    'y', 
-    'v', 
-    't', 
-    'x', 
-    'w', 
-    'u' 
+    [0] = 'z', 
+    [1] = 'y', 
+    [2] = 'v', 
+    [3] = 't', 
+    [4] = 'x', 
+    [5] = 'w', 
+    [6] = 'u' 
 };
 
 #define GET_VERTEX_COUNT (sizeof(vertices) / sizeof(vertices[0]))
@@ -35,6 +35,13 @@ int main(int argc, char const *argv[])
 {
     setbuf(stdout, NULL);
 
+    int src = indexOf('x');
+
+    if (argc != 1) {
+        src = indexOf(argv[1][0]);
+        LOG("src = %c %d", argv[1][0], src);
+    }
+
     struct G *g = edgeWeightedGraphInitWithMapping(7, indexOf);
     edgeWeightedGraphAddEdgeByMapping(g, 'z', 'y', 12);
     edgeWeightedGraphAddEdgeByMapping(g, 'z', 'x', 8);
@@ -51,8 +58,7 @@ int main(int argc, char const *argv[])
     printf("**************** print structure of graph ***************\n");
     printf("%s", edgeWeightedGraphToStringWithMapping(g, valueOf));
     printf("*********************************************************\n");
-
-    int src = indexOf('x');
+    
     struct DijkstraSP *sp = dijkstraInitWithEdgeWeightedGraph(g, src);
     for (int v = 0; v < edgeWeightedGraphGetVertexCount(g); v++) {
         if (dijkstraHasPathTo(sp, v)) {
