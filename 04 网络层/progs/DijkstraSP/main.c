@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Dijkstra.h"
+#include "BreadthFirstPath.h"
 
 void test()
 {
@@ -22,8 +23,30 @@ void test()
     edgeWeightedGraphRelease(&g);
 }
 
+void test2()
+{
+    struct G *g = edgeWeightedGraphRandomInit(10, 20);
+    printf("%s", edgeWeightedGraphToString(g));
+
+    struct BreadthFirstPath *bfp = breadthFirstPathInit(g);
+    int V = edgeWeightedGraphGetVertexCount(g);
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            if (breadthFirstPathHasPathBetween(bfp, i, j)) {
+                struct Stack *s = breadthFirstPathGetPathBetween(bfp, i, j);
+                printf("%d to %d : [hops=%d]", i, j, breadthFirstPathGetDistanceBetween(bfp, i, j));
+                stackDisplay(s);
+                stackRelease(&s);
+            } else
+                printf("no path from %d to %d\n", i, j);
+        }
+    }
+    breadthFirstPathRelease(&bfp);
+    edgeWeightedGraphRelease(&g);
+}
+
 int main(int argc, char const *argv[])
 {
-    test();
+    test2();
     return 0;
 }

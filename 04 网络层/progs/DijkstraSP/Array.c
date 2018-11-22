@@ -158,6 +158,11 @@ int arrayRemoveLastElement(struct Array *arr)
     return arrayRemoveElementAtIndex(arr, arr->size - 1);
 }
 
+int arrayRemoveFirstElement(struct Array *arr)
+{
+    return arrayRemoveElementAtIndex(arr, 0);
+}
+
 int arrayRemoveElementAtIndex(struct Array *arr, int i)
 {
     if (arr == NULL) {

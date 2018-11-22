@@ -19,6 +19,7 @@ int             arrayGetIndexOfElement(struct Array *arr, int e);
 int             arrayGetElementAtIndex(struct Array *arr, int i);
 void            arrayAddElement(struct Array *arr, int e);
 int             arrayRemoveLastElement(struct Array *arr);
+int             arrayRemoveFirstElement(struct Array *arr);
 int             arrayRemoveElementAtIndex(struct Array *arr, int i);
 
 #endif
