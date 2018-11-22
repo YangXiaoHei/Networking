@@ -41,6 +41,13 @@ void test2()
                 printf("no path from %d to %d\n", i, j);
         }
     }
+
+    printf("the diameter of graph is %d\n", breadthFirstPathGetDiameter(bfp));
+    struct Stack *s = breadthFirstPathGetPathOfDimeter(bfp);
+    printf("diameter of graph :");
+    stackDisplay(s);
+    stackRelease(&s);
+
     breadthFirstPathRelease(&bfp);
     edgeWeightedGraphRelease(&g);
 }
