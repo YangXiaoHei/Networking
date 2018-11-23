@@ -246,9 +246,15 @@
 				x 将自己的距离向量 Dx 逐个发送给它们
 			~~~
 			
-			* **1、链路费用增加与减少**
+			* 下列是一个距离向量算法从初始化到收敛的运行轨迹
+			  * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DV_algorithms.png)
 			
-		     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/routing_loop.png)
+			* **1、链路费用增加与减少**
+			  * 链路费用减少
+			     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DV_algorithms_linkcost_decrease.png)
+			
+			  * 链路费用增加
+		        * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DV_algorithms_linkcost_increase.png)
 		     
 		   * **2、增加毒性逆转**
 		   
