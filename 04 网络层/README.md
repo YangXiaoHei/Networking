@@ -250,10 +250,14 @@
 			  * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DV_algorithms.png)
 			
 			* **1、链路费用增加与减少**
-			  * 链路费用减少
+			  * 链路费用减少 (`4 -> 1`)
 			     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DV_algorithms_linkcost_decrease.png)
+			     
+			  * * 链路费用减少 (`50 -> 1`)
+			     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DV_algorithms_linkcost_decrease_2.png)
 			
-			  * 链路费用增加
+			  * 链路费用增加 (`4 -> 60`) 
+			     * 引发无穷计数问题
 		        * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DV_algorithms_linkcost_increase.png)
 		     
 		   * **2、增加毒性逆转**
