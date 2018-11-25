@@ -70,7 +70,7 @@ err:
 }
 void primMSTDisplayAllEdges(struct PrimMST *mst)
 {
-    printf("All edges in minimum spaning tree : [weight=%5.2f] [edgeCount=%d]\n", 
+    printf("All edges in minimum spanning tree : [weight=%5.2f] [edgeCount=%d]\n", 
         primMSTGetWeight(mst), primMSTGetAllEdgesCount(mst));
     int V = edgeWeightedGraphGetVertexCount(mst->g);
     for (int i = 0; i < V; i++) {
