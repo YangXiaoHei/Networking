@@ -8,8 +8,10 @@ fi
 
 file=$1
 
-dir="DijkstraSP"
+dir="Algorithms_C"
 
-cc ${dir}/Array.c ${dir}/Stack.c ${dir}/Dijkstra.c ${dir}/tool.c ${dir}/Graph.c $file ${dir}/log.c -o "$file.exe" && ./"$file.exe"
+output="exec_$file"
+
+cc ${dir}/Array.c ${dir}/Stack.c ${dir}/Dijkstra.c ${dir}/tool.c ${dir}/Graph.c $file ${dir}/log.c -o "${output}" && ./"${output}"
 
 
