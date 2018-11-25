@@ -3,6 +3,7 @@
 
 #include "Graph.h"
 #include "PriorityQueue.h"
+#include "log.h"
 
 struct PrimMST {
     struct edge_t *edgeTo;
@@ -16,6 +17,7 @@ struct PrimMST {
 struct PrimMST *primMSTInit(struct G *g);
 double primMSTGetWeight(struct PrimMST *mst);
 void primMSTDisplayAllEdges(struct PrimMST *mst);
+void primMSTDisplayAllEdgesByMapping(struct PrimMST *mst, unsigned char(*mapper)(int));
 int  primMSTGetAllEdgesCount(struct PrimMST *mst);
 void primMSTRelease(struct PrimMST **mst);
 

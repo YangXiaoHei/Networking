@@ -73,13 +73,29 @@ void primMSTDisplayAllEdges(struct PrimMST *mst)
     printf("All edges in minimum spaning tree : [weight=%5.2f] [edgeCount=%d]\n", 
         primMSTGetWeight(mst), primMSTGetAllEdgesCount(mst));
     int V = edgeWeightedGraphGetVertexCount(mst->g);
-    for (int i = 0; i < V; i++) 
+    for (int i = 0; i < V; i++) {
         if (weightedEdgeIsValid(&mst->edgeTo[i])) {
             int v = weightedEdgeGetEither(&mst->edgeTo[i]);
             int w = weightedEdgeGetOther(&mst->edgeTo[i], v);
             double weight = weightedEdgeGetWeight(&mst->edgeTo[i]);
             printf("{ %d %d %5.2f}\n", v, w, weight);
         }
+    }
+}
+
+void primMSTDisplayAllEdgesByMapping(struct PrimMST *mst, unsigned char(*mapper)(int))
+{
+    printf("All edges in minimum spaning tree : [weight=%5.2f] [edgeCount=%d]\n", 
+        primMSTGetWeight(mst), primMSTGetAllEdgesCount(mst));
+    int V = edgeWeightedGraphGetVertexCount(mst->g);
+    for (int i = 0; i < V; i++) {
+        if (weightedEdgeIsValid(&mst->edgeTo[i])) {
+            int v = weightedEdgeGetEither(&mst->edgeTo[i]);
+            int w = weightedEdgeGetOther(&mst->edgeTo[i], v);
+            double weight = weightedEdgeGetWeight(&mst->edgeTo[i]);
+            printf("{ %c %c %5.2f}\n", mapper(v), mapper(w), weight);
+        }
+    }
 }
 int  primMSTGetAllEdgesCount(struct PrimMST *mst)
 {
