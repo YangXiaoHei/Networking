@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Algorithms/Dijkstra.h"
-#include "Algorithms/BreadthFirstPath.h"
+#include "Algorithms/PrimMST.h"
 
 static unsigned char vertices[] = {
     [0] = 'A', 
@@ -52,29 +51,8 @@ int main(int argc, char const *argv[])
     printf("%s", edgeWeightedGraphToStringWithMapping(g, valueOf));
     printf("*********************************************************\n");
     
-    printf("-------------------- Dijkstra -------------------\n");
-    struct DijkstraSP *sp = dijkstraInitWithEdgeWeightedGraph(g, src);
-    for (int v = 0; v < edgeWeightedGraphGetVertexCount(g); v++) {
-        if (dijkstraHasPathTo(sp, v)) {
-            struct Stack *s = dijkstraGetPathTo(sp, v);
-            printf("shortest path from %c to %c : [distance = %.0f]", valueOf(src), valueOf(v), dijkstraGetDistanceTo(sp, v));
-            stackDisplayWithMapping(s, valueOf);
-            stackRelease(&s);
-        } else 
-            printf("no path from %c to %c\n", valueOf(src), valueOf(v));
-    }
-    dijkstraRelease(&sp);
-    printf("---------------------- BFS ---------------------\n");
-    struct BreadthFirstPath *bfp = breadthFirstPathInit(g);
-    for (int i = 0; i < GET_VERTEX_COUNT; i++) {
-        if (breadthFirstPathHasPathBetween(bfp, src, i)) {
-            struct Stack *s = breadthFirstPathGetPathBetween(bfp, src, i);
-            printf("shortest path from %c to %c : ", valueOf(src), valueOf(i));
-            stackDisplayWithMapping(s, valueOf);
-            stackRelease(&s);
-        } else
-            printf("no path from %c to %c\n", valueOf(src), valueOf(i));
-    }
-    breadthFirstPathRelease(&bfp);
-    edgeWeightedGraphRelease(&g); 
+    struct PrimMST *mst = primMSTInit(g);
+    primMSTDisplayAllEdgesByMapping(mst, valueOf);
+    primMSTRelease(&mst);
+    return 0;
 }
