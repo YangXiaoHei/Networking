@@ -54,5 +54,6 @@ int main(int argc, char const *argv[])
     struct PrimMST *mst = primMSTInit(g);
     primMSTDisplayAllEdgesByMapping(mst, valueOf);
     primMSTRelease(&mst);
+    edgeWeightedGraphRelease(&g);
     return 0;
 }

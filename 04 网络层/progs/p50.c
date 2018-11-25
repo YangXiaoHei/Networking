@@ -56,4 +56,5 @@ int main(int argc, char const *argv[])
     primMSTDisplayAllEdgesByMapping(mst, valueOf);
     primMSTRelease(&mst);
     edgeWeightedGraphRelease(&g);
+    return 0;
 }
