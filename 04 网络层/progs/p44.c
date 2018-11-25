@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Algorithms_C/PrimMST.h"
+#include "Algorithms/PrimMST.h"
 
 static unsigned char vertices[] = {
     [0] = 'z', 
@@ -34,13 +34,6 @@ unsigned char valueOf(int i)
 int main(int argc, char const *argv[])
 {
     setbuf(stdout, NULL);
-
-    int src = indexOf('x');
-
-    if (argc != 1) {
-        src = indexOf(argv[1][0]);
-        LOG("src = %c %d", argv[1][0], src);
-    }
 
     struct G *g = edgeWeightedGraphInitWithMapping(7, indexOf);
     edgeWeightedGraphAddEdgeByMapping(g, 'z', 'y', 12);

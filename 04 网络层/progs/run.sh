@@ -8,7 +8,7 @@ fi
 
 file=$1
 
-dir="Algorithms_C"
+dir="Algorithms"
 
 output="exec_$file"
 

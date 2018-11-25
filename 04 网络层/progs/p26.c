@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Algorithms_C/Dijkstra.h"
+#include "Algorithms/Dijkstra.h"
 
 static unsigned char vertices[] = {
     [0] = 'z', 
