@@ -20,9 +20,27 @@ int weightedEdgeGetOther(struct edge_t *e, int v)
     return -1;
 }
 
+int weightedEdgeGetEither(struct edge_t *e)
+{
+    if (!weightedEdgeIsValid(e)) {
+        LOG("weightEdgeGetEither fail: edge is invalid!");
+        return -1;
+    }
+    return e->v;
+}
+
 int weightedEdgeIsValid(struct edge_t *e)
 {
     return e != NULL && e->v >= 0 && e->w >= 0;
+}
+
+double  weightedEdgeGetWeight(struct edge_t *e)
+{
+    if (!weightedEdgeIsValid(e)) {
+        LOG("weightedEdgeGetWeight fail: edge is invalid!");
+        return -1;
+    }
+    return e->weight;
 }
 
 void weightedEdgeSet(struct edge_t *e, int v, int w, double weight, struct edge_t *next)

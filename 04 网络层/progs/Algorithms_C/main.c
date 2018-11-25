@@ -3,6 +3,7 @@
 #include "Dijkstra.h"
 #include "PriorityQueue.h"
 #include "BreadthFirstPath.h"
+#include "PrimMST.h"
 
 void test()
 {
@@ -112,8 +113,17 @@ void test3()
     priorityQueueRelease(&pq);
 }
 
+void test4()
+{
+    struct G *g = edgeWeightedGraphRandomInit(5, 5);
+    printf("%s", edgeWeightedGraphToString(g));
+    struct PrimMST *mst = primMSTInit(g);
+    primMSTDisplayAllEdges(mst);
+    primMSTRelease(&mst);
+}
+
 int main(int argc, char const *argv[])
 {
-    test3();
+    test4();
     return 0;
 }

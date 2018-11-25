@@ -35,7 +35,9 @@ void        edgeWeightedGraphAddEdgeByMapping(struct G *g, unsigned char v, unsi
 const char *edgeWeightedGraphToString(struct G *g);
 const char *edgeWeightedGraphToStringWithMapping(struct G *g, unsigned char(*mapper)(int v));
 
+int     weightedEdgeGetEither(struct edge_t *e);
 int     weightedEdgeGetOther(struct edge_t *e, int v);
+double  weightedEdgeGetWeight(struct edge_t *e);
 int     weightedEdgeIsValid(struct edge_t *e);
 void    weightedEdgeInvalidate(struct edge_t *e);
 void    weightedEdgeSet(struct edge_t *e, int v, int w, double weight, struct edge_t *next);
