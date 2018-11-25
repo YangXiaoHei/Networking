@@ -1,26 +1,31 @@
 #ifndef _PRIORITYQUEUE_H_
 #define _PRIORITYQUEUE_H_
 
+typedef double PriorityQueueKeyType;
+
 struct PriorityQueue {
     int *pq;
     int *qp;
-    double *keys;
+    PriorityQueueKeyType *keys;
     int size;
+    int capacity;
 };
 
-struct PriorityQueue *priorityQueueInit(int size);
-void priorityQueueRelease(struct PriorityQueue *pq);
+struct PriorityQueue *priorityQueueInit(int capacity);
+void priorityQueueRelease(struct PriorityQueue **pq);
 void priorityQueueDisplay(struct PriorityQueue *pq);
 int priorityQueueIsFull(struct PriorityQueue *pq);
 int priorityQueueIsEmpty(struct PriorityQueue *pq);
 int priorityQueueGetSize(struct PriorityQueue *pq);
-double priorityQueueDequeue(struct PriorityQueue *pq);
-int priorityQueueInsertElementAtIndex(struct PriorityQueue  *pq, int i, double e);
-double priorityQueueGetElementOfIndex(struct PriorityQueue *pq, int i);
+void priorityQueueDequeue(struct PriorityQueue *pq);
+PriorityQueueKeyType priorityQueueGetMinKey(struct PriorityQueue *pq);
+int priorityQueueGetMinIndex(struct PriorityQueue *pq);
+void priorityQueueInsertElementAtIndex(struct PriorityQueue  *pq, int i, PriorityQueueKeyType e);
+PriorityQueueKeyType priorityQueueGetElementOfIndex(struct PriorityQueue *pq, int i);
 int priorityQueueContainsElementOfIndex(struct PriorityQueue *pq, int i);
 void priorityQueueRemoveElementOfIndex(struct PriorityQueue *pq, int i);
-void priorityQueueChangePriorityOfIndex(struct PriorityQueue *pq, int i, double e);
-void priorityQueueDecreasePriorityOfIndex(struct PriorityQueue *pq, int i, double e);
-void priorityQueueIncreasePriorityOfIndex(struct PriorityQueue *pq, int i, double e);
+void priorityQueueChangePriorityOfIndex(struct PriorityQueue *pq, int i, PriorityQueueKeyType e);
+void priorityQueueDecreasePriorityOfIndex(struct PriorityQueue *pq, int i, PriorityQueueKeyType e);
+void priorityQueueIncreasePriorityOfIndex(struct PriorityQueue *pq, int i, PriorityQueueKeyType e);
 
 #endif

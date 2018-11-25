@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Dijkstra.h"
+#include "PriorityQueue.h"
 #include "BreadthFirstPath.h"
 
 void test()
@@ -52,8 +53,67 @@ void test2()
     edgeWeightedGraphRelease(&g);
 }
 
+void test3() 
+{
+    struct PriorityQueue *pq = priorityQueueInit(9);
+
+#define INSERT_ALL  \
+    do {            \
+        priorityQueueInsertElementAtIndex(pq, 3, 3.4);  \
+        priorityQueueInsertElementAtIndex(pq, 1, 7.5);  \
+        priorityQueueInsertElementAtIndex(pq, 0, 2.1);  \
+        priorityQueueInsertElementAtIndex(pq, 5, 9.0);  \
+        priorityQueueInsertElementAtIndex(pq, 4, 3.4);  \
+        priorityQueueInsertElementAtIndex(pq, 7, 2.7);  \
+        priorityQueueInsertElementAtIndex(pq, 8, 1.1);  \
+        priorityQueueInsertElementAtIndex(pq, 6, 5.2);  \
+        priorityQueueInsertElementAtIndex(pq, 2, 8.6);  \
+    } while(0);
+
+#define POP_ALL     \
+    do {    \
+        while (!priorityQueueIsEmpty(pq)) { \
+            printf("最小值 %d : %5.1f\n",priorityQueueGetMinIndex(pq),     \
+                                        priorityQueueGetMinKey(pq));    \
+            priorityQueueDequeue(pq);   \
+        }   \
+        printf("---------------\n"); \
+    } while (0);
+
+
+    INSERT_ALL
+    priorityQueueDisplay(pq);
+    POP_ALL
+
+    INSERT_ALL
+    priorityQueueRemoveElementOfIndex(pq, 3);
+    priorityQueueRemoveElementOfIndex(pq, 4);
+    priorityQueueRemoveElementOfIndex(pq, 6);
+    priorityQueueRemoveElementOfIndex(pq, 7);
+    priorityQueueRemoveElementOfIndex(pq, 0);
+    POP_ALL
+
+    INSERT_ALL
+    priorityQueueChangePriorityOfIndex(pq, 8, 6.6);
+    priorityQueueChangePriorityOfIndex(pq, 0, 3.9);
+    priorityQueueChangePriorityOfIndex(pq, 2, 0.5);
+    priorityQueueChangePriorityOfIndex(pq, 6, 1.7);
+    POP_ALL
+
+    INSERT_ALL
+    priorityQueueDecreasePriorityOfIndex(pq, 5, 5.5);
+    priorityQueueDecreasePriorityOfIndex(pq, 2, 3.2);
+    priorityQueueDecreasePriorityOfIndex(pq, 7, 0.1);
+    priorityQueueDecreasePriorityOfIndex(pq, 1, 2.9);
+    priorityQueueDecreasePriorityOfIndex(pq, 8, 0.5);
+    priorityQueueDecreasePriorityOfIndex(pq, 6, 4.4);
+    POP_ALL
+
+    priorityQueueRelease(&pq);
+}
+
 int main(int argc, char const *argv[])
 {
-    test2();
+    test3();
     return 0;
 }
