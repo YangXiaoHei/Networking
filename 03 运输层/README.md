@@ -85,11 +85,11 @@
 
 	* 3.4.1 构造可靠数据传输协议
 
-		* 1. 经完全可靠信道的可靠数据传输: rdt 1.0
+		* 1. 底层信道可靠: rdt 1.0
 		
 		![rdt_1_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_1_0.png)
 		
-		* 2. 经具有比特差错信道的可靠数据传输：
+		* 2. 比特差错：
 			* rdt 2.0 (未考虑 **ACK** 或 **NAK** 包也会损坏)
 			
 			* ![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
@@ -108,7 +108,7 @@
 			
 			![rdt_2_2](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_2.png)
 			
-		* 3. 经具有比特差错的丢包信道的可靠数据传输：rdt 3.0 
+		* 3. 比特差错、丢包：rdt 3.0 
 		
 			* 为何引入定时器？
 				* 假设信道即会产生比特差错，也会丢包，那么此时我们的停等协议可能会永远卡死，而无法进入到下一个状态重传分组。卡死的困境可以被描述如下：发送方的分组丢失了，此时发送方等待接收方的确认信息，而接收方什么都没接收到，因此等待着发送方的分组到达，这便陷入了死锁。
