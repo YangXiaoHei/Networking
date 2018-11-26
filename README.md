@@ -46,9 +46,16 @@
    * [复习题 4.1 ~ 4.2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/复习题_41_42.md)  ✅
    * [复习题 4.3 ~ 4.4](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/复习题_43_44.md)  ✅
    * [复习题 4.5 ~ 4.7](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/复习题_45_47.md)  ✅
-   * [习题 P1 ~ P19](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_01_19.md)  ✅
-   * [习题 P20 ~ P39](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_20_39.md) ✅
-   * [习题 P40 ~ P55](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_40_55.md)
+   * [习题 P1 ~ P6 【虚电路】](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_01_06.md)  ✅
+   * [习题 P7 ~ P9 【路由器交换结构】](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_07_09.md)  ✅
+   * [习题 P10 ~ P18  【前缀匹配、IPv4 编址】](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_10_18.md)  ✅
+   * [习题 P19 ~ P20 【IP 数据报分片】](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_19_20.md)  ✅
+   * [习题 P21 ~ P23 【NAT】](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_21_23.md)  ✅
+   * [习题 P24 ~ P27 【链路状态路由选择算法】](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_24_27.md)  ✅
+   * [习题 P28 ~ P34  【距离向量路由选择算法】](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_28_34.md)  ✅
+   * [习题 P35 ~ P43  【BGP】](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_35_43.md)  ✅
+   * [习题 P44 ~ P55 【广播、多播、生成树】](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/习题_44_55.md)  ✅
+  
    
    
    
