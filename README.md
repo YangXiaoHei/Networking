@@ -30,14 +30,18 @@
    * [复习题 3.4](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题_34.md) ✅
    * [复习题 3.5](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题_35.md) ✅
    * [复习题 3.7](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/复习题_37.md) ✅
-   * [习题 P1 ~ P18](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_1_18.md) ✅
-   * [习题 P19 ~ P27](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_19_27.md) ✅
-   * [习题 P28 ~ P39](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_28_39.md) ✅
-   * [习题 P40 ~ P50](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_40_50.md) ✅ 
-   * [习题 P51 ~ P56](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_51_56.md) ✅ 
+   * [习题 P1 ~ P2 【目的端口、源端口理解】](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_01_02.md) ✅
+   * [习题 P3 ~ P5 【校验和计算】](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_03_05.md) ✅
+   * [习题 P6 ~ P16 【可靠传输协议原理】](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_06_16.md) ✅
+   * [习题 P17 ~ P21 【设计可靠传输协议】](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_17_21.md) ✅ 
+   * [习题 P22 ~ P24 【GBN、SR】](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_22_24.md) ✅ 
+   * [习题 P25 ~ P28 【TCP 报文段相关计算】](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_25_28.md) ✅ 
+   * [习题 P29 & P55 【SYN cookie】](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_29&55.md) ✅ 
+   * [习题 P30 ~ P33 【TCP 超时时间计算】](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_30_33.md) ✅ 
+   * [习题 P34 ~ P56 【TCP 拥塞控制算法: 理解 & 计算】](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/习题_34_56.md) ✅ 
    * 编程作业
-     * [Reliable_Stop_And_Wait_Alternating_Bit_Protocol](https://github.com/YangXiaoHei/Networking/tree/master/03%20运输层/progs/Stop_And_Wait) ✅
-     * [Reliable_Pipeline_Go_Back_N_Protocol](https://github.com/YangXiaoHei/Networking/tree/master/03%20运输层/progs/GBN) ✅
+     * [Stop_And_Wait_Alternating_Bit 仿真](https://github.com/YangXiaoHei/Networking/tree/master/03%20运输层/progs/Stop_And_Wait) ✅
+     * [Go_Back_N 仿真](https://github.com/YangXiaoHei/Networking/tree/master/03%20运输层/progs/GBN) ✅
    * [Wireshake lab-TCP](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/Wireshake_lab-TCP.md) ✅ 
    * [Wireshake lab-UDP](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/Wireshake_lab-UDP.md) ✅
    
