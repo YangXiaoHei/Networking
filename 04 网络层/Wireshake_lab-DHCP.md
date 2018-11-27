@@ -44,12 +44,12 @@ DHCP 实验
     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_7.png)
   
   * 5、这头四个报文的 Transaction-ID 是什么值？第二次 Request/ACK DHCP 报文中，Transaction-ID 又是什么值？设计这个 Transaction-ID 字段的目的是什么？
-  	* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_8.png)
-   * 头四个 DHCP 交换报文的 Transaction-ID 值是 0xc02d4d34
+  	 * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_8.png)
+    * 头四个 DHCP 交换报文的 Transaction-ID 值是 0xc02d4d34
   
-   * 第二次 Request/ACK DHCP 报文中，Transaction-ID 是 0xc02d4d35，递增了一
+    * 第二次 Request/ACK DHCP 报文中，Transaction-ID 是 0xc02d4d35，递增了一
   
-  * 设计这个字段的目的是区分每次客户端发起 IP 地址请求的事务，在一次 IP 地址的请求，分配和确认中，使用的都是同一个 Transaction-ID
+    * 设计这个字段的目的是区分每次客户端发起 IP 地址请求的事务，在一次 IP 地址的请求，分配和确认中，使用的都是同一个 Transaction-ID
   
   * 6、一台主机使用 DHCP 获取一个 IP 地址，但是一台主机的 IP 地址直到四个报文的交换结束之后才能被确认。如果 IP 地址直到四种报文交换之后才被确认，那么这四种报文的 IP 数据报中的 IP 字段是什么值呢？对于每种 DHCP 报文，指出在 IP 数据包中携带的源 IP 地址和目的 IP 地址。
   
@@ -72,20 +72,26 @@ DHCP 实验
     * 从上图可以看出，提供给我主机的 IP 地址是 `192.168.1.101`
   
   * 9、在截图的例子中，在主机和 DHCP 服务器之间，没有中继的存在。在 trace 中什么值指示了没有中继的存在，在你的实验中存在一个中继吗？如果存在，那么该中继的 IP 地址是什么？
-  * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_10.png)
-  * 从上图的 **Relay Agent IP Adress** 可以判断中继是否存在，因为 IP 地址是 `0.0.0.0`，所以可以判断中继不存在。
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_10.png)
+     * 从上图的 **Relay Agent IP Adress** 可以判断中继是否存在，因为 IP 地址是 `0.0.0.0`，所以可以判断中继不存在。
   
-  * 10、解释在 DHCP offer 报文中，路由器和子网掩码这几行的作用
+  * 10、解释在 DHCP offer 报文中，哪几行指示了路由器和子网掩码
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_10.png)
   
-  * 11、在页脚 2 提供的 DHCP 抓包轨迹文件中，DHCP 服务器提供了一个特定的 IP 地址给客户端，在客户端对第一个服务器的 offer 报文响应中，客户端是否接收了这个 IP 地址？在客户端响应的哪个位置是这个客户端请求的地址？
+  * 11、在页脚 2 提供的 DHCP 抓包轨迹文件中，DHCP 服务器提供了一个特定的 IP 地址给客户端，在客户端对第一个服务器的 offer 报文响应中，客户端是否接受了这个 IP 地址？在客户端响应的哪个位置是这个客户端请求的地址？
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_11.png)
+      * 从上图可以看出，客户端接受了这个 IP 地址。
   
   * 12、解释租期的作用，在你的实验中租期是多久？
-  * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_10.png)
-  * 从上图中可以看出，租期是 2 小时，这代表每经过 1 个小时就会发送一个单播的 DHCP Request 给服务器请求续期，如果没有收到对应的 ACK，那么就会在 3/4 租期时发送广播的 DHCP Request。
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_10.png)
+     * 从上图中可以看出，租期是 2 小时，这代表每经过 1 个小时就会发送一个单播的 DHCP Request 给服务器请求续期，如果没有收到对应的 ACK，那么就会在 3/4 租期时发送广播的 DHCP Request。
   
   * 13、DHCP release 报文的作用是啥？DHCP 是否会发布一个客户端 DHCP 请求报文回执的公告？如果客户端的 DHCP release 报文丢失了会发生什么？
+     * release 报文的作用是客户端告诉 DHCP 服务器，这个 IP 我不用了，你收回去给别人用吧。当 DHCP 服务器收到该 release 报文后不会对该报发送确认报文。如果这个 release 丢失的话，那么 DHCP 服务器就得等到这个 IP 地址的租期耗尽后，才会回收这个 IP 地址。
   
   * 14、清除 bootp 筛选，在 DHCP 报文交换期间，是否有任何的 ARP 分组被发送或者接收。如果是的话，解释这些 ARP 报文的目的。
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_12.png)
+     * 从上图可以看出，DHCP 报文交换期间的确有 ARP 分组被发送或接收，这些 ARP 分组是 DHCP 服务器发出的，用来确认分配出的 IP 地址没有被别的地方所使用。
    
   
   
