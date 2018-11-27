@@ -182,6 +182,12 @@
 				* 通过 **DHCP** 获取 IP 地址的步骤如下图所示
 				
 				  ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DHCP_interaction.png)
+				  
+			   * 在不同的 Wifi 间切换实际上发生的是不同 DHCP 服务器重新给你的主机分配 IP 地址的报文交换过程。
+			   
+			   * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DHCP_exchange_for_switching_wifi.png)
+			   * ⚠️我注意到一个事实，那就是切换 Wifi 时，我们的主机是不会主动发送 DHCP release 报文的，这就意味着在你切换 Wifi 被 DHCP 服务器分配新的 IP 地址后，原先的 DHCP 服务器分配给你的 IP 地址仍然不能被他人使用，直到租期到期。
+			   
 		
 			* **3、网络地址转换 NAT**
 			
