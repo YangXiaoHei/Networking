@@ -188,7 +188,6 @@
 			   * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DHCP_exchange_for_switching_wifi.png)
 			   * ⚠️我注意到一个事实，那就是切换 Wifi 时，我们的主机是不会主动发送 DHCP release 报文的，这就意味着在你切换 Wifi 被 DHCP 服务器分配新的 IP 地址后，原先的 DHCP 服务器分配给你的 IP 地址仍然不能被他人使用，直到租期到期。
 			   
-		
 			* **3、网络地址转换 NAT**
 			
 				* 具有 **NAT** 功能的路由器修改分组的 IP/Port 地址，使得子网内部的 IP 地址都可以自由分配，只需要在 **NAT** 表中完成到因特网 IP/Port 地址的映射关系即可。
