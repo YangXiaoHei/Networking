@@ -22,6 +22,8 @@
    * 2. 观察被捕获的分组轨迹
       * 在你的轨迹中，你应该可以看到一系列从你的主机发送的 ICMP 回显请求（在 Windows 平台）或者 UDP 报文段（在 Unix 平台），以及中间路由器返回的 TTL-exceeded ICMP 报文。在下列问题中，我们将假设你使用 Windows 机器。对应的 Unix 版本的问题应该很清晰。
       
+    * 下列回答使用的是 shell 命令 `traceroute gaia.cs.umass.edu 2000`，wifi 使用的是公司的香港专线。
+   
       * 1、你的电脑的 IP 地址是什么？
         * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_1.png)
         * 从上图可以看出，向目的地发送一系列 UDP 报文时，源 IP 地址是 10.10.5.168，这就是我电脑的 IP 地址，一个内网地址。
