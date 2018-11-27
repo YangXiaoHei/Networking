@@ -20,6 +20,10 @@ DHCP 实验
  根据上述步骤获得了下列结果如图：
  
  ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_0.png)
+ 
+ 在公司玩的，得到下面结果:
+ 
+  ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_000.png)
 
 现在让我们来看一看 Wireshake 窗口的结果，为了看到 DHCP 报文，在过滤输入框输入 `bootp` (DHCP 起源于更老的被称为 BOOTP 的协议，BOOTP 和 DHCP 都使用想相同的端口号，67 和 68，为了在当前版本的 Wireshake 中看到 DHCP 分组，你需要输入 `bootp` 而非 `dhcp`)我们可以从上图中看出 `sudo ipconfig set en0 DHCP` 导致了 DHCP 报文的产生：DHCP Request、DHCP NAK、DHCP Discover、DHCP Offer、DHCP Request、DHCP ACK
 
