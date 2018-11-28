@@ -8,37 +8,37 @@
    
 我们将运行 traceroute 并让它发送不同长度的数据报
 
-   * Linux / Unix / MacOs. 通过 Unix/MacOS traceroute 命令，发往指定目的地的 UDP 报文段的尺寸可以被显示设置。尺寸的值紧跟在目的地名字后面。比如，向 gaia.cs.umass.edu 发送 2000 字节的 traceroute 数据报将写成 : `$traceroute gaia.cs.umass.edu 2000`
+* Linux / Unix / MacOs. 通过 Unix/MacOS traceroute 命令，发往指定目的地的 UDP 报文段的尺寸可以被显示设置。尺寸的值紧跟在目的地名字后面。比如，向 gaia.cs.umass.edu 发送 2000 字节的 traceroute 数据报将写成 : `$traceroute gaia.cs.umass.edu 2000`
    
-   * 跟着下面动手做:
-     * 启动 Wireshake 并开始捕获分组(Capture->Start) 之后在 Wireshake Packet Options screen 点击 OK（我们不需要在这选择任何选项）。
+* 跟着下面动手做:
+  * 启动 Wireshake 并开始捕获分组(Capture->Start) 之后在 Wireshake Packet Options screen 点击 OK（我们不需要在这选择任何选项）。
      
-     * 如果你使用 Mac 或者 Unix 平台，输入三个 traceroute 命令。一个使用 50 字节长度，一个使用 2000 字节，一个使用 3500 字节。
+  * 如果你使用 Mac 或者 Unix 平台，输入三个 traceroute 命令。一个使用 50 字节长度，一个使用 2000 字节，一个使用 3500 字节。
      
-     * 停止 Wireshake 分组捕获。
+  * 停止 Wireshake 分组捕获。
      
   * 如果你无法在真实的网络环境中运行 Wireshake，你可以下载分组轨迹文件，这些轨迹文件在作者的 Windows 电脑上产生。当你探索下面的问题时，下载并使用这些轨迹文件同样有益处，即使你可以捕获并使用自己的分组轨迹。
   
-   * 2. 观察被捕获的分组轨迹
-      * 在你的轨迹中，你应该可以看到一系列从你的主机发送的 ICMP 回显请求（在 Windows 平台）或者 UDP 报文段（在 Unix 平台），以及中间路由器返回的 TTL-exceeded ICMP 报文。在下列问题中，我们将假设你使用 Windows 机器。对应的 Unix 版本的问题应该很清晰。
+* 2. 观察被捕获的分组轨迹
+  * 在你的轨迹中，你应该可以看到一系列从你的主机发送的 ICMP 回显请求（在 Windows 平台）或者 UDP 报文段（在 Unix 平台），以及中间路由器返回的 TTL-exceeded ICMP 报文。在下列问题中，我们将假设你使用 Windows 机器。对应的 Unix 版本的问题应该很清晰。
       
-    * 下列回答使用的是 shell 命令 `traceroute gaia.cs.umass.edu 2000`，wifi 使用的是公司的香港专线。
+  * 下列回答使用的是 shell 命令 `traceroute gaia.cs.umass.edu 2000`，wifi 使用的是公司的香港专线。
    
-    * 1、你的电脑的 IP 地址是什么？
-       * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_1.png)
-       * 从上图可以看出，向目的地发送一系列 UDP 报文时，源 IP 地址是 10.10.5.168，这就是我电脑的 IP 地址，一个内网地址。
+  * 1、你的电脑的 IP 地址是什么？
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_1.png)
+    * 从上图可以看出，向目的地发送一系列 UDP 报文时，源 IP 地址是 10.10.5.168，这就是我电脑的 IP 地址，一个内网地址。
       
-    * 2、在 IP 分组首部，上层协议的值是什么？
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_2.png)
-      * 从图中可以看出，上层协议号 17，运输层协议是 UDP。
+  * 2、在 IP 分组首部，上层协议的值是什么？
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_2.png)
+    * 从图中可以看出，上层协议号 17，运输层协议是 UDP。
       
-    * 3、IP 首部总共多少字节？IP 数据报的载荷有多少字节？你回答载荷长度的依据是什么。
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_2.png)
-      * IP 首部总共 20 字节，载荷为 1480 字节，依据是总长度为 1500 字节，1500 - 20 = 1480 字节。
+  * 3、IP 首部总共多少字节？IP 数据报的载荷有多少字节？你回答载荷长度的依据是什么。
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_2.png)
+    * IP 首部总共 20 字节，载荷为 1480 字节，依据是总长度为 1500 字节，1500 - 20 = 1480 字节。
       
-    * 4、这个 IP 数据报被分片了吗？你回答是或否的依据是什么？
-       * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_3.png)
-       * 被分片了，因为 2000 字节的数据报，总大小只有 1500 字节。而且 flag 字段不为 0，这代表此 IP 数据报后面还有其他分片。
+  * 4、这个 IP 数据报被分片了吗？你回答是或否的依据是什么？
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_3.png)
+    * 被分片了，因为 2000 字节的数据报，总大小只有 1500 字节。而且 flag 字段不为 0，这代表此 IP 数据报后面还有其他分片。
       
 接下来，根据 IP 源地址来排序分组轨迹。通过点击 Source 列来排序。选择第一个被你电脑发送的 ICMP 回显请求报文。
 
@@ -49,11 +49,12 @@
 	
 	* 7、描述你观察到的在 IP 数据报中的 Identification 域的值的样式 
 
-接下来(仍然使用已经根据源 IP 地址排序的分组轨迹) 寻找一系列由第一跳路由器返回给你主机的 TTL-exceeded ICMP 报文。
 
-	* 8、TTL 域和 Identification 域的值是什么？
+接下来(仍然使用已经根据源 IP 地址排序的分组轨迹) 寻找一系列由第一跳路由器返回给你主机的 TTL-exceeded ICMP 报文。
+ 
+  * 8、TTL 域和 Identification 域的值是什么？
 	
-	* 9、上面问题中的两个字段，是否在第一跳路由器返回给你主机的所有 TTL-exceeded ICMP 报文中都没有变化？为什么？
+  * 9、上面问题中的两个字段，是否在第一跳路由器返回给你主机的所有 TTL-exceeded ICMP 报文中都没有变化？为什么？
 	
 	
 * 分片
@@ -69,9 +70,9 @@
   
 * 现在，把你的主机发送的 ICMP 回显报文的尺寸修改到 3500 字节，然后找出第一个发送的报文段（不是分片）。
  
-   * 12、原始的数据报产生了多少个分片？
+  * 12、原始的数据报产生了多少个分片？
    
-   * 在这些分片中，IP 首部中的什么字段在变化？
+  * 在这些分片中，IP 首部中的什么字段在变化？
 
       
       
