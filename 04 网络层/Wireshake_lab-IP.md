@@ -24,19 +24,19 @@
       
   * 下列回答使用的是 shell 命令 `traceroute gaia.cs.umass.edu 2000`，wifi 使用的是公司的香港专线。
    
-  * 1、你的电脑的 IP 地址是什么？
-    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_1.png)
-    * 从上图可以看出，向目的地发送一系列 UDP 报文时，源 IP 地址是 10.10.5.168，这就是我电脑的 IP 地址，一个内网地址。
+ * 1、你的电脑的 IP 地址是什么？
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_1.png)
+     * 从上图可以看出，向目的地发送一系列 UDP 报文时，源 IP 地址是 10.10.5.168，这就是我电脑的 IP 地址，一个内网地址。
       
-  * 2、在 IP 分组首部，上层协议的值是什么？
-    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_2.png)
-    * 从图中可以看出，上层协议号 17，运输层协议是 UDP。
+ * 2、在 IP 分组首部，上层协议的值是什么？
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_2.png)
+     * 从图中可以看出，上层协议号 17，运输层协议是 UDP。
       
-  * 3、IP 首部总共多少字节？IP 数据报的载荷有多少字节？你回答载荷长度的依据是什么。
-    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_2.png)
-    * IP 首部总共 20 字节，载荷为 1480 字节，依据是总长度为 1500 字节，1500 - 20 = 1480 字节。
+ * 3、IP 首部总共多少字节？IP 数据报的载荷有多少字节？你回答载荷长度的依据是什么。
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_2.png)
+     * IP 首部总共 20 字节，载荷为 1480 字节，依据是总长度为 1500 字节，1500 - 20 = 1480 字节。
       
-  * 4、这个 IP 数据报被分片了吗？你回答是或否的依据是什么？
+* 4、这个 IP 数据报被分片了吗？你回答是或否的依据是什么？
     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_3.png)
     * 被分片了，因为 2000 字节的数据报，总大小只有 1500 字节。而且 flag 字段不为 0，这代表此 IP 数据报后面还有其他分片。
       
@@ -61,14 +61,14 @@
 
 接下来(仍然使用已经根据源 IP 地址排序的分组轨迹) 寻找一系列由第一跳路由器返回给你主机的 TTL-exceeded ICMP 报文。
  
-  * 8、TTL 域和 Identification 域的值是什么？
-   * 如下图所示:
-   * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_6.png)
-   * TTL 是 255、Identification 是 43642
+* 8、TTL 域和 Identification 域的值是什么？
+    * 如下图所示:
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_6.png)
+    * TTL 是 255、Identification 是 43642
 	
-  * 9、上面问题中的两个字段，是否在第一跳路由器返回的所有 TTL-exceeded ICMP 报文中都没有变化？为什么？
-  * Identification 一直在变化，因为 Identification 标志着不同的 IP 数据报，如果 Identification 相同，那说明相同的 IP 数据报都是一个更大的 IP 数据报的分片。
-  * TTL 都没有变化，都是 255，因为第一跳路由器直接返回给你的电脑，因此没有被中间路由器递减 TTL 字段。
+* 9、上面问题中的两个字段，是否在第一跳路由器返回的所有 TTL-exceeded ICMP 报文中都没有变化？为什么？
+    * Identification 一直在变化，因为 Identification 标志着不同的 IP 数据报，如果 Identification 相同，那说明相同的 IP 数据报都是一个更大的 IP 数据报的分片。
+    * TTL 都没有变化，都是 255，因为第一跳路由器直接返回给你的电脑，因此没有被中间路由器递减 TTL 字段。
 	
 * 分片
   * 根据 Time 列对分组轨迹进行排序。
