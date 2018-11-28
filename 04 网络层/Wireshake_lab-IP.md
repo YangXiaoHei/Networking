@@ -42,37 +42,57 @@
       
 接下来，根据 IP 源地址来排序分组轨迹。通过点击 Source 列来排序。选择第一个被你电脑发送的 ICMP 回显请求报文。
 
-	* 5、 在一系列你的电脑所发送的 ICMP 回显报文中，从一个到接下来发送的另一个，IP 数据报的哪个域总是在改变？
-	   * TTL 递增 1，因此 checksum 一定会改变，不同的 ip 数据报因此 identification 一定会改变。
+* 5、 在一系列你的电脑所发送的 ICMP 回显报文中，从一个到接下来发送的另一个，IP 数据报的哪个域总是在改变？
+   * TTL 递增 1，所以 checksum 一定会改变。因为不同的 ip 数据报，所以 identification 一定会改变。
 	
-	* 6、哪些域保持不变？这些域中的哪一个必须保持不变？那个域一定会改变？为什么？
+* 6、哪些域保持不变？这些域中的哪一个必须保持不变？那个域一定会改变？为什么？
+   * 保持不变的域：版本号、首部长度、服务类型、源和目的 IP 地址，上层协议号。
+   * 必须保持不变的域：版本号、首部长度、服务类型、源和目的 IP 地址，上层协议号。
+   * 一定会改变的域：TTL、校验和  
+	  
+* 7、描述你观察到的在 IP 数据报中的 Identification 域的值的样式 
+	* 属于相同 IP 数据报的同一组分片的 Identification 都相同， 不同 IP 数据报的 Identification 不同。
+	* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_4.png)
+	* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_5.png)
 	
-	* 7、描述你观察到的在 IP 数据报中的 Identification 域的值的样式 
-
+	||第 1 bit| 第 2 bit|第 3 bit|第 4 ~ 第 16 总共 13 bit |
+	|:---:|:---:|:---:|:---:|:---:|
+	||Reserved bit|Don't fragment|More fragment|fragment offset|
 
 接下来(仍然使用已经根据源 IP 地址排序的分组轨迹) 寻找一系列由第一跳路由器返回给你主机的 TTL-exceeded ICMP 报文。
  
   * 8、TTL 域和 Identification 域的值是什么？
+   * 如下图所示:
+   * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_6.png)
+   * TTL 是 255、Identification 是 43642
 	
-  * 9、上面问题中的两个字段，是否在第一跳路由器返回给你主机的所有 TTL-exceeded ICMP 报文中都没有变化？为什么？
-	
+  * 9、上面问题中的两个字段，是否在第一跳路由器返回的所有 TTL-exceeded ICMP 报文中都没有变化？为什么？
+  * Identification 一直在变化，因为 Identification 标志着不同的 IP 数据报，如果 Identification 相同，那说明相同的 IP 数据报都是一个更大的 IP 数据报的分片。
+  * TTL 都没有变化，都是 255，因为第一跳路由器直接返回给你的电脑，因此没有被中间路由器递减 TTL 字段。
 	
 * 分片
   * 根据 Time 列对分组轨迹进行排序。
   
-  * 10、找到在你把分组尺寸修改到 2000 字节后，你电脑发送的第一个 ICMP 回显请求报文。这个报文是否分片成了多个 IP 数据报？[注意：如果你发现你的分组没有被分片，你应该下载 zip 文件 `http://gaia.cs.umass.edu/wireshark-labs/wireshark-traces.zip` 并解压缩得到文件名为 ip-ethereal-trace-1 的分组轨迹文件，如果你的电脑有一个以太网接口，超过 2000 字节的分组应该会导致分片]
+* 10、找到在你把分组尺寸修改到 2000 字节后，你电脑发送的第一个 ICMP 回显请求报文。这个报文是否分片成了多个 IP 数据报？[注意：如果你发现你的分组没有被分片，你应该下载 zip 文件 `http://gaia.cs.umass.edu/wireshark-labs/wireshark-traces.zip` 并解压缩得到文件名为 ip-ethereal-trace-1 的分组轨迹文件，如果你的电脑有一个以太网接口，超过 2000 字节的分组应该会导致分片]
+    * 是的，被分片
   
   * 11、打印出被分片的 IP 数据报的第一个分片。在 IP 首部中什么信息指示了数据报被分片？什么信息指示了这是相较于后续分片的第一个分片？这个 IP 数据报有多长？
+    * 在 flag 字段中第 3 bit 被设置为 1，这代表有更多的分片。
   
   * 12、打印这个被分片 IP 数据报的第二个分片。首部中什么信息指示出这不是第一个分片？是否有更多的分片？你如何辨别出这一点？
+    * offset 域不为 0 指出了这不是第一个分片，如果此时 flag 被置为 1 表示着后面还有更多的分片，如果为 0，说明这就是最后一个分片。
   
   * 13、在第一个 IP 分片和第二个分片中，IP 首部中什么字段发生了变化？
-  
+    * 改变的字段：校验和，是否有更多分片的 flag，片偏移
+   
 * 现在，把你的主机发送的 ICMP 回显报文的尺寸修改到 3500 字节，然后找出第一个发送的报文段（不是分片）。
  
   * 12、原始的数据报产生了多少个分片？
+     * 从下图可以看出，产生了 3 个分片:
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_ip_7.png)
    
   * 在这些分片中，IP 首部中的什么字段在变化？
+    * 校验和，是否有更多分片的 flag，片偏移，总长度
 
       
       
