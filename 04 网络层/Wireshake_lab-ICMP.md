@@ -78,7 +78,8 @@ Figure 5 显示了 Wireshake 捕获每台路由器返回的 ICMP 分组的窗口
   * 它比 ICMP 回显分组有更多的字段，它包含了原先 IP 数据报的首部，以及原先 IP 数据报载荷的前 8 个字节。因为 Unix/Linux 平台发送的是 UDP 分组，所以可以看到 ICMP TTL-exceeded 分组中包含了 UDP 的首部（刚好 8 个字节）
 
 * 9、检查源主机接受到的最后三个 ICMP 分组，这些分组和 ICMP 错误分组有何不同？为什么会有这些不同？
-  * 如图所示 ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_icmp_5.png)	
+  * 如图所示 
+  * ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_icmp_4.png)	
   * 前面的错误分组是 TTL-exceeded ICMP 分组，这代表 TTL 被减为 0 然后分组被路由器丢弃。但被目的主机接收到的分组 TTL 肯定不为 0，也就不会产生 ICMP TTL-exceeded 分组，那么如何判断是否到达了目的主机呢？在 Linux/Unix 平台上，traceroute 是用 UDP 来发送的，它会选择一个很大的端口号，以确保目的主机上所有应用程序都不会使用该端口号。比如下图
   ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_icmp_5.png)	
   * 这样的话目的主机就会回传一个 Destination unreachable 的 ICMP 分组，源主机根据 ICMP 是目的地不可达还是超时 ( TTL被减为 1 ) 来判断是否到达目的地。
