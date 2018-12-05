@@ -49,7 +49,7 @@
      * [Wireshake lab - UDP](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/Wireshake_lab-UDP.md) ✅
    
 * 第 4 章 网络层
-   * [note](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/README.md) 
+   * [note](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/README.md)  ✅
    * [复习题 4.1 ~ 4.2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/复习题_41_42.md)  ✅
    * [复习题 4.3 ~ 4.4](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/复习题_43_44.md)  ✅
    * [复习题 4.5 ~ 4.7](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/复习题_45_47.md)  ✅
@@ -73,8 +73,8 @@
      
 * 第 5 章 链路层
   * [note](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/README.md)
-  * [复习题 5.1 ~ 5.2](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/复习题_51_52.md)
-  * [复习题 5.3](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/复习题_53.md)
+  * [复习题 5.1 ~ 5.2](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/复习题_51_52.md) ✅
+  * [复习题 5.3](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/复习题_53.md) ✅
   
    
    
