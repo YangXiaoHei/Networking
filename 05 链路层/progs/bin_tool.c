@@ -1,110 +1,132 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "bin_tool.h"
 
-static unsigned char _buf[128];
+static char _buf[128];
 
-typedef unsigned long      TUINT64;
-typedef unsigned           TUINT32;
-typedef long long          TINT128;
-typedef long               TINT64;
-typedef int                TINT32;
-typedef unsigned short     TUINT16;
-typedef unsigned char      TUINT8;
-typedef short              TINT16;
-typedef char               TINT8;
-
-typedef enum EN_BIN_TOOL_TYPE {
-    EN_IGNORE_LEADING_ZERO  = 1 << 0,
-    EN_GROUP_IN_FOURS       = 1 << 1,
-    EN_GROUP_IN_EIGHTS      = 1 << 2
-} EN_BIN_TOOL_TYPE;
-
-const char *u64ToBinaryString(TUINT64 a, EN_BIN_TOOL_TYPE type)
-{
-    int i = 63, j = 0, len = 0;
-    int counter = 0;
-    if (type & EN_IGNORE_LEADING_ZERO) 
-        while(i >= 0 && ((a >> i) & 1) == 0) i--;   
-    while(i >= 0) 
-        _buf[j++] = ((a >> i--) & 1) + '0';
-    _buf[j] = 0;
-    // if (type & EN_GROUP_IN_EIGHTS) {
-    //     while (++counter < j) {
-    //         if (counter % 8 == 0) {
-
-    //         }
-    //     }
-    // }
-
-    return _buf;
+#define INT_2_BIN_PROTOTYPE(_prefix_, _intype_)                         \
+const char *_prefix_##ToBinaryString(_intype_ a, EN_BIN_TOOL_TYPE type) \
+{                                                               \
+    int size = sizeof(a) << 3;                                  \
+    int i = size - 1, j = 0, m = 0, n = 0, groups = 0;          \
+    int mod = 0;                                                \
+                                                                \
+    /* 忽略先导零 */                                              \
+    if (type & EN_IGNORE_LEADING_ZERO)                          \
+    while(i >= 0 && ((a >> i) & 1) == 0) i--;                   \
+                                                                \
+    /* 拼完 0 1 串 */                                            \
+    while(i >= 0)                                               \
+        _buf[j++] = ((a >> i--) & 1) + '0';                     \
+    _buf[j] = 0;                                                \
+                                                                \
+    /* 要分成多少组？空格分隔 */                                    \
+    groups = (type & EN_GROUP_IN_EIGHTS) ? 8 : (type & EN_GROUP_IN_FOURS) ? 4 : 128;    \
+    if (groups == 128)                                          \
+    return _buf;                                                \
+                                                                \
+    /* 如果要分组，先找出余数 ->[xxx] xxxxxxxx xxxxxxxx... */       \
+    mod = j % groups;                                           \
+    char tmp[128];                                              \
+    while (mod--) {                                             \
+        tmp[n] = _buf[n];                                       \
+        n++;                                                    \
+    }                                                           \
+    /* 此时 n == mod，但 mod 可能为 0 */                          \
+    if (n != 0) {                                               \
+        tmp[n++] = ' ';                                         \
+        m = n - 1;                                              \
+    }                                                           \
+    /* 分组，用空格来分隔字符串 */                                  \
+    mod = j % groups;                                           \
+    while (m < j) {                                             \
+        if (m - mod > 0 && (m - mod) % groups == 0)             \
+            tmp[n++] = ' ';                                     \
+            tmp[n++] = _buf[m++];                               \
+    }                                                           \
+    tmp[n] = 0;                                                 \
+    memmove(_buf, tmp, n + 1);                                  \
+    return _buf;                                                \
 }
 
-TUINT64 binaryStringToU64(const char *binaryStr)
-{
-    unsigned long long reg = 0;
-    unsigned char c;
-    int i, j, k;
-    size_t len = strlen(binaryStr);
-    for (i = 0, k = 0; k < len; k++) {
-        c = binaryStr[len - k - 1];
-        j = c - '0';
-        if (c == ' ') continue;
-        if (j != 0 && j != 1) 
-            goto invalid;
-        reg |= (j << i++);
-        if (i >= 64)
-            goto overflow;
-    }
-    return reg;
-invalid:
-    fprintf(stderr, "%s must be value of {1, 0, space}\n", binaryStr);
-    return 0;
-overflow:
-    fprintf(stderr, "%s cause overflow for long long type!");
-    return 0;
+INT_2_BIN_PROTOTYPE(u64, TUINT64)
+INT_2_BIN_PROTOTYPE(i64, TINT64)
+INT_2_BIN_PROTOTYPE(u32, TUINT32)
+INT_2_BIN_PROTOTYPE(i32, TINT32)
+INT_2_BIN_PROTOTYPE(u16, TUINT16)
+INT_2_BIN_PROTOTYPE(i16, TINT16)
+INT_2_BIN_PROTOTYPE(u8, TUINT8)
+INT_2_BIN_PROTOTYPE(i8, TINT8)
+
+#define BIN_2_INT_PROTOTYPE(_inttype_, _suffix_)          \
+_inttype_ binaryStringTo##_suffix_(const char *binary)    \
+{                                                \
+    _inttype_ reg = 0;                           \
+    int size = sizeof(reg) << 3;                 \
+    unsigned char c;                             \
+    int i = 0, j = 0, k = 0;                     \
+    size_t len = strlen(binary);                 \
+    for (; k < len; k++) {                       \
+        c = binary[len - k - 1];                 \
+        j = c - '0';                             \
+        if (c == ' ') continue;                  \
+        if (j != 0 && j != 1)                    \
+            goto invalid;                        \
+        reg |= (j << i++);                       \
+        if (i > size)                            \
+            goto overflow;                       \
+    }                                            \
+    return reg;                                  \
+invalid:                                                            \
+    fprintf(stderr, "%s must be value of {1, 0, ' '}\n", binary);   \
+    return 0;                                                       \
+overflow:                                                           \
+    fprintf(stderr, "%s cause overflow\n", binary);                 \
+    return 0;                                                       \
 }
 
-TUINT32 binaryStringToU32(const char *binaryStr)
-{
+BIN_2_INT_PROTOTYPE(TUINT64, U64)
+BIN_2_INT_PROTOTYPE(TINT64, I64)
+BIN_2_INT_PROTOTYPE(TUINT32, U32)
+BIN_2_INT_PROTOTYPE(TINT32, I32)
+BIN_2_INT_PROTOTYPE(TUINT16, U16)
+BIN_2_INT_PROTOTYPE(TINT16, I16)
+BIN_2_INT_PROTOTYPE(TUINT8, U8)
+BIN_2_INT_PROTOTYPE(TINT8, I8)
 
+/*
+ TUINT64 binaryStringToU64(const char *binary);
+ TINT64 binaryStringToI64(const char *binary);
+ TUINT32 binaryStringToU32(const char *binary);
+ TINT32 binaryStringToI32(const char *binary);
+ TUINT16 binaryStringToU16(const char *binary);
+ TINT16 binaryStringToI16(const char *binary);
+ TUINT8 binaryStringToU8(const char *binary);
+ TINT8 binaryStringToI8(const char *binary);
+ 
+ const char *u64ToBinaryString(TUINT64, EN_BIN_TOOL_TYPE type);
+ const char *i64ToBinaryString(TINT64, EN_BIN_TOOL_TYPE type);
+ const char *u32ToBinaryString(TUINT32, EN_BIN_TOOL_TYPE type);
+ const char *i32ToBinaryString(TINT32, EN_BIN_TOOL_TYPE type);
+ const char *u16ToBinaryString(TUINT16, EN_BIN_TOOL_TYPE type);
+ const char *i16ToBinaryString(TINT16, EN_BIN_TOOL_TYPE type);
+ const char *u8ToBinaryString(TUINT8, EN_BIN_TOOL_TYPE type);
+ const char *i8ToBinaryString(TINT8, EN_BIN_TOOL_TYPE type);
+ */
+
+const char *asciiToBinaryString(unsigned char ascii)
+{
+    return u8ToBinaryString(ascii, EN_GROUP_IN_FOURS);
 }
 
-TUINT16 binaryStringToU16(const char *binaryStr)
+unsigned char binaryStringToAscii(const char *binary)
 {
-
+    return binaryStringToU8(binary);
 }
 
-TUINT8 binaryStringToU8(const char *binaryStr)
+void printAsciiString(const char *asciiString)
 {
-
-}
-
-TINT64 binaryStringTo64(const char *binaryStr)
-{
-
-}
-
-TINT32 binaryStringTo32(const char *binaryStr)
-{
-
-}
-
-TINT16 binaryStringTo16(const char *binaryStr)
-{
-
-}
-
-TINT8 binaryStringTo8(const char *binaryStr)
-{
-
-}
-
-int main(int argc, char const *argv[])
-{
-    // printf("%lld\n", binaryStringToU128("000 1 1 1 1 1 1"));
-    printf("%s\n", u64ToBinaryString(256, EN_IGNORE_LEADING_ZERO));
-
-
-    return 0;
+    for (int i = 0; i < strlen(asciiString); i++)
+        printf("%5d %c -> %s\n", asciiString[i], asciiString[i], asciiToBinaryString(asciiString[i]));
 }

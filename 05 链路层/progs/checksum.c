@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 unsigned short checksum(unsigned short *addr, int len)
 {
     unsigned int sum = 0;
@@ -29,24 +25,4 @@ unsigned short checksum(unsigned short *addr, int len)
     /* 取反码 */
     anwser = ~sum;
     return anwser;
-}
-
-void printb(unsigned short a) 
-{
-    for (int i = 15; i >= 0; i--) 
-        printf("%d", (a >> i) & 1);
-    printf("\n");
-}
-
-int main(int argc, char const *argv[])
-{
-    if (argc != 2) {
-        printf("usage : %s <#msg>", argv[0]);
-        exit(1);
-    }    
-
-    unsigned short cks = checksum((unsigned short *)argv[1], strlen(argv[1]));
-    printf("checksum of %s is 【%d】\n",argv[1], cks);
-    printb(cks);
-    return 0;
 }
