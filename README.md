@@ -75,6 +75,8 @@
   * [note](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/README.md)
   * [复习题 5.1 ~ 5.2](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/复习题_51_52.md) ✅
   * [复习题 5.3](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/复习题_53.md) ✅
+  * [复习题 5.4](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/复习题_54.md) 
+  * [习题 P1 ~ P7 【奇偶校验、校验和、CRC】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_01_07.md) 
   
    
    
