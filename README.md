@@ -78,8 +78,13 @@
   * [复习题 5.4](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/复习题_54.md) 
   * [习题 P1 ~ P7 【奇偶校验、校验和、CRC】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_01_07.md) 
   * [习题 P8 ~ P13 【时隙 ALOHA、纯 ALOHA、轮询多路访问】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_08_13.md) ✅
-  * [习题 P14 ~ P16 【ARP、MAC 地址、交换机寻址】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_14_16.md) ✅ 
-  * [习题 P17 ~ P20 【CSMA/CD】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_17_20.md)
+  * [习题 P14 ~ P16 & P21 ~ P22 & P26 【ARP、MAC 地址、交换机寻址】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_14_16.md) ✅ 
+  * [习题 P17 ~ P20 【CSMA/CD】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_17_20.md)  ✅ 
+  * [习题 P23 ~ P25 【交换机对比集线器】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_23_25.md) ✅ 
+  * [习题 P27【IP 语音应用】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_27.md) ✅ 
+  * [习题 P28 ~ P30【VLAN、MPLS】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_28_30.md) ✅ 
+  * [习题 P31【从打开电脑到获取 Web 页面都发生了什么？】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_31.md) 
+  * [习题 P32 ~ P33【等级体系结构--数据中心】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_28_30.md) ✅ 
   
    
    
