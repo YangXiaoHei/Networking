@@ -123,6 +123,7 @@
         * ![](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/images/ethernet_frame_structure.png)
         
         * **数据字段** ：46 ~ 1500 字节,如果 IP 数据报超过 1500 字节，则主机必须将数据报分片，如果 IP 数据报小于 46 字节，则必须被填充到 46 字节。因为以太网的 10 Mbps 最大传播时延是 57.6 us，因此为了碰撞一定能被能被侦测到 `L/R >= 57.6 us`，所以 `L >= 72 bytes`，即 IP 数据报最小为 `72 - 26 = 46 bytes` 。
+            * ⚠️注意：Wireshake 捕获到的帧长度会小于 72 字节，这是因为 Wireshake 没有拿到帧的第一手信息。链路层大部分功能用硬件实现，网卡中的适配器将前同步码同步完时间，CRC 检错完就去掉了，不会将其传上来，并且 Wireshake 会将多余的填充字段去掉。
         
         * **目的 MAC** ：若接收方收到的 MAC 不是广播 MAC 或者自己的 MAC，那么它直接丢弃该帧。
         
