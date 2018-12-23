@@ -86,6 +86,14 @@
   * [习题 P31【从打开电脑到获取 Web 页面都发生了什么？】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_31.md) 
   * [习题 P32 ~ P33【等级体系结构--数据中心】](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/习题_28_30.md) ✅ 
   
+* 计算机网络中的安全
+  * [note](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/README.md)
+  * [复习题 8.1](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_81.md)
+  * [复习题 8.2](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_82.md)
+  * [复习题 8.3 ~ 8.4](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_83_84.md)
+  * [复习题 8.5 ~ 8.8](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_85_88.md)
+  * [复习题 8.9](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_89.md)
+  
    
    
    
