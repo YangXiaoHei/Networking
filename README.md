@@ -93,6 +93,7 @@
   * [复习题 8.3 ~ 8.4](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_83_84.md) ✅
   * [复习题 8.5 ~ 8.8](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_85_88.md) ✅
   * [复习题 8.9](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_89.md) ✅
+  * [习题 P1 ~ P6【对称加密】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_01_06.md) 
   
    
    
