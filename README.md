@@ -91,8 +91,8 @@
   * [复习题 8.1](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_81.md) ✅
   * [复习题 8.2](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_82.md) ✅
   * [复习题 8.3 ~ 8.4](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_83_84.md) ✅
-  * [复习题 8.5 ~ 8.8](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_85_88.md)
-  * [复习题 8.9](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_89.md)
+  * [复习题 8.5 ~ 8.8](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_85_88.md) ✅
+  * [复习题 8.9](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_89.md) ✅
   
    
    
