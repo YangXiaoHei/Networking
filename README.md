@@ -96,6 +96,16 @@
   * [习题 P1 ~ P6【对称加密】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_01_06.md) ✅
   * [习题 P7 ~ P8【非对称加密 RSA】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_07_08.md)  ✅
   * [习题 P9【Diffie-Hellman 协商密钥算法】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_09.md)  ✅
+  * [习题 P10【使用 KDC 给 Alice 和 Bob 分发对称密钥】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_10.md)  ✅
+  * [习题 P11 ~ P12【书上内容理解：校验和为什么不好，提供机密性和完整性】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_11_12.md)  ✅
+  * [习题 P13【BitTorrent 中的完整性校验】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_13.md)  ✅
+  * [习题 P15 ~ P16【使用端点鉴别的注意事项】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_15_16.md)  ✅
+  * [习题 P17 ~ P18【安全电子邮件和 PGP】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_17_18.md)  ✅
+  * [习题 P19 ~ P21【SSL】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_19_21.md)  ✅
+  * [习题 P22 ~ P23【IPsec】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_22_23.md)  ✅
+  * [习题 P24【WEP】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_24.md)  ✅
+  * [习题 P25【传统分组过滤器，状态分组过滤器】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_25.md)  ✅
+  * [习题 P26【匿名与隐私】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_26.md)  ✅
   
    
    
