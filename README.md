@@ -88,7 +88,7 @@
   * 实验
      * [Wireshake lab - Ethernet_ARP](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/Wireshake_lab-Ethernet_ARP.md) ✅
   
-* 计算机网络中的安全
+* 第 8 章 计算机网络中的安全
   * [note](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/README.md)
   * [复习题 8.1](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_81.md) ✅
   * [复习题 8.2](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/复习题_82.md) ✅
@@ -109,7 +109,7 @@
   * [习题 P25【传统分组过滤器，状态分组过滤器】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_25.md)  ✅
   * [习题 P26【匿名与隐私】](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/习题_26.md)  ✅
   * 实验
-     * 
+     * [Wireshake lab - SSL](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/Wireshake_lab-SSL.md) 
   
    
    
