@@ -63,8 +63,27 @@
    * 9、这个记录项是否包含一个证书？或者证书包含在一个单独的记录项中？证书是否能被完整的塞到一个单独的以太网帧中?
       * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_8.png)
       * 从上图可以看出，这个证书包含在一个单独的记录项中，这个证书不能被完整的塞带一个以太网帧中，而是被分为三个 TCP 报文段来承载。
-      
+
+⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️        
+⚠️ 自己电脑捕获的 SSL 分组的加密算法看不懂，下面开始使用教材提供的轨迹 ⚠️
+⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+
 * **Client Key Exchange Record:**
    * 10、定位 Client Key Exchange 记录项，这个记录项是否包含一个 PMS？这个密钥是用来干嘛的？这个密钥是否被加密？如果是，如何加密的？这个被加密的密钥有多长？
-      * 
+      * 从下图可以看出，包含一个 PMS，该密钥用来让客户端和服务器共同导出 4 个密钥。这个 PMS 被服务器的公钥加密，总共有 128 字节长。 
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_9.png)
+     
+* **Change Cipher Spec Record (sent by client) and Encrypted Handshake Record:**     
+
+   * 11、Change Cipher Sepc 记录项的目的是啥？在你的分组轨迹中该记录项有多少字节？
+      * 目的是通知对方接下来要使用加密的方式传输报文咯，在我的分组轨迹中，这个记录项有 1 字节长。
+
+   * 12、在加密的握手报文记录项中，被加密的是什么？如何加密的？
+      * Encrypted Handshake Record 被加密的是所有客户端和服务器的所有握手报文，使用 MD5 和 SHA 两个摘要算法将各自计算出的哈希值连在一块，该加密报文用来验证 Key Exchange 和认证阶段是成功的。
+
+   * 13、服务器是否也发送了一个 Change Cipher Record 和一个 Encrypted Handshake Record 给客户端？这些记录项和客户端发送的有什么不同？
+      * 是的，服务器同样给客户端发送了 Change Cipher Record 和 Encrypted Handshake Record，这些报文只有发送者不同，一会是客户端，一会是服务器。
+
+      
+
    
