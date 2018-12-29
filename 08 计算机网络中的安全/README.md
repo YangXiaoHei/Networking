@@ -173,5 +173,5 @@
    * 应用程序网关 : 深度检测分组中的应用层字段。
       * 必须搭配网关来使用，先设置网关策略以使得只允许来自应用程序网关的流量外出，这样迫使所有内部流量都必须先经过应用程序网关，也就使得所有外出流量都会被应用程序网关检查。 
       *  如下图所示是应用程序网关的工作方式
-         * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/application_packet_filter.png)
+         * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/application_gateway_filter.png)
          
