@@ -53,7 +53,7 @@
    * 7、这个记录项是否包含一个不重数？如果包含的话，有多少字节长？在 SSL 中客户端和服务器包含不重数的目的是什么？
       * 在 ServerHello 中包含了一个不重数，如下图所示
       * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_6.png)
-      * 这个不重数总共有 32 字节，使用不重数的目的是防止重放攻击。
+      * 这个不重数总共有 32 字节，使用不重数的目的是防止 “连接重放”。
 
    * 8、这个记录项是否包含一个 Session ID？使用 Session ID 的目的是什么？
       * 包含了 Session ID，如下图所示
@@ -83,6 +83,12 @@
 
    * 13、服务器是否也发送了一个 Change Cipher Record 和一个 Encrypted Handshake Record 给客户端？这些记录项和客户端发送的有什么不同？
       * 是的，服务器同样给客户端发送了 Change Cipher Record 和 Encrypted Handshake Record，这些报文只有发送者不同，一会是客户端，一会是服务器。
+      
+* **Application Data**
+  * 14、application data 如何被加密？这些包含 application data 的记录项是否包含 MAC，Wireshake 能分辨出加密应用数据和 MAC 吗？
+     * 应用数据被服务器所选择的加密套件中的特定加密算法所加密，在这个分组轨迹中，使用的是 CBC AES 加密应用数据和 MAC，而 MAC 使用 SHA 算法生成。但是 Wireshake 并不能分辨出应用数据和 MAC。 
+    
+  * 15、注释以及解释你在轨迹中发现的好玩的地方。
 
       
 
