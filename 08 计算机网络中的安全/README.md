@@ -130,7 +130,7 @@
             * 鉴别密钥
             
       * IPsec 数据报格式如下图所示:
-         * sdsd
+         * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/IPsec_packet_structure.png)
          * 在初始 IPv4 数据报后面附上 “ESP 尾部” 字段。
          * 使用 SA 规定的密钥和算法加密该结果。
          * 在上面👆的加密量前添加一个 "ESP 首部" 字段。得到的包称为 "enchilada"
@@ -147,4 +147,31 @@
          * 首先使用 Diffie-Hellman 在路由器之间生成一个双向的 IKE SA。该 IKE SA 在这两台路由器之间提供了一个鉴别的和加密的信道。
          * 使用第一步的 IKE SA 信道，两侧协商 IPsec SA 算法和密钥。然后在两侧生成每个方向的一个 SA。
          * 因为在第二个阶段不涉及任何公钥密码，因此 IKE 能够以相对低的计算成本在两个 IPsec 实体间生成大量 SA。
+
+         
+* 防火墙
+   * 防火墙分为三类 : 传统分组过滤器，状态分组过滤器，应用程序网关
+   
+   * 传统分组过滤器 : 基于下列因素决定数据报允许通过还是丢弃。
+      * IP 源或目的地址
+      * 在 IP 数据报中的协议类型字段 : TCP、UDP、ICMP、OSPF 等
+      * TCP 或 UDP 的源或目的端口。
+      * TCP 标志比特: SYN、ACK 等。
+      * ICMP 报文类型。
+      * 数据报离开和进入网络的不同规则
+      * 对不同路由器接口的不同规则
+      * 如下图所示就是一张传统分组过滤器的策略表
+        * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/traditional_packet_filter.png)
+      
+   * 状态分组过滤器 : 跟踪多条 TCP
+      * 上面的传统分组过滤器允许来自外部的任何源端口为 80 的 ACK 为 1 的分组，但是这样的分组能够被试图用异常分组来绘制内部系统结构，执行 Dos 攻击。而状态分组过滤器通过跟踪 TCP 连接来解决这个问题。
+      * 状态分组过滤器通过观察三次握手来观察一条新连接的开始
+      * 状态分组过滤器当看到 FIN 分组时观察到连接的结束
+      * 如下图所示是一个状态分组过滤器的策略表
+         * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/stateful_packet_filter.png)
+      
+   * 应用程序网关 : 深度检测分组中的应用层字段。
+      * 必须搭配网关来使用，先设置网关策略以使得只允许来自应用程序网关的流量外出，这样迫使所有内部流量都必须先经过应用程序网关，也就使得所有外出流量都会被应用程序网关检查。 
+      *  如下图所示是应用程序网关的工作方式
+         * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/application_packet_filter.png)
          
