@@ -92,7 +92,7 @@ Windows 的 `arp` 命令不带任何参数时将会展示你电脑上的 ARP 缓
 
 回答下列问题：
 
-	![](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/images/wl_arp_1.png)
+	![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/05%20链路层/images/wl_arp_1.png)
 	
   * 10、包含 ARP 请求报文的以太网帧的源和目的地址是什么？用 16 进制表示。
     * 由上图可以看出，源和目的地址分别是 a4:5e:60:ef:99:4d 和 ff-ff-ff-ff-ff-ff
@@ -115,7 +115,7 @@ Windows 的 `arp` 命令不带任何参数时将会展示你电脑上的 ARP 缓
     
   * 13、现在找出 ARP 查询对应的 ARP 响应报文。
     * a、从以太网帧开始到 ARP opcode 域之间有多少字节？
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/images/wl_arp_2.png)
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/05%20链路层/images/wl_arp_2.png)
       * 从上图可以看出，有 20 字节。
       
     * b、对于有效载荷是 ARP 响应报文的以太网帧，opcode 字段的值是什么？

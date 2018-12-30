@@ -20,15 +20,15 @@
  
  当实验结束时，你的终端窗口应该看到如图 figure 1 所示。在这个例子中，源主机的 Ping 程序在深圳而目的主机的 Ping 程序在北京，从下面的窗口中我们可以看到，Ping 程序发送了 10 个查询分组并且收到 10 个响应，同时也注意对于每个响应，源主机计算了往返时间，对于这 10 个分组来说平均往返时间是 14.526 ms。
  	
- ![figure 1](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_icmp_1.png)	
+ ![figure 1](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_icmp_1.png)	
  
   在 figure 2 中提供了 Wireshake 输出的截图，在筛选框中输入 `icmp` 之后，注意到分组监控展示了 20 个分组，10 个 Ping 查询被源所发出而 10 个 Ping 响应被源所接收。同时也注意到源 IP 地址是一个 CIDR 为 192.168/12 的私有 IP 地址。而目的 IP 地址是百度北京的 Web 服务器 IP 地址，现在让我们把镜头移转到被客户端发送的第一个分组上，在下图中，这个分组的内容区域提供了关于该分组的信息，我们可以看到分组中的 IP 数据报的上层协议号是 01，这标示上层协议是 ICMP，也就是说这个 IP 数据报的载荷是 ICMP 分组报文。
   
-  ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_icmp_2.png)	
+  ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_icmp_2.png)	
   
   Figure 3 同样强调 ICMP，只是在分组内容窗口中展开了 ICMP 协议的详细信息，管擦好这个 Type 为 8 而且 Code 为 0 的 ICMP 回显分组，同时注意到这个 ICMP 分组包含了一个校验和字段，一个标志位字段，还有一个序列号字段。
   
-  ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_icmp_3.png)	
+  ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_icmp_3.png)	
   
 你应该回答下列问题
 
@@ -79,9 +79,9 @@ Figure 5 显示了 Wireshake 捕获每台路由器返回的 ICMP 分组的窗口
 
 * 9、检查源主机接受到的最后三个 ICMP 分组，这些分组和 ICMP 错误分组有何不同？为什么会有这些不同？
   * 如图所示 
-  * ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_icmp_4.png)	
+  * ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_icmp_4.png)	
   * 前面的错误分组是 TTL-exceeded ICMP 分组，这代表 TTL 被减为 0 然后分组被路由器丢弃。但被目的主机接收到的分组 TTL 肯定不为 0，也就不会产生 ICMP TTL-exceeded 分组，那么如何判断是否到达了目的主机呢？在 Linux/Unix 平台上，traceroute 是用 UDP 来发送的，它会选择一个很大的端口号，以确保目的主机上所有应用程序都不会使用该端口号。比如下图
-  ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_icmp_5.png)	
+  ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_icmp_5.png)	
   * 这样的话目的主机就会回传一个 Destination unreachable 的 ICMP 分组，源主机根据 ICMP 是目的地不可达还是超时 ( TTL被减为 1 ) 来判断是否到达目的地。
   * 在 Windows 平台上，traceroute 发送的是 ICMP 回显请求报文，因此当目的主机收到 TTL 为 1 的回显请求报文时，会给源主机回传 ICMP 回显 replay 报文。
   * 综上所述：根据 Unix/Linux 和 Windows 两种平台的不同，分别处理。如果是 Unix/Linux，最后三个分组是 ICMP Destination unreachable，如果是 Windows，最后三个分组是 ICMP echo replay。

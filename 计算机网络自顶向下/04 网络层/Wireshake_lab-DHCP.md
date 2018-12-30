@@ -19,36 +19,36 @@ DHCP 实验
 
  根据上述步骤获得了下列结果如图：
  
- ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_0.png)
+ ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_0.png)
  
  在公司玩的，得到下面结果:
  
-  ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_000.png)
+  ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_000.png)
 
 现在让我们来看一看 Wireshake 窗口的结果，为了看到 DHCP 报文，在过滤输入框输入 `bootp` (DHCP 起源于更老的被称为 BOOTP 的协议，BOOTP 和 DHCP 都使用想相同的端口号，67 和 68，为了在当前版本的 Wireshake 中看到 DHCP 分组，你需要输入 `bootp` 而非 `dhcp`)我们可以从上图中看出 `sudo ipconfig set en0 DHCP` 导致了 DHCP 报文的产生：DHCP Request、DHCP NAK、DHCP Discover、DHCP Offer、DHCP Request、DHCP ACK
 
 回答下列问题：
 
   * 1、DHCP 基于 UDP 还是 TCP 发送？
-    *  ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_1.png)
+    *  ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_1.png)
     * 从上图可以看出，DHCP 基于的运输层协议是 UDP，DHCP 是一个应用层协议。
   
   * 2、画出数据报的时序图解 在服务器和客户端之间交换的头四个分组 Discover/Offer/Request/ACK 。对每个分组，指出源端口号和目的端口号，这些端口号与在实验作业中给出的相同吗？
-    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_2.png)
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_2.png)
   
   * 3、你的主机的链路层地址是什么？
     * 即 Mac 地址，见下图
-      *  ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_3.png)
+      *  ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_3.png)
   
   * 4、在 DHCP 发现报文中什么字段的值区分了它和 DHCP 请求报文。
     * DHCP 报文中的 `Option` 字段中的 `DHCP Message Type` 字段区分了 `DHCP` 报文的类型，见下图
-    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_4.png)
-    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_5.png)
-    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_6.png)
-    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_7.png)
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_4.png)
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_5.png)
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_6.png)
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_7.png)
   
   * 5、这头四个报文的 Transaction-ID 是什么值？第二次 Request/ACK DHCP 报文中，Transaction-ID 又是什么值？设计这个 Transaction-ID 字段的目的是什么？
-  	 * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_8.png)
+  	 * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_8.png)
     * 头四个 DHCP 交换报文的 Transaction-ID 值是 0xc02d4d34
   
     * 第二次 Request/ACK DHCP 报文中，Transaction-ID 是 0xc02d4d35，递增了一
@@ -65,36 +65,36 @@ DHCP 实验
     
     * **DHCP ACK** 就是收到 **Request** 后服务器返回给客户端的确认，在这个 **ACK** 中，会携带 **DNS** 服务器 **IP** 地址，第一跳路由器地址，子网掩码，租期等各种信息。
 
-    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_9.png)
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_9.png)
   
   * 7、DHCP 服务器的 IP 地址是什么？
-    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_9.png)
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_9.png)
     * 从上图可以看出，DHCP 服务器的 IP 地址是 `192.168.1.1`
   
   * 8、DHCP 服务器使用 DHCP offer 报文提供给你的主机的 IP 地址是什么？
-    * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_10.png)
+    * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_10.png)
     * 从上图可以看出，提供给我主机的 IP 地址是 `192.168.1.101`
   
   * 9、在截图的例子中，在主机和 DHCP 服务器之间，没有中继的存在。在 trace 中什么值指示了没有中继的存在，在你的实验中存在一个中继吗？如果存在，那么该中继的 IP 地址是什么？
-     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_10.png)
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_10.png)
      * 从上图的 **Relay Agent IP Adress** 可以判断中继是否存在，因为 IP 地址是 `0.0.0.0`，所以可以判断中继不存在。
   
   * 10、解释在 DHCP offer 报文中，哪几行指示了路由器和子网掩码
-     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_10.png)
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_10.png)
   
   * 11、在页脚 2 提供的 DHCP 抓包轨迹文件中，DHCP 服务器提供了一个特定的 IP 地址给客户端，在客户端对第一个服务器的 offer 报文响应中，客户端是否接受了这个 IP 地址？在客户端响应的哪个位置是这个客户端请求的地址？
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_11.png)
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_11.png)
       * 从上图可以看出，客户端接受了这个 IP 地址。
   
   * 12、解释租期的作用，在你的实验中租期是多久？
-     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_10.png)
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_10.png)
      * 从上图中可以看出，租期是 2 小时，这代表每经过 1 个小时就会发送一个单播的 DHCP Request 给服务器请求续期，如果没有收到对应的 ACK，那么就会在 3/4 租期时发送广播的 DHCP Request。
   
   * 13、DHCP release 报文的作用是啥？DHCP 是否会发布一个客户端 DHCP 请求报文回执的公告？如果客户端的 DHCP release 报文丢失了会发生什么？
      * release 报文的作用是客户端告诉 DHCP 服务器，这个 IP 我不用了，你收回去给别人用吧。当 DHCP 服务器收到该 release 报文后不会对该报发送确认报文。如果这个 release 丢失的话，那么 DHCP 服务器就得等到这个 IP 地址的租期耗尽后，才会回收这个 IP 地址。
   
   * 14、清除 bootp 筛选，在 DHCP 报文交换期间，是否有任何的 ARP 分组被发送或者接收。如果是的话，解释这些 ARP 报文的目的。
-     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_dhcp_12.png)
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_dhcp_12.png)
      * 从上图可以看出，DHCP 报文交换期间的确有 ARP 分组被发送或接收，这些 ARP 分组是 DHCP 服务器发出的，用来确认分配出的 IP 地址没有被别的地方所使用。
    
   

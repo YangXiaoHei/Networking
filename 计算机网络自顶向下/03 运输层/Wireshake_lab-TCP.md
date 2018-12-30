@@ -5,7 +5,7 @@
 
 * 1.What is the IP address and TCP port number used by the client computer (source) that is transferring the file to gaia.cs.umass.edu?  To answer this question, it’s probably easiest to select an HTTP message and explore the details of the TCP packet used to carry this HTTP message, using the “details of the selected packet header window” (refer to Figure 2 in the “Getting Started with Wireshark” Lab if you’re uncertain about the Wireshark windows. 
 
-	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.1.png)
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.1.png)
 
 * 2.What is the IP address of gaia.cs.umass.edu? On what port number is it sending and receiving TCP segments for this connection? 
 
@@ -16,7 +16,7 @@
 
 * 3.What is the IP address and TCP port number used by your client computer (source) to transfer the file to gaia.cs.umass.edu?
 
-	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.2.png) 
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.2.png) 
 
 ### 3. TCP Basics
  
@@ -24,21 +24,21 @@
 
 * 4.What is the sequence number of the TCP SYN segment that is used to initiate the TCP connection between the client computer and gaia.cs.umass.edu?  What is it in the segment that identifies the segment as a SYN segment? 
 
-	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.3.png)  
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.3.png)  
 
 * 5.What is the sequence number of the SYNACK segment sent by gaia.cs.umass.edu to the client computer in reply to the SYN?  What is the value of the Acknowledgement field in the SYNACK segment?  How did gaia.cs.umass.edu determine that value? What is it in the segment that identifies the segment as a SYNACK segment? 
 
-	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.4.png)   
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.4.png)   
 
 * 6.What is the sequence number of the TCP segment containing the HTTP POST command?  Note that in order to find the POST command, you’ll need to dig into the packet content field at the bottom of the Wireshark window, looking for a segment with a “POST” within its DATA field. 
 	
 	> 先找到包含 `HTTP POST` 方法名的 TCP 报文段如下图所示
 	>
-	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.5.png)
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.5.png)
 	>
 	> 然后查看里面的详细字段，如下图所示
 	> 
-	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.6.png)  
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.6.png)  
 
 * 7.Consider the TCP segment containing the HTTP POST as the first segment in the TCP connection. What are the sequence numbers of the first six segments in the TCP connection (including the segment containing the HTTP POST)?  At what time was each segment sent?  When was the ACK for each segment received? Given the difference between when each TCP segment was sent, and when its acknowledgement was received, what is the RTT value for each of the six segments?  What is the EstimatedRTT value (see Section 3.5.3, page 239 in text) after the receipt of each ACK?  ***Assume that the value of the EstimatedRTT is equal to the measured RTT for the first segment***, and then is computed using the EstimatedRTT equation on page 239 for all subsequent segments. 
 
@@ -47,7 +47,7 @@
 	* 1、What are the sequence numbers of the first six segments in the TCP connection (including the segment containing the HTTP POST)?
 	
 	> 由下图可以看出，该 TCP 连接的前 6 个发送端发出的包是 4、5、6、7、11、12。这 6 个包的序号是 1、615、754、2182、3610、5038
-	>  ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.7.png)  
+	>  ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.7.png)  
 	
 	* 2、At what time was each segment sent
 	
@@ -67,7 +67,7 @@
 	
 	* 3、When was the ACK for each segment received
 		
-		> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.8.png) 
+		> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.8.png) 
 		>
 		> 由上图可以看出，这 6 个包的 ACK 分别是 8、9、10、16、17、18
 		> 这 6 个 ACK 包的接收时间分别为 
@@ -158,9 +158,9 @@
 
 	> 是用筛选宏 `tcp && ((ip.src == 128.119.245.12 && ip.dst == 192.168.1.101))` 得到如下图所示的接收方的确认包，从中观察接收窗口字段可以看出接收缓存的变化趋势。
 	>
-	>![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.9.png) 
+	>![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.9.png) 
 	>
-	>![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.10.png) 
+	>![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.10.png) 
 	>
 	> 从中可以看到，接收方会扩充自己的缓存大小，从而使得发送方从始至终没有被接收方的接收缓存遏制发送速率
  
@@ -169,16 +169,16 @@
 	>
 	> 使用筛选宏 `tcp && ((ip.src == 192.168.1.101 && ip.dst == 128.119.245.12))` 得到发送方发送的所有数据包
 	>
-	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.11.png) 
-	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.12.png) 
-	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.13.png) 
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.11.png) 
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.12.png) 
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.13.png) 
 	> 
 	> 没有重传的分组，通过检查分组序号是否有重复的来推断。
 
 
 * 11.How much data does the receiver typically acknowledge in an ACK?  Can you identify cases where the receiver is ACKing every other received segment (see Table 3.2 on page 247 in the text). 
 
-	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.14.png) 
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.14.png) 
 	> 从中可以看出，有两个冗余 ACK 产生，但是发送方并没有任何重传分组，因此可以推断出到达接收方的某两个分组发生了失序。
 	
 * 12.What is the throughput (bytes transferred per unit time) for the TCP connection? Explain how you calculated this value. 
@@ -207,7 +207,7 @@
 
 	> 见下图
 	> 
-	> ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/wl_tcp.15.png) 
+	> ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/wl_tcp.15.png) 
 	> 
 	> 从图中并不能看出慢启动是何时结束，拥塞避免是何时开始的
 	>

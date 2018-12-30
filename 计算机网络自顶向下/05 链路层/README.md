@@ -18,7 +18,7 @@
      * 路由器: 链路层协议实现在线路卡中。
      
      * 主机:
-       * ![](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/images/link_layer_imp_position.png)
+       * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/05%20链路层/images/link_layer_imp_position.png)
        * 在发送端，控制器取得了协议栈高层生成并存储在主机内存中的数据报，在链路层帧中封装该数据报，然后遵循链路接入协议将该帧传进通信链路中。在接收端，控制器接收了整个帧，抽取出网络层数据报。如果链路层执行差错检测，则发送控制器在该帧首部设置差错检测比特，由接收控制器执行差错检测。
        
 * 5.2 差错检测和纠正技术
@@ -29,7 +29,7 @@
   	 
   * 5.2.2 检验和方法
   
-     * 实现 [checksum.c](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/progs/checksum.c)
+     * 实现 [checksum.c](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/05%20链路层/progs/checksum.c)
   
   * 5.2.3 循环冗余检测 (CRC)
   
@@ -100,7 +100,7 @@
         * 从令牌环网的工作方式可以看出，令牌需要在 A 的帧绕环一整圈后才能被 A 释放，因此当局域网有很大的周长时，绕一阵圈相当耗时，下一个结点要等好久才能轮到自己说话。
   
   * 5.3.4 DOCSIS
-     * ![](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/images/DOCSIS.png)
+     * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/05%20链路层/images/DOCSIS.png)
      
      * 上行信道被 CMTS 使用 TDM 划分，一组时隙为特殊请求帧时隙；一组时隙为数据帧时隙。调制电缆解调器在请求帧时隙间隔内向 CMTS 发送请求帧来告知 CMTS 自己有数据要发送。
      
@@ -120,7 +120,7 @@
         * 跨网段时，目的 MAC 填写的是网关路由器的 MAC 而不是目的主机的 MAC。
   * 5.4.2 以太网
      * 1、以太网帧结构
-        * ![](https://github.com/YangXiaoHei/Networking/blob/master/05%20链路层/images/ethernet_frame_structure.png)
+        * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/05%20链路层/images/ethernet_frame_structure.png)
         
         * **数据字段** ：46 ~ 1500 字节,如果 IP 数据报超过 1500 字节，则主机必须将数据报分片，如果 IP 数据报小于 46 字节，则必须被填充到 46 字节。因为以太网的 10 Mbps 最大传播时延是 57.6 us，因此为了碰撞一定能被能被侦测到 `L/R >= 57.6 us`，所以 `L >= 72 bytes`，即 IP 数据报最小为 `72 - 26 = 46 bytes` 。
             * ⚠️注意：Wireshake 捕获到的帧长度会小于 72 字节，这是因为 Wireshake 没有拿到帧的第一手信息。链路层大部分功能用硬件实现，网卡中的适配器将前同步码同步完时间，CRC 检错完就去掉了，不会将其传上来，并且 Wireshake 会将多余的填充字段去掉。

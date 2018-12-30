@@ -7,24 +7,24 @@ The goal of this first lab was primarily to introduce you to Wireshark. The foll
 
 ### HTTP
 
-![](https://github.com/YangXiaoHei/Networking/blob/master/01%20计算机网络和因特网/images/wireshake_http.png)
+![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/01%20计算机网络和因特网/images/wireshake_http.png)
 
 ### DNS
 
-![](https://github.com/YangXiaoHei/Networking/blob/master/01%20计算机网络和因特网/images/wireshake_dns.png)
+![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/01%20计算机网络和因特网/images/wireshake_dns.png)
 
 ### ICMP
 
-![](https://github.com/YangXiaoHei/Networking/blob/master/01%20计算机网络和因特网/images/wireshake_icmp.png)
+![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/01%20计算机网络和因特网/images/wireshake_icmp.png)
 
 ### TCP
 
-![](https://github.com/YangXiaoHei/Networking/blob/master/01%20计算机网络和因特网/images/wireshake_tcp.png)
+![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/01%20计算机网络和因特网/images/wireshake_tcp.png)
 
 
 #### 2、How long did it take from when the HTTP GET message was sent until the HTTP OK reply was received? (By default, the value of the Time column in the packet-listing window is the amount of time, in seconds, since Wireshark tracing began.  To display the Time field in time-of-day format, select the Wireshark View pull down menu, then select Time Display Format, then select Time-of-day.) 
 
-![](https://github.com/YangXiaoHei/Networking/blob/master/01%20计算机网络和因特网/images/wireshake_time.png)
+![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/01%20计算机网络和因特网/images/wireshake_time.png)
 
 `T = 740659 us - 647275 us = 93384 us = 0.09 ms`
 

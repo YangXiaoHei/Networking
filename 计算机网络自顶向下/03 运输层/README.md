@@ -69,13 +69,13 @@
 		
 	* 3.3.1 **UDP** 报文段结构如下
 	
-	 	* ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/UDP_segment.png)
+	 	* ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/UDP_segment.png)
 	
 	* 3.3.2 **UDP** 校验和代码实例如下
 		
 		* ⚠️**这种方法只能检测出所有 1 比特的差错，如果同时出现 2 比特以上的差错，可能无法被校验出来。比如 0010，0001 变为 0011，0000。在改变前后这两个 4 比特数的加和相同。**
 		
-		* [checksum.c](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/progs/checksum.c)
+		* [checksum.c](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/progs/checksum.c)
 	
 * 3.4 可靠数据传输原理：
 
@@ -87,12 +87,12 @@
 
 		* 1. 底层信道可靠: rdt 1.0
 		
-		![rdt_1_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_1_0.png)
+		![rdt_1_0](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/rdt_1_0.png)
 		
 		* 2. 比特差错：
 			* rdt 2.0 (未考虑 **ACK** 或 **NAK** 包也会损坏)
 			
-			* ![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_0.png)
+			* ![rdt_2_0](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/rdt_2_0.png)
 			
 			* rdt 2.1 (考虑到 **ACK** 和 **NAK** 也会损坏，那么采用的解决方法是：若发送方收到损坏的分组，就重传当前数据分组。但是冗余分组又引入了新的问题，如下所述)
 			
@@ -100,19 +100,19 @@
 			
 			* **解决方法：在数据分组中添加新字段 —— 序号，接收方只需检查序号便可得知到达的分组是重传还是新分组。对于停等协议，1 比特序号就足够了。这样的话，当接收方重复接收到序号为 0 的分组，它知道先前向发送方发送的对 0 分组的确认报文已经损坏，于是它重传对 0 分组的确认报文。对于发送方来说，它刚刚发送了 0 分组，但却得到接收方回传的一个损坏的确认报文，这个报文本来可能是 ACK，也可能是 NAK，发送方不能断定 0 分组是否被接收方正确接收，于是它不断重传 0 分组。直到收到一个未损坏的对 0 分组的 ACK 报文。**
 			
-			![rdt_2_1](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_1.png)
+			![rdt_2_1](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/rdt_2_1.png)
 			
 			* rdt 2.2 (考虑了 **ACK** 和 **NAK** 会损坏的情况，不使用 **NAK** 而是使用 **带序号的 ACK**)
 			
 			* **rdt 2.1 的接收方当收到损坏分组时向发送方回传一个 NAK，但不用 NAK，而是对上次正确接收的分组发送一个 ACK，也能达到同样的效果。发送方本来在等待 ACK 0，却等来了 ACK 1，那么它便知道它发送的 0 分组没有被接收端正确接收，于是它选择重传 0 分组。对于接收方，若它已经成功接收了 0 分组，但是它又收到 0 分组，它便知道它发送的 ACK 0 没有被发送方正确接收，于是它选择重传 ACK 0 报文。** 
 			
-			![rdt_2_2](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_2_2.png)
+			![rdt_2_2](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/rdt_2_2.png)
 			
 		* 3. 比特差错、丢包：rdt 3.0 
 		
 			* 为何引入定时器？
 				* 假设信道即会产生比特差错，也会丢包，那么此时我们的停等协议可能会永远卡死，而无法进入到下一个状态重传分组。卡死的困境可以被描述如下：发送方的分组丢失了，此时发送方等待接收方的确认信息，而接收方什么都没接收到，因此等待着发送方的分组到达，这便陷入了死锁。
-			* ![rdt_3_0](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/rdt_3_0.png)
+			* ![rdt_3_0](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/rdt_3_0.png)
 
 			* **思考:** 列举两种 rdt 3.0 发送方处于【等待 **ACK** 0】 状态却收到  **ACK** 1 分组的情况？
 				* 接收方收到损坏的分组 0
@@ -121,7 +121,7 @@
 	* 3.4.2 流水线可靠数据传输协议
 		* 定义发送方的信道利用率为：发送方实际忙于将比特发送进信道的那部分时间与发送时间之比。从下图可以看出 `stop-wait` 具有极低的信道利用率，因此采用流水线技术改善信道利用率。
 		
-		![stop_wait_vs_pipeline](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/stop_wait_vs_pipeline.png)
+		![stop_wait_vs_pipeline](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/stop_wait_vs_pipeline.png)
 		
 		* 采用流水线技术对可靠数据传输协议带来如下影响：
 			1. 必须增加序号范围，每个传输中的分组必须有一个唯一的序号，而且也许有许多个在输送中未确认的报文。
@@ -134,7 +134,7 @@
 		* 试玩该交互动画并体会 **GBN** 的每个细节。[GBN interactive-animation](https://media.pearsoncmg.com/aw/ecs_kurose_compnetwork_7/cw/content/interactiveanimations/go-back-n-protocol/index.html)
 		
 		* **GBN 扩展FSM**
-		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/GBN.png)
+		![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/GBN.png)
 	* 3.4.4 选择重传
 	
 		* 试玩该交互动画并体会 **SR** 的每个细节 [SR_interative-animation](https://media.pearsoncmg.com/aw/ecs_kurose_compnetwork_7/cw/content/interactiveanimations/selective-repeat-protocol/index.html)
@@ -156,9 +156,9 @@
 		* **SR** 的问题
 
 			* 序号范围有限时，发送方和接收方窗口缺乏同步会产生严重的后果。接收方有时无法判断一个分组是新分组还是重传。
-			* ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/sr_dilemma.png)
+			* ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/sr_dilemma.png)
 			* 解决办法：限制发送方和接收方的窗口范围
-				* ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/p23.png)
+				* ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/p23.png)
 				* 由上图可知，序号范围需要大于发送方和接收方窗口长度的最大使用范围，即 `Range of Sequence Number > k + N - 1 - (k - N) => 2N - 1`，即序号范围需要至少是窗口长度的两倍。 
 
 * 3.5 面向连接的运输：**TCP**
@@ -174,15 +174,15 @@
 		
 		* **TCP** 构件的图示如下：
 		
-		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/tcp_sendbuf_recvbuf.png)
+		![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/tcp_sendbuf_recvbuf.png)
 		
 	* 3.5.2 **TCP** 报文段结构：
 		
-		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/TCP_segment.png)
+		![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/TCP_segment.png)
 	
 		* Telnet: 序号和确认号的一个学习案例
 		
-		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/Telnet.png)
+		![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/Telnet.png)
 		
 	* 3.5.3 往返时间的估计与超时
 	
@@ -191,7 +191,7 @@
 			* `EstimatedRTT = (1 - a) x EstimatedRTT + a x SampleRTT`
 			
 			* 对于连续 n 个 SampleRTT 计算的 EstimatedRTT
-				* ![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/nEstimatedRTT.png)
+				* ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/nEstimatedRTT.png)
 			
 			* `DevRTT = (1 - b) x DevRTT + b x | SampleRTT - EstimatedRTT |`
 			
@@ -245,7 +245,7 @@
 			
 		2. 一些有趣的情况
 		
-			![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/Interesting_case.png)
+			![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/Interesting_case.png)
 		
 		3. 超时间隔加倍
 		
@@ -284,11 +284,11 @@
 	
 		* **TCP** 三次握手
 		
-		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/TCP_three_handshake.png)
+		![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/TCP_three_handshake.png)
 
 		* **TCP** 四次握手 
 			
-		![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/TCP_four_handshake.png)
+		![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/TCP_four_handshake.png)
 		
 * 3.6 拥塞控制原理
 
@@ -333,7 +333,7 @@
 		
 		* 当发送方感知端到端的拥塞时，采用何种算法来改变其发送速率呢？
 
-			![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/TCP_congestion_control_alg.png)
+			![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/TCP_congestion_control_alg.png)
 			
 			1. **慢启动**
 				* cwnd 的值以 1 个 **MSS** 开始并且每当传输的报文段首次被确认就增加一个 **MSS**，因此，**TCP** 发送速率起始慢，但在 **慢启动** 阶段以指数增长。
@@ -356,7 +356,7 @@
 			4. **TCP** 拥塞控制：回顾
 
 				* 加性增、乘性减
-					![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/AIMD_graph.png)
+					![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/AIMD_graph.png)
 			
 			5. 对 **TCP** 吞吐量的宏观描述
 
@@ -372,7 +372,7 @@
 				* 如下图所示，两条连接的带框最终将沿着平等带宽共享曲线波动，无论两条连接位于二维空间的何处，最终都会收敛到该状态。
 
 				* 在实践中，多条连接共享一个共同的瓶颈链路时，具有较小 RTT 的连接能够在链路空闲时更快地抢到可用带宽（即较快地打开其拥塞窗口），因而将比那些具有较大 RTT 的连接享用更高的吞吐量。
-				![](https://github.com/YangXiaoHei/Networking/blob/master/03%20运输层/images/TCP_fairness.png)
+				![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/03%20运输层/images/TCP_fairness.png)
 			
 			8. 公平性与 **UDP**
 

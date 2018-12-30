@@ -14,7 +14,7 @@
 
    * 1、对于最开始的 8 个以太网帧，指定帧的源（客户端或者服务器），指出在这些帧中包含了多少个 SSL 记录项，并列出 SSL 记录项的类型。画出客户端和服务器使用每个 SSL 记录项通信的时序图。
    
-   * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_1.png)
+   * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/image/wl_ssl_1.png)
 
    * 2、每个 SSL 记录项以三个相同的字段开头（可能填写了不同的值）。这些字段中的一个 "Content Type" 有一个字节，列出所有这三个字段以及它们的长度。
    
@@ -35,33 +35,33 @@
 * **ClientHello Record:**
 
    * 3、展开 ClientHello 记录项 (如果你的轨迹有多个帧包含 ClientHello，展开第一个帧)，content type 的值是什么？
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_2.png)
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/image/wl_ssl_2.png)
       
    * 4、这个 ClientHello 是否包含一个不重数？如果是，这个不重数的 16 进制表达是什么？
       * 随机数如下图所示
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_3.png)
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/image/wl_ssl_3.png)
       
    * 5、这个 ClientHello 记录项是否告知了它支持的加密算法？如果是，在第一个展开的套件中，公开密钥算法是什么？对称密钥算法是什么？hash 算法是什么？
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_4.png)
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/image/wl_ssl_4.png)
       
 * **ServerHello Record:**
 
    * 6、定位 ServerHello SSL 记录项，这个记录项是否选择了一个加密算法套件？它选择的加密算法套件是什么?
       * 服务器选择加密算法如下图所示
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_5.png)
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/image/wl_ssl_5.png)
 
    * 7、这个记录项是否包含一个不重数？如果包含的话，有多少字节长？在 SSL 中客户端和服务器包含不重数的目的是什么？
       * 在 ServerHello 中包含了一个不重数，如下图所示
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_6.png)
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/image/wl_ssl_6.png)
       * 这个不重数总共有 32 字节，使用不重数的目的是防止 “连接重放”。
 
    * 8、这个记录项是否包含一个 Session ID？使用 Session ID 的目的是什么？
       * 包含了 Session ID，如下图所示
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_7.png)
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/image/wl_ssl_7.png)
       * Session ID 的目的是恢复会话，它减少了用来创建一个新的 Session ID 而耗费时间的握手步骤的数量。如果在 ClientHello 记录项中的 Session ID 不是 0，那么这代表客户端想要继续先前已经建立的会话，如果是 0，那么代表客户端想要与服务器建立一个新的会话。
       
    * 9、这个记录项是否包含一个证书？或者证书包含在一个单独的记录项中？证书是否能被完整的塞到一个单独的以太网帧中?
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_8.png)
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/image/wl_ssl_8.png)
       * 从上图可以看出，这个证书包含在一个单独的记录项中，这个证书不能被完整的塞带一个以太网帧中，而是被分为三个 TCP 报文段来承载。
 
 ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️        
@@ -71,7 +71,7 @@
 * **Client Key Exchange Record:**
    * 10、定位 Client Key Exchange 记录项，这个记录项是否包含一个 PMS？这个密钥是用来干嘛的？这个密钥是否被加密？如果是，如何加密的？这个被加密的密钥有多长？
       * 从下图可以看出，包含一个 PMS，该密钥用来让客户端和服务器共同导出 4 个密钥。这个 PMS 被服务器的公钥加密，总共有 128 字节长。 
-      * ![](https://github.com/YangXiaoHei/Networking/blob/master/08%20计算机网络中的安全/image/wl_ssl_9.png)
+      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/image/wl_ssl_9.png)
      
 * **Change Cipher Spec Record (sent by client) and Encrypted Handshake Record:**     
 

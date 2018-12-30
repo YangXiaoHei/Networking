@@ -35,18 +35,18 @@
 
 * 7、HTTP GET 报文中的所有字段都被改变了吗？下面列出的哪些字段被改变了？版本号、首部长度、Flags、校验和、如果有任何一个字段被改变，给出一个这些字段被改变的理由。
   * 下图是 ISP 边的分组 
-  * ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_nat_3.png)
+  * ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_nat_3.png)
   * 下图是 home 变的分组
-  * ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_nat_4.png)	
+  * ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_nat_4.png)	
   * 下图是网络层和运输层对比字段的改变
-  * ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_nat_5.png)	
+  * ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_nat_5.png)	
   * ⚠️为什么 TCP 的 checksum 会改变？	
 
 * 8、在 `NAT_ISP_side` 文件中，第一个来自 Google 服务器的 HTTP 200 OK 报文在何时被收到？源和目的 IP 是什么？源和目的端口是什么？哪些字段是相同的？哪些是不同的？为什么？
   * 在 `NAT_ISP_side` 文件中，第一个来自 Google 的 HTTP 200 OK 在 7.848634。
   * 源和目的 IP 的地址 71.192.34.104、64.233.169.104
   * 不相同的字段见下图所示
-  * ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/wl_nat_8.png)	
+  * ![figure 2](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/wl_nat_8.png)	
 
 * 9、在 `NAT_ISP_side` 文件中，什么时候捕获到客户端到服务器的 SYN 以及什么时候捕获到服务器到客户端的 ACK，源和目的 IP 地址是什么？源和目的端口是什么？哪些字段相同，哪些不同？为什么？
   * 在时间点 7.766539 捕获到客户端到服务器的 SYN

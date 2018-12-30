@@ -15,7 +15,7 @@
 		
 			* **路由选择** : 在路由器图结构中决定分组从源端到目的端的路径的算法，时间长度通常为几秒，通常用软件实现。
 			
-			* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/network_layer_outline.png)
+			* ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/network_layer_outline.png)
 	
 	* 4.1.2 **网络层服务模型**
 	
@@ -61,7 +61,7 @@
 	  	 	|4|97|3|87|
 	  	 	|...|...|...|...|
   	 	 
-  	 	 * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/VC_number.png)
+  	 	 * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/VC_number.png)
 
   	 	 * **虚电路建立**: 网络层决定发送方与接收方之间的路径，并为该路径的每条链路决定一个 VC 号，最后在沿着该路径的每台路由器转发表中增加一个表项，并预留该虚电路路径上的资源比如带宽。
   	 	 
@@ -78,7 +78,7 @@
 
   * 4.3 **路由器工作原理**
   	
-  	* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/Router_structure.png)
+  	* ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/Router_structure.png)
 	
 	* 路由器的主要作用是将数据包从入链路转发到出链路，除了控制目的外的路由器不运行应用层和运输层协议。
 	
@@ -97,7 +97,7 @@
   		* **搜索转发表查找最长前缀匹配，决定分组的输出链路**
   	
   	* 4.3.2 **交换结构**
-  		* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/Switching_3_structure.png)
+  		* ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/Switching_3_structure.png)
   		* **经内存交换**
   			* **输入端口与输出端口之间的交换是在 CPU (路由选择处理器) 的直接控制下完成的，如果内存带宽为每秒可写进内存或从内存读出 B 个分组，则总的转发吞吐量 (分组从输入端口被传送到输出端口的总速率) 必然小于 B/2，并且不能同时转发两个分组，即便它们有不同的端口号，因为经过共享系统总线一次仅能执行一个内存读/写**
   			
@@ -130,7 +130,7 @@
   			
 		   * 另一种排队是因为 **线路前部阻塞**，这是因为输入队列中排在后面的分组，必须等待前面的分组被交换结构处理完毕，即使排在后面的分组要去往的输出端口是空闲的，入下图所示。
 		   
-		   * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/HOL.png)
+		   * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/HOL.png)
   			
   		* 输出端口
   			* 若 `Rswitch` 比 `Rline` 快 N 倍，那么最坏情况下，若所有到达输入端口的分组都要去到同一个输出端口，则在输出端口发送完 1 个分组的时间内，就到达了 N 个分组，再发送完一个分组，又到达 N 个分组，这将导致输出端口可用内存被很快耗尽，最终产生大量丢包。
@@ -144,24 +144,24 @@
 	* 4.3.5 分组调度
 	  * 以下描述输出链路中排队分组如何被调度并传输的问题。
 	    * 1. 先进先出
-	      * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/FIFO_scheduling.png)
+	      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/FIFO_scheduling.png)
 	    * 2. 优先权排队
-	      * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/priority_scheduling.png)
+	      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/priority_scheduling.png)
 	    * 3. 循环和加权公平排队
-	      * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/loop_weighted_scheduling.png)
+	      * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/loop_weighted_scheduling.png)
 
   * 4.4 **网际协议：因特网中的转发和编址**
   
   	 * **4.4.1 数据报格式**
   	 
-  	 	 * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/IPv4报文格式.png)
+  	 	 * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/IPv4报文格式.png)
 		
 		 * IP 数据报分片
 		 	* 并不是所有链路层协议都能承载相同长度的网络层分组。有的协议能承载大数据报，有的只能承载小数据报。例如，以太网帧能承载不超过 1500 字节的数据，而某些广域网链路的帧可承载不超过 576 字节的数据。一个链路层帧能承载的最大数据量叫做 **最大传送单元 MTU**，每个 IP 数据报封装在链路层帧中从一台路由器传输到下一台路由器，所以链路层帧的 MTU 严格限制着 IP 数据报的长度。并且发送方到接收方路径上的每段链路可能使用不同的链路层协议，每种协议可能有不同的 MTU。
 		 	
 		 	* ⚠️ 路由器中可能会执行 IP 数据报的分片操作，当下一段链路的 MTU 小于路由器接收到的 IP 数据报长度时。但是数据报的组装工作只在端系统的网络层进行，而不会在路由器的网络层进行。如果一个或多个片没有到达目的地，则该不完整的数据报会被接收方的网络层丢弃。
 		 	
-		 	* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/分片和组装.png)
+		 	* ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/分片和组装.png)
 
 		 	* 可以通过设置片的偏移量从而使数据报无法恰当的重建来攻击，IPv6 禁止分片，从而简化了 IP 分组的处理，并使得 IP 不太容易收到攻击。
 		 	
@@ -181,11 +181,11 @@
 				
 				* 通过 **DHCP** 获取 IP 地址的步骤如下图所示
 				
-				  ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DHCP_interaction.png)
+				  ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/DHCP_interaction.png)
 				  
 			   * 在不同的 Wifi 间切换实际上发生的是不同 DHCP 服务器重新给你的主机分配 IP 地址的报文交换过程。
 			   
-			   * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DHCP_exchange_for_switching_wifi.png)
+			   * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/DHCP_exchange_for_switching_wifi.png)
 			   * ⚠️我注意到一个事实，那就是切换 Wifi 时，我们的主机是不会主动发送 DHCP release 报文的，这就意味着在你切换 Wifi 被 DHCP 服务器分配新的 IP 地址后，原先的 DHCP 服务器分配给你的 IP 地址仍然不能被他人使用，直到租期到期。
 			   
 			* **3、网络地址转换 NAT**
@@ -204,7 +204,7 @@
 	
 		* **1、IPv6 数据报格式**
 		
-		  * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/IPv6_segment.png)
+		  * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/IPv6_segment.png)
 		  
 		  * **IPv6 中删减 IPv4 中某些字段的意图:**
 		  
@@ -236,7 +236,7 @@
 			
 			* **振荡现象**
 			
-			 * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/Oscillations.png)
+			 * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/Oscillations.png)
 			  
 			 * **避免路由器自同步的方法** : 让每台路由器发送链路通告的时间随机化
 			
@@ -262,18 +262,18 @@
 			~~~
 			
 			* 下列是一个距离向量算法从初始化到收敛的运行轨迹
-			  * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DV_algorithms.png)
+			  * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/DV_algorithms.png)
 			
 			* **1、链路费用增加与减少**
 			  * 链路费用减少 (`4 -> 1`)
-			     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DV_algorithms_linkcost_decrease.png)
+			     * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/DV_algorithms_linkcost_decrease.png)
 			     
 			  * * 链路费用减少 (`50 -> 1`)
-			     * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DV_algorithms_linkcost_decrease_2.png)
+			     * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/DV_algorithms_linkcost_decrease_2.png)
 			
 			  * 链路费用增加 (`4 -> 60`) 
 			     * 引发无穷计数问题
-		        * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/DV_algorithms_linkcost_increase.png)
+		        * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/DV_algorithms_linkcost_increase.png)
 		     
 		   * **2、增加毒性逆转**
 		   
@@ -315,11 +315,11 @@
 			* 2、向 **AS** 内部的所有路由器传播这些可达信息以便它们能配置自己的路由表。
 	  * 【**从相邻 AS 获取哪些目的子网可达**】和 【**向该 AS 中所有路由器传播该可达信息**】这两项任务由 **自洽系统间路由选择协议** 处理。因特网中所有 **AS** 都运行相同的 **AS 间路由选择协议**，该协议称为 **BGP4**。每台路由器接受来自一个 **AS 内部路由选择协议** 和一个 **AS 间路由选择协议** 的信息来配置自己的转发表。
 		
-	   * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/AS.png)
+	   * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/AS.png)
 	   
 	   * 下图总结了路由器对转发表增加一个表项所采取的动作
 	   
-	   	* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/configure_AS_internal_forward_table.png) 
+	   	* ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/configure_AS_internal_forward_table.png) 
 	   	
 	   	* 某个 **AS** 从相邻 **AS** 处知道了一个目的地 (CDIR 化的前缀，而非主机 IP)，该 **AS** 能够向它相邻的 **AS** 继续通告该路由选择信息，一个 **AS** 决定向相邻 **AS** 通告哪些目的地具有很大的灵活性，这取决于经济问题而非技术。
 	   	* **ISP** 与 **AS** 的关系 : 一个 **ISP** 内部可能划分为多个互联的 **AS**，或者一个 **ISP** 本身就是一个 **AS**。
@@ -338,7 +338,7 @@
 				
 				* 下图是 **RIP** 通告工作的一个例子。
 			
-			*  ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/RIP_working.png)
+			*  ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/RIP_working.png)
 			*
 			* **RIP 注意点** :
 			
@@ -372,7 +372,7 @@
 		 	
 		 	* **内部 BGP 会话** : 在同一个 **AS** 内的两台路由器之间的 **BGP** 会话。当从 eBGP 学习到前缀列表后，网关路由器通过 iBGP 向该 AS 中的其他路由器通告这些前缀。
 		 	
-		 	* ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/AS_BGP.png)
+		 	* ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/AS_BGP.png)
 
 		 	* **新创公司如何获得因特网连通性 ?**
 		 	
@@ -406,7 +406,7 @@
 			    
 		 * 4、路由选择【策略】
 		 	
-		 	 * ![](https://github.com/YangXiaoHei/Networking/blob/master/04%20网络层/images/BGP_routing_strategy.png)
+		 	 * ![](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/images/BGP_routing_strategy.png)
 		 	 
 		 	 * 问题 1 : X 如何起到桩网络的作用 ？ 即 X 如何防止转发 B 与 C 之间的流量？
 		 	 	  * X 向其他 **AS** 通告自己不会抵达任何 **AS** 即可，即便它自己知道有路可走。这样因为 B 知道 X 到不了 C，就不会期望通过 X 到达任何地方。
