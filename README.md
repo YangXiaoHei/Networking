@@ -89,7 +89,7 @@
      * [Wireshake lab - Ethernet_ARP](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/04%20网络层/Wireshake_lab-Ethernet_ARP.md) ✅
   
 * 第 8 章 计算机网络中的安全
-  * [note](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/README.md)
+  * [note](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/README.md) ✅
   * [复习题 8.1](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/复习题_81.md) ✅
   * [复习题 8.2](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/复习题_82.md) ✅
   * [复习题 8.3 ~ 8.4](https://github.com/YangXiaoHei/Networking/blob/master/计算机网络自顶向下/08%20计算机网络中的安全/复习题_83_84.md) ✅
