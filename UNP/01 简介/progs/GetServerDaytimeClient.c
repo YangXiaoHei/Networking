@@ -5,11 +5,16 @@
 #include <arpa/inet.h>
 
 #define VEASON_IP "119.29.207.157"
-#define DAYTIME_PORT (20013)
+// #define DAYTIME_PORT (20013)
 #define MAXLINE 2048
 
 int main(int argc, char const *argv[])
 {
+    if (argc != 2) {
+        fprintf(stderr, "usage : ./%s <port>", argv[0]);
+        exit(1);
+    }
+
     int fd = -1;
     if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket fd create fail!");
@@ -23,7 +28,7 @@ int main(int argc, char const *argv[])
         perror("ip formater error");
         exit(1);
     }
-    svraddr.sin_port = htons(DAYTIME_PORT);
+    svraddr.sin_port = htons(atoi(argv[1]));
 
     if (connect(fd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0) {
         perror("connect error!");
