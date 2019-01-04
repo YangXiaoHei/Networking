@@ -9,8 +9,6 @@
 
 int main(int argc, char const *argv[])
 {
-    setbuf(stdout, NULL);
-
     if (argc != 2) {
         printf("usage : %s <port>\n", argv[0]);
         exit(1);
@@ -46,11 +44,14 @@ int main(int argc, char const *argv[])
             exit(1);
         }
         snprintf(buf, sizeof(buf), "%24s\r\n", ctime(&curtime));
-        if (write(connfd, buf, strlen(buf)) != strlen(buf)) {
-            perror("write error");
-            exit(1);
+        ssize_t content_len = strlen(buf);
+        for (int i = 0; i < content_len; i++) {
+            sleep(1);
+            if (write(connfd, buf + i, 1) != 1) {
+                perror("write error");
+                exit(1);
+            }
         }
-
         close(connfd);
     }
     return 0;
