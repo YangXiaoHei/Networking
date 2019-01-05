@@ -15,6 +15,17 @@
   * **向 UDP 发送缓冲区注入大量数据** [SendBigDataByUDP.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/progs/SendBigDataByUDP.c)
   * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/习题.md)
 
+* 第 3 章 套接字编程简介
+   
+   * **IP 字符串数值互转旧版本 API 的问题** [BugOfAddressTransform.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/03%20套接字编程简介/progs/BugOfAddressTransform.c)
+   * **大小端判断** [BigEndianOrLittleEndian.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/03%20套接字编程简介/progs/BigEndianOrLittleEndian.c)
+   * **套接字结构体中存放的 IP 和端口默认被解释为大端存储** [AddressTransformFunctionUseBigEndianByDefault.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/03%20套接字编程简介/progs/AddressTransformFunctionUseBigEndianByDefault.c)
+   * **实现 IP 地址字符串和数值的互相转换** [ImplementationOfAddressTransformFunction.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/03%20套接字编程简介/progs/ImplementationOfAddressTransformFunction.c)
+   * **一次性读取指定 n 个字节** [ReadNBytes.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/03%20套接字编程简介/progs/ReadNBytes.c)
+   * **一次性写入指定 n 个字节** [WriteNBytes.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/03%20套接字编程简介/progs/WriteNBytes.c)
+   * **一次性读取一行 (非常慢版本)** [VerySlowReadLine.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/03%20套接字编程简介/progs/VerySlowReadLine.c)
+
+
 # 《计算机网络-自顶向下 6th》
 
 * 第 1 章 计算机网络和因特网
