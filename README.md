@@ -25,6 +25,7 @@
    * **一次性写入指定 n 个字节** [WriteNBytes.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/03%20套接字编程简介/progs/WriteNBytes.c)
    * **一次性读取一行 (非常慢版本)** [VerySlowReadLine.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/03%20套接字编程简介/progs/VerySlowReadLine.c)
    * **一次性读取一行 (快速版本-预读技术)** [QuickReadLine.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/03%20套接字编程简介/progs/QuickReadLine.c)
+   * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/03%20套接字编程简介/习题.md)
 
 
 # 《计算机网络-自顶向下 6th》
