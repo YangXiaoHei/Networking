@@ -12,4 +12,27 @@
       * 防止发生无穷计数问题导致的失而复现的分组可能造成的数据损坏。作为网络编程人员，无需考虑该选项。
 
 * TCP 状态转换图
+
    ![](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/images/TCP_state_change.png)
+   
+   * ⚠️ 主动打开的状态有哪些？
+      * `SYN_SENT` `ESTABLISHED` `CLOSED`
+
+   * ⚠️ 被动打开的状态有哪些？
+      * `LISTEN` `SYN_RCVD` `ESTABLISHED`
+      
+   * ⚠️ 主动关闭的状态？
+      * `FIN_WAIT_1` `FIN_WAIT_2` `TIME_WAIT` `CLOSING`
+      
+   * ⚠️ 被动关闭的状态？
+      * `CLOSE_WAIT` `LAST_ACK`
+      
+   * ⚠️ 同时打开，同时关闭
+      * 主动打开方在 `SYN_SENT` 时收到 `SYN` 分组，那么主动打开方发送 `SYN ACK` 后切换为被动打开
+      
+      * 主动关闭方在 `FIN_WAIT_1` 时收到 `FIN` 分组，那么主动关闭方发送 `ACK` 后进入 `CLOSING` 状态，等待自己发送的 `FIN` 的 `ACK`
+      
+      * 主动关闭方在 `FIN_WAIT_1` 时收到 `FIN ACK` 分组，说明双方都没有数据要发送了，那么主动关闭方发送 `ACK` 后进入 `TIME_WAIT` 状态
+     
+   * ⚠️ 被动打开时收到 RST
+      * 被动打开方在 `SYN_RCVD` 时收到 `RST`，说明主动打开方异常关闭，那么被动打开方恢复到 `CLOSED` 状态
