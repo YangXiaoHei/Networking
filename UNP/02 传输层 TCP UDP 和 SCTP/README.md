@@ -1,39 +1,63 @@
-* TCP 新认识
+* **1、TCP 新认识**
    * TCP 并不保证数据一定被对端所接收，因为这是不可能做到的。如果有可能，TCP 就把数据传送到对方端点，否则就（通过放弃重传并中断连接这一手段）通知用户。因此 TCP 并不能被描述为 100% 可靠，它提供的是数据的可靠递送或故障的可靠通知。
 
-* TCP 选项
-   * MSS 选项
+* **2、TCP 选项**
+   * **MSS 选项**
       * 发送 SYN 的 TCP 一端使用本选项通告它的 MSS，即它在本连接的每个 TCP 报文段愿意接收的最大数据量。发送端 TCP  使用接收端的 MSS 作为所发送报文段的最大大小。可以利用 `TCP_MAXSEG` 套接字选项设置和提取该 TCP 选项。
       
-   * 窗口规模选项
+   * **窗口规模选项**
       * TCP 首部中的接收窗口字段最大只能表示 65536 字节，而在当今高速网络连接或长延迟路径（卫星链路）要求有更大的窗口以获得尽可能大的吞吐量。这个新选项指定 TCP 首部中的接收窗口必须左移的位数 (0 ~ 14)，因此所能提供的最大窗口接近 1 GB `(65536 x 2^14)`
       
-   * 时间戳选项
+   * **时间戳选项**
       * 防止发生无穷计数问题导致的失而复现的分组可能造成的数据损坏。作为网络编程人员，无需考虑该选项。
 
-* TCP 状态转换图
+* **3、TCP 状态转换图**
 
    ![](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/images/TCP_state_change.png)
    ![](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/images/TCP_segment_exchange.png)
    
-   * ⚠️ 主动打开的状态有哪些？
+   * ⚠️ **主动打开的状态有哪些？**
       * `SYN_SENT` `ESTABLISHED` `CLOSED`
 
-   * ⚠️ 被动打开的状态有哪些？
+   * ⚠️ **被动打开的状态有哪些？**
       * `LISTEN` `SYN_RCVD` `ESTABLISHED`
       
-   * ⚠️ 主动关闭的状态？
+   * ⚠️ **主动关闭的状态？**
       * `FIN_WAIT_1` `FIN_WAIT_2` `TIME_WAIT` `CLOSING`
       
-   * ⚠️ 被动关闭的状态？
+   * ⚠️ **被动关闭的状态？**
       * `CLOSE_WAIT` `LAST_ACK`
       
-   * ⚠️ 同时打开，同时关闭
+   * ⚠️ **同时打开，同时关闭**
       * 主动打开方在 `SYN_SENT` 时收到 `SYN` 分组，那么主动打开方发送 `SYN ACK` 后切换为被动打开
       
       * 主动关闭方在 `FIN_WAIT_1` 时收到 `FIN` 分组，那么主动关闭方发送 `ACK` 后进入 `CLOSING` 状态，等待自己发送的 `FIN` 的 `ACK`
       
       * 主动关闭方在 `FIN_WAIT_1` 时收到 `FIN ACK` 分组，说明双方都没有数据要发送了，那么主动关闭方发送 `ACK` 后进入 `TIME_WAIT` 状态
      
-   * ⚠️ 被动打开时收到 RST
+   * ⚠️ **被动打开时收到 RST**
       * 被动打开方在 `SYN_RCVD` 时收到 `RST`，说明主动打开方异常关闭，那么被动打开方恢复到 `CLOSED` 状态
+
+* **4、`MSL` 的意义**
+
+   * `MSL` 就是一个 IP 数据报在网络中存活的最长时间，这个时间必然是有限的，因为 TTL 字段的作用，该时间在各操作系统中的实现从 1 分钟到 4 分钟不等。
+   
+   * `TIME_WAIT` 状态要求必须等待 2MSL TCP 才能最终释放资源。
+   
+* **5、`TIME_WAIT` 存在的意义**
+   * **可靠的实现 TCP 全双工连接的终止**
+      * 假设主动关闭方的最后一个 ACK 丢失，那么如果没有 `TIME_WAIT` 状态，主动关闭方发送完 ACK 后就释放了 TCP 的资源，那么当被动关闭方发送 FIN 后，就会收到 RST，那么这个分组被被动关闭方解释为一个错误 "Connection Reset by peer"。
+      
+   * **允许老的重复分组在网络中消逝**
+      * 假设在 `IP_A Port_A` 和 `IP_B Port_B` 之间建立 TCP 连接，传输数据，然后断开，然后又在相同 IP 和 Port 之间建立 TCP 连接，那么要防止老的重复的分组被新的 TCP 连接所接纳。因此 TCP 断开连接后，必须等待自己产生的分组都在网络中消逝后，才能在相同的 IP 和 Port 之间建立 TCP 连接。
+
+* **6、最小重组缓冲区大小**
+   * IPv4 最小重组缓冲区大小为 576 字节，IPv6 为 1500 字节。TCP 双方通过通告 MSS 来间接指定最小重组缓冲区大小，如果 MSS 是 300，那么最小重组缓冲区就是 340。如果没有通告 MSS 的大小，那么默认是 576 字节。一般而言，最小重组缓冲区大小等于 MTU。
+
+* **7、ICMPv4 错误**
+   * 当路由器接收到一个超过其外出链路 MTU 大小并且设置了 DF (Dont't fragment) 位的数据报时，它将产生一个 ICMPv4 "destination unreachable, fragmentation needed but DF bit set" 出错信息。
+
+* **8、路径 MTU**
+   * 在两个主机之间的路径中最小的 MTU 被称为路径 MTU (path MTU)，IPv4 的 DF 位和 IPv6 的隐含 DF 位可用于路径 MTU 发现，如果基于 IPv4 的 TCP 使用该技术，那么它将在所发送的所有数据报中设置 DF 位。如果某个中间路由器返回一个 ICMP "destination unreachable, fragmentation needed but DF bit set" 错误，TCP 就减小每个数据报的数据量并重传。路径 MTU 发现对于 IPv4 是可选的。
+   
+   * 路径 MTU 发现在如今的因特网上有问题，因为许多防火墙都丢弃所有 ICMP 消息，包括用于路径 MTU 发现的消息，这意味着 TCP 永远得不到要求它降低所发送数据量的信号。
