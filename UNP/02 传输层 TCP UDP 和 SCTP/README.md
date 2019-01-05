@@ -14,6 +14,7 @@
 * TCP 状态转换图
 
    ![](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/images/TCP_state_change.png)
+   ![](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/images/TCP_segment_exchange.png)
    
    * ⚠️ 主动打开的状态有哪些？
       * `SYN_SENT` `ESTABLISHED` `CLOSED`
