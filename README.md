@@ -13,10 +13,7 @@
 
 * 第 2 章 传输层: TCP、UDP 和 SCTP
 
-  * [note]()
-   
-
-
+  * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/README.md)
 
 # 《计算机网络-自顶向下 6th》
 
