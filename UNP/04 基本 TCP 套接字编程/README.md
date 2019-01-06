@@ -25,3 +25,13 @@
 * listen 函数
 
    * listen 函数的第 2 个参数可以理解为已完成连接数的最大值、或者已完成连接队列 + 未完成连接队列的和的最大值，视不同的操作系统而定。
+   * ![](https://github.com/YangXiaoHei/Networking/blob/master/UNP/04%20基本%20TCP%20套接字编程/images/tcp_shakehands_queue.png)
+   * ![](https://github.com/YangXiaoHei/Networking/blob/master/UNP/04%20基本%20TCP%20套接字编程/images/tcp_shakehands_queue_2.png)
+   * 当一个客户 SYN 到达时，若这些队列是满的，TCP 就忽略该分组。
+   
+* accept 函数
+   
+   * accpet 函数由 TCP 服务器调用，用于从已完成连接队列头部返回下一个已完成连接，如果已完成连接队列为空，那么进程被投入睡眠 (假定套接字为默认的阻塞方式)。
+
+* getsockname 和 getpeername 的用法和使用场景
+ 
