@@ -69,6 +69,8 @@ int main(int argc, char const *argv[])
     if (nread < 0) {
         perror("read error!");
         exit(1);
+    } else {
+        printf("read EOF\n");
     }
 
     return 0;
