@@ -37,12 +37,8 @@
           * [RunByExecFunctionServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/04%20基本%20TCP%20套接字编程/progs/RunByExecFunctionServer.c)
       * 客户端
           * [GetServerDaytimeClientDisplayAddress.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/04%20基本%20TCP%20套接字编程/progs/GetServerDaytimeClientDisplayAddress.c)
-      
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/04%20基本%20TCP%20套接字编程/习题.md)
           
-    
-
-
 # 《计算机网络-自顶向下 6th》
 
 * 第 1 章 计算机网络和因特网
