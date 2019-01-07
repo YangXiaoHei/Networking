@@ -38,6 +38,17 @@
       * 客户端
           * [GetServerDaytimeClientDisplayAddress.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/04%20基本%20TCP%20套接字编程/progs/GetServerDaytimeClientDisplayAddress.c)
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/04%20基本%20TCP%20套接字编程/习题.md)
+
+* 第 5 章 TCP 客户/服务器程序示例
+   * **fgets 和 fputs 对比** [fgetsAndfputs.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/fgetsAndfputs.c)
+   * **回显服务器和客户端** 
+      * 服务器
+         * [ConcurrentMultiProcessEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ConcurrentMultiProcessEchoServer.c)
+      * 客户端
+         * [EchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/EchoClient.c)
+      * 读写工具
+         * [ReadWriteTool.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ReadWriteTool.h)
+         * [ReadWriteTool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ReadWriteTool.c)
           
 # 《计算机网络-自顶向下 6th》
 
