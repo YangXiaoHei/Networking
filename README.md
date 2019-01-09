@@ -40,15 +40,22 @@
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/04%20基本%20TCP%20套接字编程/习题.md)
 
 * 第 5 章 TCP 客户/服务器程序示例
+   * 读写工具
+      * [ReadWriteTool.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ReadWriteTool.h)
+      * [ReadWriteTool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ReadWriteTool.c)
    * **fgets 和 fputs 对比** [fgetsAndfputs.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/fgetsAndfputs.c)
    * **回显服务器和客户端** 
-      * 服务器
-         * [ConcurrentMultiProcessEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ConcurrentMultiProcessEchoServer.c)
-      * 客户端
-         * [EchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/EchoClient.c)
-      * 读写工具
-         * [ReadWriteTool.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ReadWriteTool.h)
-         * [ReadWriteTool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ReadWriteTool.c)
+     * [ConcurrentMultiProcessEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ConcurrentMultiProcessEchoServer.c)
+     * [EchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/EchoClient.c)
+   * **connect 是否在 accept 之前返回 : YES**
+      * [IfConnectRetureBeforeAcceptServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/IfConnectRetureBeforeAcceptServer.c)
+      * [IfConnectRetureBeforeAcceptClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/IfConnectRetureBeforeAcceptClient.c)
+     
+  * **Wait 和 WaitPid 的测试客户端 (for 中调用 5 次 connect 引发服务器创建 5 个子进程)** [WaitAndWaitpidTestClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/WaitAndWaitpidTestClient.c)
+      
+  * **使用 wait 只回收了部分僵尸进程 ❌** [ConcurrentMultiProcessEchoServerHandleZombieBug.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ConcurrentMultiProcessEchoServerHandleZombieBug.c)  
+  * **使用 waitpid 成功回收所有僵尸进程 ✅** [ConcurrentMultiProcessEchoServerHandleZombieCorrect.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ConcurrentMultiProcessEchoServerHandleZombieCorrect.c)
+  * **服务器进程终止情形 (用来为 tcpdump 抓包提供情景)** [ServerProcessTerminated.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ServerProcessTerminated.c)
           
 # 《计算机网络-自顶向下 6th》
 
