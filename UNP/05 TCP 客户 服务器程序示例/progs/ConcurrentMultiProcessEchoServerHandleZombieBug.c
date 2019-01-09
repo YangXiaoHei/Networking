@@ -4,6 +4,8 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <signal.h>
+#include <sys/wait.h>
 #include "ReadWriteTool.h"
 
 void echoTextSentByClient(int connfd)
@@ -32,6 +34,21 @@ void echoTextSentByClient(int connfd)
         perror("readline error!");
         exit(1);
     }
+}
+
+void handler(int signo) 
+{
+    // int status;
+    // pid_t pid = -1;
+    // if ((pid = waitpid(-1, &status, WNOHANG)) < 0) {
+    //     perror("waitpid error!");
+    //     exit(1);
+    // }
+    // printf("succ collect process : %d\n", pid);
+
+    int status;
+    pid_t pid = wait(&status);
+    printf("child %d terminated\n", pid);
 }
 
 typedef void(*yxh_signal_handler)(int);
@@ -89,6 +106,12 @@ int main(int argc, char const *argv[])
     int connfd = -1;
     socklen_t clilen = sizeof(cliaddr);
     pid_t child_pid = -1;
+
+    if (yxh_signal(SIGCHLD, handler) == SIG_ERR) {
+        perror("yxh_signal error!");
+        exit(1);
+    }
+
     while (1) {
         if ((connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &clilen)) < 0) {
             perror("accept error!");
@@ -106,6 +129,7 @@ int main(int argc, char const *argv[])
             exit(1);
         } else if (child_pid == 0) {
             close(listenfd);
+            printf("new child process %d handle the connection\n", getpid());
             echoTextSentByClient(connfd);
             exit(0);
         }
