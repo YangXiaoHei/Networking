@@ -40,7 +40,8 @@
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/04%20基本%20TCP%20套接字编程/习题.md)
 
 * 第 5 章 TCP 客户/服务器程序示例
-   * 读写工具
+   * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/README.md)
+   * **读写工具**
       * [ReadWriteTool.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ReadWriteTool.h)
       * [ReadWriteTool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ReadWriteTool.c)
    * **fgets 和 fputs 对比** [fgetsAndfputs.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/fgetsAndfputs.c)
