@@ -65,6 +65,18 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
+    // struct sockaddr_in peeraddr;
+    // socklen_t peerlen = sizeof(peeraddr);
+    // if (getpeername(fd, (struct sockaddr *)&peeraddr, &peerlen) < 0) {
+    //     perror("getpeername error!");
+    //     exit(1);
+    // }
+    // char peerip[128];
+    // if (inet_ntop(AF_INET, &peeraddr.sin_addr, peerip, sizeof(peerip)) < 0) {
+    //     perror("inet_ntop error!");
+    //     exit(1);
+    // }
+
     printf("TCP connection established [%s:%d] <---> [%s:%d]\n", 
         cliip, 
         ntohs(cliaddr.sin_port), 
