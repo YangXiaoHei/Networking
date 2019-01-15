@@ -56,8 +56,12 @@ int main(int argc, char const *argv[])
         if (FD_ISSET(fileno(stdin), &rset)) {
             printf("stdin fd\n");
             if (fgets(buf, sizeof(buf), stdin) == NULL) {
-                printf("fgets error!");
-                exit(1);
+                if (ferror(stdin)) {
+                    printf("fgets error!");
+                    exit(1);
+                }
+                printf("all finished!");
+                exit(0);
             }
             if (writen(fd, buf, strlen(buf)) < 0) {
                 perror("writen error!");
