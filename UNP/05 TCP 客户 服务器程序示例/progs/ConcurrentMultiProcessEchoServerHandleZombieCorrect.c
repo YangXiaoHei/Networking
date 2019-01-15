@@ -43,7 +43,7 @@ void handler(int signo)
     while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
         printf("child %d terminated\n", pid);
     }
-    if (pid < 0) {
+    if (pid < 0 && errno != ECHLD) {
         perror("waitpid error!");
         exit(1);
     }
