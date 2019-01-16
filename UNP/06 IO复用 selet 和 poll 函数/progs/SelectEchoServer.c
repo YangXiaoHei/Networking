@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 #include <errno.h>
 
-char *get_ip_port(struct sockaddr_in *addr) 
+char *getAddrInfo(struct sockaddr_in *addr) 
 {
     size_t slen = 1 /* [] */ + 15 /* xxx.xxx.xxx.xxx */ + 1 /* : */ + 5 /* port */ + 1 /* \0 */ + 1 /* ] */;
     char *buf = NULL;
@@ -15,10 +15,40 @@ char *get_ip_port(struct sockaddr_in *addr)
         printf("malloc error!");
         exit(1);
     }
-    const char *ip = inet_ntoa(addr.sin_addr);
-    slen = snprintf(buf, slen, "[%s:%d]", ip, ntohs(addr.sin_port));
+    const char *ip = inet_ntoa(addr->sin_addr);
+    slen = snprintf(buf, slen, "[%s:%d]", ip, ntohs(addr->sin_port));
     buf[slen] = 0;
     return buf;
+}
+
+char *getPeerInfo(int fd) 
+{   
+    struct sockaddr_in peeraddr;
+    socklen_t peerlen = sizeof(peeraddr);
+    if (getpeername(fd, (struct sockaddr *)&peeraddr, &peerlen) < 0) {
+        perror("getpeername error!");
+        exit(1);
+    }
+    return getAddrInfo(&peeraddr);
+}
+
+char *getSockInfo(int fd) 
+{
+    struct sockaddr_in addr;
+    socklen_t addrlen = sizeof(addr);
+    if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) < 0) {
+        perror("getsockname error!");
+        exit(1);
+    }
+    return getAddrInfo(&addr);
+}
+
+void printClifds(int *clifds) 
+{
+    for (int i = 0; i < 5; i++) {
+        printf("%-3d", clifds[i]);
+    }
+    printf("\n");
 }
 
 int main(int argc, char const *argv[])
@@ -49,12 +79,12 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
-    fd_set rset;
-    FD_ZERO(&rset);
-    FD_SET(listenfd, &rset);
+    fd_set rset, allset;
+    FD_ZERO(&allset);
+    FD_SET(listenfd, &allset);
 
     int connfd = -1;
-    int maxfd = -1;
+    int maxfd = listenfd;
     int nready = 0;
     int maxi = 0;
     socklen_t clilen = sizeof(cliaddr);
@@ -67,6 +97,7 @@ int main(int argc, char const *argv[])
         clifds[i] = -1;
 
     while (1) {
+        rset = allset;
         select_again:
         if ((nready = select(maxfd + 1, &rset, NULL, NULL, NULL)) < 0) {
             if (errno == EINTR)
@@ -74,10 +105,11 @@ int main(int argc, char const *argv[])
             perror("select error!");
             exit(1);
         }
-        printf("%d fds readable\n", nready);
+        printf("%d fds readable ", nready);
 
         // 新连接进来
         if (FD_ISSET(listenfd, &rset)) {
+            printf("listenfd\n");
             if ((connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &clilen)) < 0) {
                 perror("accept error!");
                 exit(1);
@@ -96,8 +128,14 @@ int main(int argc, char const *argv[])
                 exit(1);
             }
 
+            char *peerInfo = getPeerInfo(connfd);
+            char *addrInfo = getSockInfo(connfd);
+            printf("%s <---> %s\n", addrInfo, peerInfo);
+            free(peerInfo);
+            free(addrInfo);
+
             // 把新客户端添加进监听可读事件列表中
-            FD_SET(connfd, &rset);
+            FD_SET(connfd, &allset);
 
             // 给 select 用
             if (connfd > maxfd)
@@ -107,11 +145,13 @@ int main(int argc, char const *argv[])
             if (i > maxi)
                 maxi = i;
 
-            if (--nready <= 0)
+            if (--nready <= 0) 
                 continue;
         }
 
-        for (int j = 0; j < maxi; j++) {
+        printf("connfd\n");
+
+        for (int j = 0; j <= maxi; j++) {
 
             if (clifds[j] < 0) 
                 continue;
@@ -119,7 +159,7 @@ int main(int argc, char const *argv[])
             if (FD_ISSET(clifds[j], &rset)) {
                 if ((nread = read(clifds[j], buf, sizeof(buf))) == 0) {
                     close(clifds[j]);
-                    FD_CLR(clifds[j], &rset);
+                    FD_CLR(clifds[j], &allset);
                     clifds[j] = -1;
                 } else if (nready < 0) {
                     /* 为什么会发生这种情况呢？ */
@@ -129,10 +169,9 @@ int main(int argc, char const *argv[])
                         exit(1);
                     }
                 }
+                if (--nready <= 0)
+                    break;
             }
-
-            if (--nready <= 0)
-                break;
         }
     }
 
