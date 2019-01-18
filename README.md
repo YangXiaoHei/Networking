@@ -55,6 +55,11 @@
   * **使用 wait 只回收了部分僵尸进程 ❌** [ConcurrentMultiProcessEchoServerHandleZombieBug.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ConcurrentMultiProcessEchoServerHandleZombieBug.c)  
   * **使用 waitpid 成功回收所有僵尸进程 ✅** [ConcurrentMultiProcessEchoServerHandleZombieCorrect.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ConcurrentMultiProcessEchoServerHandleZombieCorrect.c)
   * **服务器进程终止情形 (用来为 tcpdump 抓包提供情景)** [ServerProcessTerminated.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ServerProcessTerminated.c)
+
+* 第 6 章 简介
+   * **客户端缓冲区改进，I/O 多路复用** [SelectEchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/progs/SelectEchoClient.c)
+   * **客户端缓冲区改进，I/O 多路复用，半关闭** [SelectEchoClientHalfClose.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/progs/SelectEchoClientHalfClose.c)
+   * **服务器使用 I/O 多路复用替代多进程** [SelectEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/progs/SelectEchoServer.c)
           
 # 《计算机网络-自顶向下 6th》
 
