@@ -59,7 +59,9 @@
 * 第 6 章 简介
    * **客户端缓冲区改进，I/O 多路复用** [SelectEchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/progs/SelectEchoClient.c)
    * **客户端缓冲区改进，I/O 多路复用，半关闭** [SelectEchoClientHalfClose.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/progs/SelectEchoClientHalfClose.c)
-   * **服务器使用 I/O 多路复用替代多进程** [SelectEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/progs/SelectEchoServer.c)
+   * **服务器使用 I/O 多路复用替代多进程 - select** [SelectEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/progs/SelectEchoServer.c)
+   * **服务器使用 I/O 多路复用替代多进程 - poll** [PollEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/progs/PollEchoServer.c)
+   * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/习题.md)
           
 # 《计算机网络-自顶向下 6th》
 
