@@ -5,9 +5,15 @@
 #include <arpa/inet.h>
 #include "TimeTool.h"
 #include <netinet/in.h>
+#include <fcntl.h>
 
 int main(int argc, char const *argv[])
 {
+    if (argc != 4) {
+        printf("usage : %s <ip> <port> <linger>\n", argv[0]);
+        exit(1);
+    }
+
     int fd = -1;
     if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket error!");
@@ -21,7 +27,7 @@ int main(int argc, char const *argv[])
     svraddr.sin_addr.s_addr = inet_addr(argv[1]);
 
 #ifdef _USE_LINGER_
-    struct linger l = { 1, 30 };
+    struct linger l = { 1, 0 };
     socklen_t llen = sizeof(l);
     if (setsockopt(fd, SOL_SOCKET, SO_LINGER, &l, llen) < 0) {
         perror("setsockopt error!");
@@ -35,7 +41,7 @@ int main(int argc, char const *argv[])
     }
 
     char *buf = NULL;
-    int size = 100 << 10;
+    int size = atoi(argv[3]) << 10;
 
     if ((buf = malloc(size)) == NULL) {
         printf("malloc error!");
@@ -51,10 +57,16 @@ int main(int argc, char const *argv[])
     }
     printf("write finished! %s total_cost=%ld\n", curTime(), getCurTimeUs() - begin);
 
+#ifdef _USE_NONBLOCK_
+    int flags = fcntl(fd, F_GETFL);
+    flags |= O_NONBLOCK;
+    fcntl(fd, F_SETFL, flags);
+#endif
+
     printf("close begin %s\n", curTime());
     begin = getCurTimeUs();
-    close(fd);
-    printf("close finished! %s total_cost=%ld\n", curTime(), getCurTimeUs() - begin);
+    int retCode = close(fd);
+    printf("close finished! [ret_code=%d] %s total_cost=%ld\n", retCode, curTime(), getCurTimeUs() - begin);
 
     return 0;
 }
