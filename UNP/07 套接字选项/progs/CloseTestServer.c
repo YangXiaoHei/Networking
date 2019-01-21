@@ -31,25 +31,27 @@ int main(int argc, char const *argv[])
 
     struct sockaddr_in cliaddr;
     socklen_t clilen = sizeof(cliaddr);
-    int connfd = accept(fd, (struct sockaddr *)&cliaddr, &clilen);
 
     char buf[1024];
+    for (;;) {
+        int connfd = accept(fd, (struct sockaddr *)&cliaddr, &clilen);
 
-    unsigned long begin = getCurTimeUs();
-    ssize_t nread = 0;
-    while ((nread = read(connfd, buf, sizeof(buf))) > 0);
-    if (nread < 0) {
-        perror("read error!");
-        exit(1);
-    } else if (nread == 0) {
-        printf("read EOF\n");
+        unsigned long begin = getCurTimeUs();
+        ssize_t nread = 0;
+        while ((nread = read(connfd, buf, sizeof(buf))) > 0);
+        if (nread < 0) {
+            perror("read error!");
+            exit(1);
+        } else if (nread == 0) {
+            printf("read EOF\n");
+        }
+        printf("read finsihed! %s total_cost = %ld\n", curTime(), getCurTimeUs() - begin);
+
+        printf("close begin! %s\n", curTime());
+        begin = getCurTimeUs();
+        close(connfd);
+        printf("close finished! %s total_cost = %ld\n\n\n\n\n\n\n", curTime(), getCurTimeUs() - begin);
     }
-    printf("read finsihed! %s total_cost = %ld\n", curTime(), getCurTimeUs() - begin);
-
-    printf("close begin! %s\n", curTime());
-    begin = getCurTimeUs();
-    close(connfd);
-    printf("close finished! %s total_cost = %ld\n", curTime(), getCurTimeUs() - begin);
-
+    
     return 0;
 }

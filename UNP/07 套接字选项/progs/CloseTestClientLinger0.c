@@ -26,14 +26,22 @@ int main(int argc, char const *argv[])
     svraddr.sin_port = htons(atoi(argv[2]));
     svraddr.sin_addr.s_addr = inet_addr(argv[1]);
 
-#ifdef _USE_LINGER_
+    struct sockaddr_in cliaddr;
+    bzero(&cliaddr, sizeof(cliaddr));
+    cliaddr.sin_family = AF_INET;
+    cliaddr.sin_port = htons(30000);
+    cliaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    if (bind(fd, (struct sockaddr *)&cliaddr, sizeof(cliaddr)) < 0) {
+        perror("bind error!");
+        exit(1);
+    }
+
     struct linger l = { 1, 0 };
     socklen_t llen = sizeof(l);
     if (setsockopt(fd, SOL_SOCKET, SO_LINGER, &l, llen) < 0) {
         perror("setsockopt error!");
         exit(1);
     }
-#endif
 
     if (connect(fd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0) {
         perror("connect error!");
@@ -56,12 +64,6 @@ int main(int argc, char const *argv[])
         exit(1);
     }
     printf("write finished! %s total_cost=%ld\n", curTime(), getCurTimeUs() - begin);
-
-#ifdef _USE_NONBLOCK_
-    int flags = fcntl(fd, F_GETFL);
-    flags |= O_NONBLOCK;
-    fcntl(fd, F_SETFL, flags);
-#endif
 
     printf("close begin %s\n", curTime());
     begin = getCurTimeUs();
