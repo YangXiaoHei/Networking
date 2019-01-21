@@ -6,7 +6,14 @@
 #include <string.h>
 #include "TimeTool.h"
 
-const char *currentTime()
+unsigned long getCurTimeUs()
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return 1000000 * tv.tv_sec + tv.tv_usec;
+}
+
+const char *curTime()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
@@ -20,10 +27,7 @@ const char *currentTime()
         printf("malloc error!");
         exit(1);
     }
-    ssize_t len = snprintf(buf, 256, "%0d/%0d/%0d [%0d:%0d:%0d:%0d]", 
-            tmbuf->tm_year + 1900, 
-            tmbuf->tm_mon + 1, 
-            tmbuf->tm_mday, 
+    ssize_t len = snprintf(buf, 256, "[%02d:%02d:%02d:%0d]", 
             tmbuf->tm_hour, 
             tmbuf->tm_min,
             tmbuf->tm_sec,
