@@ -62,6 +62,9 @@
    * **服务器使用 I/O 多路复用替代多进程 - select** [SelectEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/progs/SelectEchoServer.c)
    * **服务器使用 I/O 多路复用替代多进程 - poll** [PollEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/progs/PollEchoServer.c)
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/06%20IO复用%20selet%20和%20poll%20函数/习题.md)
+
+* 第 7 章 套接字选项
+  * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/README.md)
           
 # 《计算机网络-自顶向下 6th》
 
