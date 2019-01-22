@@ -11,6 +11,8 @@
 	* SO_REUSEADDR
 	* SO_REUSEPORT
 	* SO_LINGER
+	* SO_RCVTIMEO  // 接收超时
+	* SO_SNDTIMEO  // 发送超时
 	
 * SO_KEEPALIVE
    * ⚠️ 可能会中断仍然存活的连接。由于中间路由器的故障。
