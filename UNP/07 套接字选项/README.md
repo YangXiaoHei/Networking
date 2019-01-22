@@ -51,6 +51,12 @@
    
    * `close l_onoff = 1, l_linger != 0` 不能对 fd 调用读写函数；接收缓冲区中数据被丢弃，发送缓冲区中数据被发送到对端，若引用计数减为 0，则后跟 FIN; 如果在连接变为 CLOSED 状态前 `l_linger` 时间到，那么 close 返回 `EWOULDBLOCK` 错误。
 
+* `SO_REUSEADDR`
+   * ⚠️ `SO_REUSEADDR` 选项的设置一定要在 bind 前调用，否则无效！！
+   * ⚠️ 设置 `SO_REUSEADDR` 选项的服务器在主动关闭后，仍然会有 `TIME_WAIT` 状态，而不是直接进入 CLOSED，只不过设置了 `SO_REUSEADDR` 而处于 `TIME_WAIT` 状态的套接字仍然可以绑定同一个 IP 和端口。
+   * ⚠️ 即使不设置 `SO_REUSEADDR`，绑定 0.0.0.0:20001 后再绑定 127.0.0.1:20001 仍然可以成功，因为通配地址直到 SYN 连接到达才确定本端的源 IP，而一般这个源 IP 会被 NAT 成私网 IP。TCP 套接字用四元祖来唯一标示。
+   * ⚠️ TCP 套接字即使设置 `SO_REUSEADDR` 也不能让多个进程绑定同一个 IP 和同一个端口。UDP 即使不设置 `SO_REUSEADDR` 也可以。
+
    
 
    
