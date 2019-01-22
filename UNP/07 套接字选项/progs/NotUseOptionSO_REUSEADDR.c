@@ -38,6 +38,8 @@ int main(int argc, char const *argv[])
 
     int connfd = -1;
     socklen_t clilen = sizeof(cliaddr);
+    char buf[1024];
+    ssize_t nread = 0;
     for (;;) {
         if ((connfd = accept(fd, (struct sockaddr *)&cliaddr, &clilen)) < 0) {
             perror("accept error!");
@@ -50,9 +52,26 @@ int main(int argc, char const *argv[])
         free(peerInfo);
         free(sockInfo);
 
-        sleep(3);
+again:
+        while ((nread = read(connfd, buf, sizeof(buf))) > 0) {
+            buf[nread] = 0;
+            if (fputs(buf, stdout) == EOF) {
+                if (ferror(stdout)) {
+                    printf("fputs error!");
+                    close(connfd);
+                }
+            }
+        } 
 
-        close(connfd);
+        if (nread == 0) {
+            printf("client close connection\n");
+            close(connfd);
+        } else if (nread < 0) {
+            if (errno == EINTR)
+                goto again;
+            perror("read error!");
+            exit(1);
+        }
     }
 
     return 0;
