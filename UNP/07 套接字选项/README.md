@@ -3,16 +3,24 @@
 * getsockopt
 
 * 通用套接字选项
-	* SO_KEEPALIVE
-	* SO_RCVBUF
-	* SO_SNDBUF
-	* SO_RCVLOWAT
-	* SO_SNDLOWAT
-	* SO_REUSEADDR
-	* SO_REUSEPORT
-	* SO_LINGER
-	* SO_RCVTIMEO  // 接收超时
-	* SO_SNDTIMEO  // 发送超时
+   * 级别 : `SOL_SOCKET`
+		* `SO_KEEPALIVE`
+		* `SO_RCVBUF`
+		* `SO_SNDBUF`
+		* `SO_RCVLOWAT`
+		* `SO_SNDLOWAT`
+		* `SO_REUSEADDR`
+		* `SO_REUSEPORT`
+		* `SO_LINGER`
+		* `SO_RCVTIMEO` // 接收超时
+		* `SO_SNDTIMEO`  // 发送超时
+		* `SO_TYPE`
+		
+	* 级别 : `IPPROTO_IP`
+	   * `IP_TTL` // 设置或获取默认 TTL 值
+
+	* 级别 : `IPPROTO_TCP`
+	   * `TCP_MAXSEG`
 	
 * SO_KEEPALIVE
    * ⚠️ 可能会中断仍然存活的连接。由于中间路由器的故障。
@@ -55,7 +63,14 @@
    * ⚠️ `SO_REUSEADDR` 选项的设置一定要在 bind 前调用，否则无效！！
    * ⚠️ 设置 `SO_REUSEADDR` 选项的服务器在主动关闭后，仍然会有 `TIME_WAIT` 状态，而不是直接进入 CLOSED，只不过设置了 `SO_REUSEADDR` 而处于 `TIME_WAIT` 状态的套接字仍然可以绑定同一个 IP 和端口。
    * ⚠️ 即使不设置 `SO_REUSEADDR`，绑定 0.0.0.0:20001 后再绑定 127.0.0.1:20001 仍然可以成功，因为通配地址直到 SYN 连接到达才确定本端的源 IP，而一般这个源 IP 会被 NAT 成私网 IP。TCP 套接字用四元祖来唯一标示。
-   * ⚠️ TCP 套接字即使设置 `SO_REUSEADDR` 也不能让多个进程绑定同一个 IP 和同一个端口。UDP 即使不设置 `SO_REUSEADDR` 也可以。
+   * ⚠️ TCP 套接字即使设置 `SO_REUSEADDR` 也不能让多个进程绑定同一个 IP 和同一个端口。但是 UDP 设置 `SO_REUSEADDR` 后，同样的 IP 和端口可以绑定到另一个套接字上。
+   * ⚠️ `SO_REUSEADDR` 允许单个进程捆绑同一个端口到多个套接字上。只要每次绑定指定不同的本地 IP 地址即可。
+
+* `TCP_MAXSEG`
+   * 如果在套接字连接建立之前获得该值，那么返回值是未从对端收到 MSS 选项的情况下所用的默认值。在连接后取得的话，则是对端使用 SYN 分组通告的 MSS。
+   * 如果使用 TCP 时间戳选项的话，那么实际使用的 MSS 将会小于对端用 SYN 分组通告的 MSS，因为首先 MTU 是天花板，既然 TCP 首部字段还要多一些空间，那么只能再挤占 MSS 的地盘。
+   * 如果 TCP 支持路径 MTU 发现功能，那么它将发送的每个分组的最大数据量可能在连接存活期内改变，如果到对端的路径变动，该值就会有所调整。
+   * 有的系统支持设置该值，有的不支持，即使支持设置，一般也只能调低，而不能增加。
 
    
 
