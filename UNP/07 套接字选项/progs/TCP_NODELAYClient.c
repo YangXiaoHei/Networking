@@ -35,6 +35,11 @@ int main(int argc, char const *argv[])
         perror("setsockopt error!");
         exit(1);
     }
+    int reuse = 1;
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) < 0) {
+        perror("setsockopt error!");
+        exit(1);
+    }
 
     if (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &on, &len) < 0) {
         perror("getsockopt error!");
@@ -42,12 +47,20 @@ int main(int argc, char const *argv[])
     }
     printf("after set, on = %d\n", on);
 
+    bzero(&cliaddr, sizeof(cliaddr));
+    cliaddr.sin_family = AF_INET;
+    cliaddr.sin_port = htons(30000);
+    if (bind(fd, (struct sockaddr *)&cliaddr, sizeof(cliaddr)) < 0) {
+        perror("bind error!");
+        exit(1);
+    }
+
     if (connect(fd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0) {
         perror("connect error!");
         exit(1);
     }
 
-    char *msg = "0123456789abcdefghijklmnopqrstuvwxyz";
+    char *msg = "0123456789";
     for (int i = 0; i < strlen(msg); i++) {
         if (write(fd, &msg[i], 1) != 1) {
             perror("write error!");
