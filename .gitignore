@@ -27,3 +27,5 @@
 05 链路层/progs/p4
 *.out
 UNP/07 套接字选项/progs/test.c
+UNP/07 套接字选项/progs/03_cli
+UNP/07 套接字选项/progs/03_svr
