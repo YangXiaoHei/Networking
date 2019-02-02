@@ -11,7 +11,7 @@ char *getAddrInfo(struct sockaddr_in *addr)
     char *buf = NULL;
     if ((buf = malloc(slen)) == NULL) {
         printf("malloc error!");
-        exit(1);
+        return NULL;
     }
     const char *ip = inet_ntoa(addr->sin_addr);
     slen = snprintf(buf, slen, "[%s:%d]", ip, ntohs(addr->sin_port));
@@ -25,7 +25,7 @@ char *getPeerInfo(int fd)
     socklen_t peerlen = sizeof(peeraddr);
     if (getpeername(fd, (struct sockaddr *)&peeraddr, &peerlen) < 0) {
         perror("getpeername error!");
-        exit(1);
+        return NULL;
     }
     return getAddrInfo(&peeraddr);
 }
@@ -36,7 +36,7 @@ char *getSockInfo(int fd)
     socklen_t addrlen = sizeof(addr);
     if (getsockname(fd, (struct sockaddr *)&addr, &addrlen) < 0) {
         perror("getsockname error!");
-        exit(1);
+        return NULL;
     }
     return getAddrInfo(&addr);
 }
