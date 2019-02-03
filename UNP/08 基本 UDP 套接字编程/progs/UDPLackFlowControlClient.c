@@ -32,15 +32,16 @@ int main(int argc, char const *argv[])
         printf("malloc error!");
         exit(1);
     }
-
+    int original = totalPktToSend;
     while (totalPktToSend--) {
         if (sendto(fd, buf, bytesPerPkt, 0, NULL, 0) < 0) {
             perror("sendto error!");
             exit(1);
         }
-        printf("there are [ %d ] packet to send\n", totalPktToSend);
+        if (totalPktToSend % 10 == 0)
+            printf("there are [ %d ] packet to send\n", totalPktToSend);
     }
-    printf("all send finished!");
+    printf("all send finished! [total_send=%d]\n", original);
 
     return 0;
 }
