@@ -10,7 +10,7 @@
 int main(int argc, char const *argv[])
 {
     if (argc != 4) {
-        printf("usage : %s <ip> <port> <linger>\n", argv[0]);
+        printf("usage : %s <ip> <port> <send_bytes KB>\n", argv[0]);
         exit(1);
     }
 

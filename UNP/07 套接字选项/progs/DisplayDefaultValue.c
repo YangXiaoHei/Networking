@@ -29,6 +29,8 @@ int main(int argc, char const *argv[])
      * SO_SNDLOWAT
      * SO_REUSEADDR
      * SO_REUSEPORT
+    * SO_RCVTIMEO
+    * SO_SNDTIMEO   
      */
 
     display("SO_KEEPALIVE", SO_KEEPALIVE);
@@ -39,6 +41,8 @@ int main(int argc, char const *argv[])
     display("SO_SNDLOWAT", SO_SNDLOWAT);
     display("SO_REUSEADDR", SO_REUSEADDR);
     display("SO_REUSEPORT", SO_REUSEPORT);
+    display("SO_SNDTIMEO", SO_SNDTIMEO);
+    display("SO_RCVTIMEO", SO_RCVTIMEO);
 
     return 0;
 }

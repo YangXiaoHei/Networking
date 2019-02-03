@@ -65,6 +65,14 @@
 
 * 第 7 章 套接字选项
   * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/README.md)
+  * **展示套接字选项的默认值** [DisplayDefaultValue.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/DisplayDefaultValue.c)
+  * **linger 对 close 的影响 - 丢弃发送缓冲区数据，发送 RST** [CloseTestClientLinger0.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/CloseTestClientLinger0.c)
+  * **linger 对 close 的影响 - 直到接收到对端对 FIN 的 ACK 才返回** [CloseTestClientLinger30.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/CloseTestClientLinger30.c)
+  * **通常的 close - 立即返回，尝试发送发送缓冲区中剩余数据，若文件计数为 0 发送 FIN** [CloseTestClientNormal.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/CloseTestClientNormal.c)
+  * **上面三个测试客户端使用的 server** [CloseTestServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/CloseTestServer.c)
+  * **不使用 `SO_REUSEADDR` 选项的 server** [NotUseOptionSO_REUSEADDR.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/NotUseOptionSO_REUSEADDR.c)
+  * **使用 `SO_REUSEADDR` 选项的 server** [UseOptionSO_REUSEADDR_BindDifferentIp.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/UseOptionSO_REUSEADDR_BindDifferentIp.c)
+  * **查看 `TCP_NODELAY` 选项的影响的客户端** [TCP_NODELAYClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/TCP_NODELAYClient.c)
           
 # 《计算机网络-自顶向下 6th》
 
