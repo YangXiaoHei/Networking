@@ -55,7 +55,9 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
+    printf("before increase recv buffer size = %zd  %zd of 1400 bytes\n", curRcvBuffSize, curRcvBuffSize / 1400);
     curRcvBuffSize *= 5;
+    printf("after increase recv buffer size = %zd  %zd of 1400 bytes\n", curRcvBuffSize, curRcvBuffSize / 1400);
 
     len = sizeof(curRcvBuffSize);
     if (setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &curRcvBuffSize, len) < 0) {
@@ -80,6 +82,7 @@ int main(int argc, char const *argv[])
             perror("recvfrom error!");
             exit(1);
         }
+        usleep(1000);
         totalRecvdCount++;
     }
 

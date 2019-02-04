@@ -24,8 +24,8 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
-    int totalPktToSend = 10000;
-    int bytesPerPkt = 1500;
+    int totalPktToSend = 1000;
+    int bytesPerPkt = 1400;
 
     char *buf = NULL;
     if ((buf = malloc(bytesPerPkt)) == NULL) {

@@ -54,6 +54,15 @@ int main(int argc, char const *argv[])
     svraddr.sin_port = htons(atoi(argv[1]));
     svraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
+    size_t curRcvBuffSize = 0;
+    socklen_t len = sizeof(curRcvBuffSize);
+    if (getsockopt(fd, SOL_SOCKET, SO_RCVBUF, &curRcvBuffSize, &len) < 0) {
+        perror("getsockopt error!");
+        exit(1);
+    }
+
+    printf("recv buffer size = %zd  %zd of 1400 bytes\n", curRcvBuffSize, curRcvBuffSize / 1400);
+
     if (bind(fd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0) {
         perror("bind error!");
         exit(1);
@@ -65,6 +74,7 @@ int main(int argc, char const *argv[])
             perror("recvfrom error!");
             exit(1);
         }
+        usleep(1000);
         totalRecvdCount++;
     }
 
