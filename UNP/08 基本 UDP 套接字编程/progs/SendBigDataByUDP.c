@@ -10,8 +10,8 @@ int main(int argc, char const *argv[])
 {
     setbuf(stdout, NULL);
 
-    if (argc != 2) {
-        printf("usage : %s <port>\n", argv[0]);
+    if (argc < 2) {
+        printf("usage : %s <port> [send bytes KB default 10k]\n", argv[0]);
         exit(1);
     }
     
@@ -30,12 +30,15 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
-    const int bufsize = 10 << 10;
+    int size = 10 << 10;
+    if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &size, sizeof(size)) < 0) {
+        perror("setsockopt error!");
+        exit(1);
+    }
+
+    const int bufsize = (argc == 3 ? atoi(argv[2]) : 10) << 10;
     char *buf = malloc(bufsize);
     memset(buf, 'a', bufsize);
-
-//     int sendto ( socket s , const void * msg, int len, unsigned int flags, const
-// struct sockaddr * to , int tolen ) ;
 
     if (sendto(fd, buf, bufsize, 0, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0) {
         perror("sendto error!");
