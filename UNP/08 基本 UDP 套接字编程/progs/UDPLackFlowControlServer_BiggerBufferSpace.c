@@ -40,6 +40,11 @@ signal_handler fuck(int signo, signal_handler handler)
 
 int main(int argc, char const *argv[])
 {
+    if (argc != 2 && argc != 3) {
+        printf("usage : %s <port> [sleep time ms, default 10]\n", argv[0]);
+        exit(1);
+    }
+
     int fd = -1;
     if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         perror("socket fd create fail!");
@@ -82,7 +87,7 @@ int main(int argc, char const *argv[])
             perror("recvfrom error!");
             exit(1);
         }
-        usleep(1000);
+        usleep(1000 * (argc == 3 ? atoi(argv[2]) : 10));
         totalRecvdCount++;
     }
 
