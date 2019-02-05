@@ -78,14 +78,18 @@
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/习题.md)
   
 * 第 8 章 基本 UDP 套接字编程
-   * [note]()
    * **UDP 回显服务器** [UDPEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPEchoServer.c)
+   * **UDP 回显客户端 - 检查返包来源是否正确** [UDPEchoClient_CheckServerIP.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPEchoClient_CheckServerIP.c)
    * **UDP 回显客户端 - 未连接套接字** [UDPEchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPEchoClient.c)
    * **UDP 回显客户端 - 未连接套接字 - 使用 NULL 的 sendto 调用** [UDPEchoDisconnectedClient_EDSTADDRREQ.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPEchoDisconnectedClient_EDSTADDRREQ.c)
    * **UDP 回显客户端 - 已连接套接字 - 使用传非 NULL 参的 sendto 调用** [UDPEchoConnectedClient_EISCONN.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPEchoConnectedClient_EISCONN.c)
    * **UDP 回显客户端 - 已连接套接字** [UDPEchoConnectedClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPEchoConnectedClient.c)
    * **UDP 通过已连接套接字和 getsockname 获取源 IP 和源端口** [UDPGetSourceAddrByConnectAndGetSockName.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPGetSourceAddrByConnectAndGetSockName.c)
-   * [习题]()
+   * **UDP 缺乏流量控制实验 - 服务器 - 读取速率可调节** [UDPLackFlowControlServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPLackFlowControlServer.c)
+   * **UDP 缺乏流量控制实验 - 服务器 - 读取速率可调节 - 发送缓冲区很大** [UDPLackFlowControlServer_BiggerBufferSpace.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPLackFlowControlServer_BiggerBufferSpace.c)
+   * **UDP 缺乏流量控制实验 - 客户端 - 发送速率可调节** [UDPLackFlowControlClient_DelaySend.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPLackFlowControlClient_DelaySend.c)
+   * **使用 select，对相同端口同时绑定 UDP 和 TCP 的回显服务器** [UDPTCPSelectEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPTCPSelectEchoServer.c)
+   * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/习题.md)
 
 * 第 11 章 名字与地址转换
    * [note]()
