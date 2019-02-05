@@ -123,11 +123,17 @@ int main(int argc, char const *argv[])
             
             if (FD_ISSET(clifds[j], &rset)) {
                 if ((nread = read(clifds[j], buf, sizeof(buf))) == 0) {
+                    printf("client send all data, cut connection\n");
                     close(clifds[j]);
                     FD_CLR(clifds[j], &allset);
                     clifds[j] = -1;
-                } else if (nready < 0) {
-                    /* 为什么会发生这种情况呢？ */
+                } else if (nread < 0) {
+                    if (errno == ECONNRESET) {
+                        printf("client reset, cut connection\n");
+                        close(clifds[j]);
+                        FD_CLR(clifds[j], &allset);
+                        clifds[j] = -1;
+                    }
                 } else {
                     if ((nwrite = write(clifds[j], buf, nread)) != nread) {
                         perror("write error!");
