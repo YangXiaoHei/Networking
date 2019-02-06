@@ -15,6 +15,8 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
+    setbuf(stdout, NULL);
+
     const char *hostname = argv[1];
     const char *service = argv[2];
 
