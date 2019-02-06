@@ -11,6 +11,10 @@
 #include <time.h>
 #include <sys/wait.h>
 
+⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+⚠️ 该程序未处理进程间同步问题，当客户端关闭后，没有将文件描述符从 fd_set 中移除     ⚠️
+⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+
 typedef void(*sig_handler)(int);
 
 sig_handler fuck(int signo, sig_handler newhandler) 
