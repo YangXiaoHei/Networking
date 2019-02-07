@@ -94,7 +94,7 @@
 * 第 11 章 名字与地址转换
 
    * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/11%20名字与地址转换/README.md)
-   * **用主机名或域名获取 IP ** [[GetHostByName.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/11%20名字与地址转换/progs/GetHostByName.c)
+   * **用主机名或域名获取 IP** [GetHostByName.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/11%20名字与地址转换/progs/GetHostByName.c)
    * **用 IP 获取主机名或域名 - 获取域名需要 PTR 记录支持** [GetHostByAddr.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/11%20名字与地址转换/progs/GetHostByAddr.c)
    * **使用服务名和套接字类型获取端口，基于 /etc/services 的配置** [GetHostByAddr.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/11%20名字与地址转换/progs/GetServByName.c)
    * **使用端口和套接字类型获取服务名，基于 /etc/services 的配置** [GetServByPort.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/11%20名字与地址转换/progs/GetServByPort.c)
