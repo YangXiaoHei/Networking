@@ -95,6 +95,16 @@
    * [note]()
    *
    * [习题]()     
+
+* 第 13 章 守护进程和 inetd 超级服务器
+   * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/README.md)
+   * **创建守护进程：演示了所有步骤** [CreateDaemonProcess.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/progs/CreateDaemonProcess.c)
+   * **同时支持 TCP 和 UDP 的时间获取服务器守护进程** [TCPUDPDaytimeServerWithDaemonProcess.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/progs/TCPUDPDaytimeServerWithDaemonProcess.c)
+   * **TCP 时间获取客户端** [TCPDaytimeClientUseGetAddrInfo.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/progs/TCPDaytimeClientUseGetAddrInfo.c)
+   * **UDP 时间获取客户端** [UDPDaytimeClientUseGetAddrInfo.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/progs/UDPDaytimeClientUseGetAddrInfo.c)
+   * **通过 xinetd 启动的 TCP 时间获取服务器** [TCPDaytimeServerExecByXinetd.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/progs/TCPDaytimeServerExecByXinetd.c)
+   * **通过 xinetd 启动的 UDP 时间获取服务器** [UDPDaytimeServerExecByXinetd.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/progs/UDPDaytimeServerExecByXinetd.c)
+   * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/习题.md)
           
 # 《计算机网络-自顶向下 6th》
 
