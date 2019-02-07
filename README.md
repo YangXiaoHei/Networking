@@ -11,8 +11,8 @@
 * 第 2 章 传输层: TCP、UDP 和 SCTP
 
   * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/README.md)
-  * **向 TCP 发送缓冲区注入大量数据** [SendBigDataByTCP.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/progs/SendBigDataByTCP.c)
-  * **向 UDP 发送缓冲区注入大量数据** [SendBigDataByUDP.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/progs/SendBigDataByUDP.c)
+  * **向 TCP 发送缓冲区注入大量数据 - 阻塞直到全部发出** [SendBigDataByTCP.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/progs/SendBigDataByTCP.c)
+  * **向 UDP 发送缓冲区注入大量数据 - 返回 EMSGSZIE 错误** [SendBigDataByUDP.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/progs/SendBigDataByUDP.c)
   * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/02%20传输层%20TCP%20UDP%20和%20SCTP/习题.md)
 
 * 第 3 章 套接字编程简介
