@@ -74,6 +74,7 @@
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/习题.md)
   
 * 第 8 章 基本 UDP 套接字编程
+   * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/note.md)
    * **UDP 回显服务器** [UDPEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPEchoServer.c)
    * **UDP 回显客户端 - 检查返包来源是否正确** [`UDPEchoClient_CheckServerIP.c`](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPEchoClient_CheckServerIP.c)
    * **UDP 回显客户端 - 未连接套接字** [UDPEchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/08%20基本%20UDP%20套接字编程/progs/UDPEchoClient.c)
@@ -89,7 +90,6 @@
 
 * 第 11 章 名字与地址转换
 
-   * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/11%20名字与地址转换/README.md)
    * **用主机名或域名获取 IP** [GetHostByName.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/11%20名字与地址转换/progs/GetHostByName.c)
    * **用 IP 获取主机名或域名 - 获取域名需要 PTR 记录支持** [GetHostByAddr.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/11%20名字与地址转换/progs/GetHostByAddr.c)
    * **使用服务名和套接字类型获取端口，基于 /etc/services 的配置** [GetHostByAddr.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/11%20名字与地址转换/progs/GetServByName.c)
