@@ -8,6 +8,11 @@
 
 int main(int argc, char const *argv[])
 {
+    if (argc == 1) {
+        printf("usage : %s [ip1, ip2, ...]\n", argv[0]);
+        exit(1);
+    }
+
     char **pptr = NULL, *ptr = NULL;
     struct hostent *ent = NULL;
     struct in_addr addr;

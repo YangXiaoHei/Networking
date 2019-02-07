@@ -5,6 +5,11 @@
 
 int main(int argc, char const *argv[])
 {
+    if (argc != 3) {
+        printf("usage : %s <port> <protocol>\n", argv[0]);
+        exit(1);
+    }
+
     struct servent *sptr = NULL;
     if ((sptr = getservbyport(htons(atoi(argv[1])), argv[2])) == NULL) {
         printf("getservbyport error! %s\n", hstrerror(h_errno));

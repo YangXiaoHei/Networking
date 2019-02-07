@@ -7,6 +7,11 @@
 
 int main(int argc, char const *argv[])
 {
+    if (argc == 1) {
+        printf("usage : %s [hostname1, hostname2, ...]\n", argv[0]);
+        exit(1);
+    }
+
     struct hostent *ent = NULL;
     while (--argc > 0) {
         const char *name = *++argv;
