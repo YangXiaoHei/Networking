@@ -13,6 +13,8 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
+    setbuf(stdout, NULL);
+
     int fd = -1;
     if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket fd create fail!");
