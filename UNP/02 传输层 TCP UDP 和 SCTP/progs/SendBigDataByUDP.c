@@ -44,6 +44,11 @@ int main(int argc, char const *argv[])
     }
     printf("send buffer size = %d\n", sendbuff);
 
+    if (connect(fd, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0) {
+        perror("connect error!");
+        exit(1);
+    }
+
     printf("input ? 100B you want to send\n");
     int wantToSend = 0;
     scanf("%d", &wantToSend);
@@ -53,11 +58,18 @@ int main(int argc, char const *argv[])
     memset(buf, 'a', bufsize);
 
     long beg = curtimeus();
-    if (sendto(fd, buf, bufsize, 0, (struct sockaddr *)&svraddr, sizeof(svraddr)) < 0) {
+    if (sendto(fd, buf, bufsize, 0, NULL, 0) < 0) {
         perror("sendto error!");
         exit(1);
     }
     printf("sendto succ! %.2f ms\n", (curtimeus() - beg) / 1000.0);
+
+    // 即使服务器端口未监听，sendto 还是能发送成功，但如果接下来 recvfrom 的话，会返回 Connection refused 错误
+    // char c = 0;
+    // if (recvfrom(fd, &c, 1, 0, NULL, NULL) < 0) {
+    //     perror("recvfrom error!");
+    //     exit(1);
+    // }
 
     close(fd);
 
