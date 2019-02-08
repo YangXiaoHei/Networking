@@ -58,6 +58,7 @@ int main(int argc, char const *argv[])
     bzero(buf, sizeof(buf));
     ssize_t nread = 0;
     for (;;) {
+        /* 即使客户端发送 FIN，recv 也不会返回 0 */
         if ((nread = recv(connfd, buf, sizeof(buf), MSG_PEEK)) < 0) {
             perror("recv error!");
             exit(1);
