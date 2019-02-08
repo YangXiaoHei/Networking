@@ -10,6 +10,11 @@
 
 int main(int argc, char const *argv[])
 {
+    if (argc != 2) {
+        printf("usage : %s <port>\n", argv[0]);
+        exit(1);
+    }
+
     int listenfd = -1;
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("TCP socket fd create fail!");
