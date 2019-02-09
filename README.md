@@ -111,6 +111,15 @@
    * **通过 xinetd 启动的 TCP 时间获取服务器** [TCPDaytimeServerExecByXinetd.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/progs/TCPDaytimeServerExecByXinetd.c)
    * **通过 xinetd 启动的 UDP 时间获取服务器** [UDPDaytimeServerExecByXinetd.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/progs/UDPDaytimeServerExecByXinetd.c)
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/习题.md)
+
+* 第 14 章 高级 IO 函数
+   * [note]()
+   * **使用 SIGALRM 给 connect 设置超时 - 有缺陷** [TimeoutConnectClientBySignal.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutConnectClientBySignal.c)
+   * **使用 SIGALRM 给 recvfrom 设置超时** [TimeoutRecvfromClientBySignal_UDPDaytimeClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutRecvfromClientBySignal_UDPDaytimeClient.c)
+   * **使用 select 给 recvfrom 设置超时** [TimeoutRecvfromClientBySelect.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutRecvfromClientBySelect.c)
+   * **使用套接字选项 SO_RCVTIMEO 给 recvfrom 设置超时** [TimeoutRecvfromClientBySockOpt.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutRecvfromClientBySockOpt.c)
+   * **writev 测试客户端**  [TCPWritevTestClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPWritevTestClient.c)
+   * **writev 测试服务器** [TCPWritevTestServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPWritevTestServer.c)
           
 # 《计算机网络-自顶向下 6th》
 
