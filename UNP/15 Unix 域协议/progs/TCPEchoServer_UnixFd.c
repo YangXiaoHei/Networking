@@ -77,7 +77,7 @@ int main(int argc, char const *argv[])
             continue;
         }
 
-        printf("new client connected\n");
+        printf("new client connected cliaddr.sun_path=%s\n", cliaddr.sun_path);
 
         pid_t pid = 0;
         if ((pid = fork()) < 0) {
