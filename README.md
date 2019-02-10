@@ -117,10 +117,27 @@
    * **使用 SIGALRM 给 connect 设置超时 - 有缺陷** [TimeoutConnectClientBySignal.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutConnectClientBySignal.c)
    * **使用 SIGALRM 给 recvfrom 设置超时** [TimeoutRecvfromClientBySignal_UDPDaytimeClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutRecvfromClientBySignal_UDPDaytimeClient.c)
    * **使用 select 给 recvfrom 设置超时** [TimeoutRecvfromClientBySelect.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutRecvfromClientBySelect.c)
-   * **使用套接字选项 SO_RCVTIMEO 给 recvfrom 设置超时** [TimeoutRecvfromClientBySockOpt.c](https://github.com/YangXiaoHei/Networking/bl
-   * ob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutRecvfromClientBySockOpt.c)
-   * **writev 测试客户端**  [TCPWritevTestClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPWritevTestClient.c)
+   * **使用套接字选项 SO_RCVTIMEO 给 recvfrom 设置超时** [TimeoutRecvfromClientBySockOpt.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutRecvfromClientBySockOpt.c)
+   * **测试超时 API 的服务器 - 可以指定推迟几秒给回包** [UDPDaytimeServer_Delay.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutRecvfromClientBySockOpt.c)
+   * **writev 测试客户端**  [TCPWritevTestClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/UDPDaytimeServer_Delay.c)
    * **writev 测试服务器** [TCPWritevTestServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPWritevTestServer.c)
+   * **readv 测试客户端 - 每次循环写一个字节 - 禁用 Nagle 算法** [TCPReadvTestClient_EveryLoopOneByte_TCP_NODELAY.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPReadvTestClient_EveryLoopOneByte_TCP_NODELAY.c)
+   * **readv 测试客户端 - 一次写完所有数据** [TCPReadvTestClient_WriteAllOneTime.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPReadvTestClient_WriteAllOneTime.c)
+   * **readv 测试服务器** [TCPReadvTestServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPReadvTestServer.c)
+   * **recv flag 测试服务器 - MSG_PEEK** [TCPRecvFlagTestServer_MSG_PEEK.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPRecvFlagTestServer_MSG_PEEK.c)
+   * **recv flag 测试服务器 - MSG_WAITALL** [TCPRecvFlagTestServer_MSG_WAITALL.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPRecvFlagTestServer_MSG_WAITALL.c)
+   * **recv flag 测试客户端 - 每次循环写一个字节 - 禁用 Nagle 算法 - 每次循环睡 0.5 秒** [TCPRecvTestClient_EveryLoopOneByte_TCP_NODELAY_Delay.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPRecvTestClient_EveryLoopOneByte_TCP_NODELAY_Delay.c)
+   * **查看 TCP 套接字排队数据量 - 客户端** [client_TCP_EveryLoopOneByte_TCP_NODELAY_Delay.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/client_TCP_EveryLoopOneByte_TCP_NODELAY_Delay.c)
+   * **查看 UDP 套接字排队数据量 - 客户端** [client_UDP_EveryLoopOneByte_Delay.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/client_UDP_EveryLoopOneByte_Delay.c)
+   * **查看 TCP 套接字排队数据量 - 服务器 - ioctl** [server_TCP_LookHowManyInRecvBufferButNotRead_ioctl.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/server_TCP_LookHowManyInRecvBufferButNotRead_ioctl.c)
+   * **查看 TCP 套接字排队数据量 - 服务器 - MSG_PEEK** [server_TCP_LookHowManyInRecvBufferButNotRead_MSG_PEEK.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/server_TCP_LookHowManyInRecvBufferButNotRead_MSG_PEEK.c)
+   * **查看 UDP 套接字排队数据量 - 服务器 - ioctl** [server_UDP_LookHowManyInRecvBufferButNotRead_ioctl.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/server_UDP_LookHowManyInRecvBufferButNotRead_ioctl.c)
+   * **查看 UDP 套接字排队数据量 - 服务器 - MSG_PEEK** [server_UDP_LookHowManyInRecvBufferButNotRead_MSG_PEEK.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/server_UDP_LookHowManyInRecvBufferButNotRead_MSG_PEEK.c)
+   * **对套接字使用标准 IO 库的缓冲问题 - 服务器** [TCPEchoServer_StandardIO.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPEchoServer_StandardIO.c)
+   * **对套接字使用标准 IO 库的缓冲问题 - 客户端 - 使用半关闭修复了 close 的 bug** [TCPEchoClientUseGetAddrInfo.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPEchoClientUseGetAddrInfo.c)
+   *  **对 sendmsg 的使用 - 客户端** [UDPClientUseSendmsg.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/UDPClientUseSendmsg.c)
+   *  **对 recvmsg 的使用 - 服务器 - 通过设置 IP_ORIRECVDSTADDR 套接字选项获取 UDP 目的 IP 地址** [UDPServerUseRecvmsg.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/UDPServerUseRecvmsg.c)
+
           
 # 《计算机网络-自顶向下 6th》
 
