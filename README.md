@@ -113,7 +113,7 @@
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/13%20守护进程和%20inetd%20超级服务器/习题.md)
 
 * 第 14 章 高级 IO 函数
-   * [note]()
+   * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/README.md)
    * **使用 SIGALRM 给 connect 设置超时 - 有缺陷** [TimeoutConnectClientBySignal.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutConnectClientBySignal.c)
    * **使用 SIGALRM 给 recvfrom 设置超时** [TimeoutRecvfromClientBySignal_UDPDaytimeClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutRecvfromClientBySignal_UDPDaytimeClient.c)
    * **使用 select 给 recvfrom 设置超时** [TimeoutRecvfromClientBySelect.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TimeoutRecvfromClientBySelect.c)
