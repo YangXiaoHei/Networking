@@ -137,6 +137,7 @@
    * **对套接字使用标准 IO 库的缓冲问题 - 客户端 - 使用半关闭修复了 close 的 bug** [TCPEchoClientUseGetAddrInfo.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/TCPEchoClientUseGetAddrInfo.c)
    *  **对 sendmsg 的使用 - 客户端** [UDPClientUseSendmsg.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/UDPClientUseSendmsg.c)
    *  **对 recvmsg 的使用 - 服务器 - 通过设置 IP_ORIRECVDSTADDR 套接字选项获取 UDP 目的 IP 地址** [UDPServerUseRecvmsg.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/progs/UDPServerUseRecvmsg.c)
+   *  [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/14%20高级%20IO%20函数/习题.md)
 
           
 # 《计算机网络-自顶向下 6th》
