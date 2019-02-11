@@ -35,3 +35,6 @@ UNP/08 基本 UDP 套接字编程/progs/cli
 UNP/08 基本 UDP 套接字编程/progs/svr
 UNP/15 Unix 域协议/progs/cli
 UNP/15 Unix 域协议/progs/svr
+UNP/15 Unix 域协议/progs/openfile
+UNP/15 Unix 域协议/progs/data
+UNP/15 Unix 域协议/progs/readfile
