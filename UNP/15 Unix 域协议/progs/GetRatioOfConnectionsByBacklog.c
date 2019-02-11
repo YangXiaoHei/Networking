@@ -83,7 +83,7 @@ void connect_terminate(int signo) { return; }
 void do_parent()
 {
     close(cfd);
-    int backlog = 1;
+    int backlog = 0;
     int ready = 1;
 
     if (fuck(SIGALRM, connect_terminate) == SIG_ERR) {
