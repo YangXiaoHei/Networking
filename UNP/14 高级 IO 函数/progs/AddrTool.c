@@ -5,17 +5,32 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-char *getAddrInfo(struct sockaddr_in *addr) 
+char *getAddrInfo(struct sockaddr *addr) 
 {
-    size_t slen = 1 /* [] */ + 15 /* xxx.xxx.xxx.xxx */ + 1 /* : */ + 5 /* port */ + 1 /* \0 */ + 1 /* ] */;
     char *buf = NULL;
-    if ((buf = malloc(slen)) == NULL) {
-        printf("malloc error!");
-        return NULL;
+    size_t slen = 0;
+
+    /* IPv4 套接字 */
+    if (addr->sa_family == AF_INET) {
+        slen = 1 /* [] */ + 15 /* xxx.xxx.xxx.xxx */ + 1 /* : */ + 5 /* port */ + 1 /* \0 */ + 1 /* ] */;
+        if ((buf = malloc(slen)) == NULL) {
+            printf("malloc error!");
+            return NULL;
+        }
+        const char *ip = inet_ntoa(addr->sin_addr);
+        slen = snprintf(buf, slen, "[%s:%d]", ip, ntohs(addr->sin_port));
+        buf[slen] = 0;
+
+    /* unix 域套接字 */
+    } else if (addr->sa_family == AF_LOCAL) {
+        slen = sizeof(struct sockaddr_un);
+        if ((buf = malloc(slen)) == NULL) {
+            printf("malloc error!");
+            return NULL;
+        }
+        struct sockaddr_un *unaddr = (struct sockaddr_un *)addr;
+        snprintf(buf, slen, "[%s]", unaddr->sun_path);
     }
-    const char *ip = inet_ntoa(addr->sin_addr);
-    slen = snprintf(buf, slen, "[%s:%d]", ip, ntohs(addr->sin_port));
-    buf[slen] = 0;
     return buf;
 }
 
