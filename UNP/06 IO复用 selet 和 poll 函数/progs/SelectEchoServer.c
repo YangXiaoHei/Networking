@@ -29,6 +29,12 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
+    int on = 1;
+    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0) {
+        perror("setsockopt error!");
+        exit(1);
+    }
+
     struct sockaddr_in svraddr, cliaddr;
     bzero(&svraddr, sizeof(svraddr));
     svraddr.sin_family = AF_INET;
