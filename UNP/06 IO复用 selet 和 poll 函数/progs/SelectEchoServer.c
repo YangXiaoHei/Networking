@@ -76,11 +76,9 @@ int main(int argc, char const *argv[])
             perror("select error!");
             exit(1);
         }
-        printf("%d fds readable ", nready);
 
         // 新连接进来
         if (FD_ISSET(listenfd, &rset)) {
-            printf("listenfd\n");
             if ((connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &clilen)) < 0) {
                 perror("accept error!");
                 exit(1);
@@ -119,8 +117,6 @@ int main(int argc, char const *argv[])
             if (--nready <= 0) 
                 continue;
         }
-
-        printf("connfd\n");
 
         for (int j = 0; j <= maxi; j++) {
 
