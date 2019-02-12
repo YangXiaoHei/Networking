@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <sys/un.h>
 
 char *getAddrInfo(struct sockaddr *addr) 
 {
@@ -17,8 +18,9 @@ char *getAddrInfo(struct sockaddr *addr)
             printf("malloc error!");
             return NULL;
         }
-        const char *ip = inet_ntoa(addr->sin_addr);
-        slen = snprintf(buf, slen, "[%s:%d]", ip, ntohs(addr->sin_port));
+        struct sockaddr_in *inaddr = (struct sockaddr_in *)addr;
+        const char *ip = inet_ntoa(inaddr->sin_addr);
+        slen = snprintf(buf, slen, "[%s:%d]", ip, ntohs(inaddr->sin_port));
         buf[slen] = 0;
 
     /* unix 域套接字 */
@@ -42,7 +44,7 @@ char *getPeerInfo(int fd)
         perror("getpeername error!");
         return NULL;
     }
-    return getAddrInfo(&peeraddr);
+    return getAddrInfo((struct sockaddr *)&peeraddr);
 }
 
 char *getSockInfo(int fd) 
@@ -53,5 +55,5 @@ char *getSockInfo(int fd)
         perror("getsockname error!");
         return NULL;
     }
-    return getAddrInfo(&addr);
+    return getAddrInfo((struct sockaddr *)&addr);
 }

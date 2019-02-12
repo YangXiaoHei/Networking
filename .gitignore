@@ -38,3 +38,5 @@ UNP/15 Unix 域协议/progs/svr
 UNP/15 Unix 域协议/progs/openfile
 UNP/15 Unix 域协议/progs/data
 UNP/15 Unix 域协议/progs/readfile
+UNP/15 Unix 域协议/progs/unix_cli
+UNP/15 Unix 域协议/progs/unix_svr
