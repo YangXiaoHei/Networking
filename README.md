@@ -152,6 +152,8 @@
    * **描述符传递 - 被传递描述符的读取端 - 父进程** [FdTransfer_Read_End.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/progs/FdTransfer_Read_End.c)
    * **描述符传递 - 被传递描述符的写入端 - 子进程** [FdTransfer_Write_End.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/progs/FdTransfer_Write_End.c)
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/习题.md)
+
+* 第 16 章 非阻塞式 IO
           
 # 《计算机网络-自顶向下 6th》
 
