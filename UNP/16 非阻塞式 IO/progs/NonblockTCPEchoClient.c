@@ -113,15 +113,19 @@ int main(int argc, char const *argv[])
         FD_ZERO(&rset);
         FD_ZERO(&wset);
 
+        /* 标准输入还有内容需要读取，并且待发送缓冲区未填满，标准输入的可读事件 */
         if (stdineof == 0 && to_finish < &to[size])
             FD_SET(STDIN_FILENO, &rset);
 
+        /* 缓冲区中还有待发送的数据，监听套接字的可写事件 */
         if (to_send < to_finish)
             FD_SET(fd, &wset);
 
+        /* 接收缓冲区还有空余，监听套接字的可读事件 */
         if (from_finish < &from[size])
             FD_SET(fd, &rset);
 
+        /* 接收缓冲区还有待读取的数据，监听标准输出的可写事件 */
         if (from_send < from_finish)
             FD_SET(STDOUT_FILENO, &wset);
 
@@ -154,7 +158,7 @@ int main(int argc, char const *argv[])
                 FD_SET(fd, &wset);
             }
         }
-
+        
         if (FD_ISSET(fd, &rset)) {
             if ((nread = read(fd, from_send, &from[size] - from_send)) < 0) {
                 if (errno != EAGAIN) {
