@@ -18,8 +18,9 @@
 
 struct filectl {
     const char *file;
-    int fd;
+    int sockfd;
     int flags;
+    int filefd;
 };
 
 fd_set rset, wset;
@@ -77,22 +78,20 @@ void nonblock(int fd)
 
 int write_get_cmd(struct filectl *ctl)
 {
-    if (ctl->fd <= 0)
+    if (ctl->sockfd <= 0)
         return -1;
 
     if (ctl->file == NULL || strlen(ctl->file) == 0)
         return -2;
 
-    block(ctl->fd);
-
     ssize_t nwrite, nread;
     char reqbuf[1024];
     snprintf(reqbuf, sizeof(reqbuf), GET_CMD, ctl->file);
-    if (write(ctl->fd, reqbuf, strlen(reqbuf)) != strlen(reqbuf)) {
+    if (write(ctl->sockfd, reqbuf, strlen(reqbuf)) != strlen(reqbuf)) {
         perror("write error! incomplete");
         return -3;
     }
-    FD_CLR(ctl->fd, &wset);
+    FD_CLR(ctl->sockfd, &wset);
     ctl->flags = FLCTL_READING;
 
     return 0;
@@ -113,7 +112,7 @@ int TCP_nonblock_connect(struct addrinfo *res, struct filectl *ctl)
             return -3;
         FD_SET(fd, &rset);
         FD_SET(fd, &wset);
-        ctl->fd = fd;
+        ctl->sockfd = fd;
         ctl->flags = FLCTL_CONNECTING;
         if (fd > maxfd)
             maxfd = fd;
@@ -173,9 +172,12 @@ int main(int argc, char const *argv[])
         exit(1);
     }
     for (i = 0; i < nfiles; i++) {
-        ctls[i].fd = -1;
+        ctls[i].sockfd = -1;
+        ctls[i].filefd = -1;
         ctls[i].flags = 0;
         ctls[i].file = argv[file_beg_idx++];
+        snprintf(filebuf, sizeof(filebuf), "%s/%s", download_dir, ctls[i].file);
+        remove(filebuf);
     }
 
     long beg = curtimeus();
@@ -215,10 +217,10 @@ int main(int argc, char const *argv[])
             if (flags == 0 || flags == FLCTL_DONE)
                 continue;
 
-            if (flags == FLCTL_CONNECTING && (FD_ISSET(ctls[j].fd, &rs) || FD_ISSET(ctls[j].fd, &ws))) {
+            if (flags == FLCTL_CONNECTING && (FD_ISSET(ctls[j].sockfd, &rs) || FD_ISSET(ctls[j].sockfd, &ws))) {
                 int err = 0;
                 socklen_t errlen = sizeof(err);
-                if (getsockopt(ctls[j].fd, SOL_SOCKET, SO_ERROR, &err, &errlen) < 0) {
+                if (getsockopt(ctls[j].sockfd, SOL_SOCKET, SO_ERROR, &err, &errlen) < 0) {
                     perror("getsockopt error!");
                     exit(1);
                 } 
@@ -226,29 +228,39 @@ int main(int argc, char const *argv[])
                     printf("connect error! %s\n", strerror(err));
                     exit(1);
                 }
-                FD_CLR(ctls[j].fd, &wset);
+                FD_CLR(ctls[j].sockfd, &wset);
                 write_get_cmd(&ctls[j]);
-            } else if (flags == FLCTL_READING && FD_ISSET(ctls[j].fd, &rs)) {
+            } else if (flags == FLCTL_READING && FD_ISSET(ctls[j].sockfd, &rs)) {
 
                 snprintf(filebuf, sizeof(filebuf), "%s/%s", download_dir, ctls[j].file);
-            
-                if ((filefd = open(filebuf, O_CREAT | O_RDWR | O_APPEND, 0644)) < 0) {
-                    perror("open error!");
+                if (access(filebuf, F_OK) != 0) {  /* not exist */
+                    if ((ctls[j].filefd = open(filebuf, O_CREAT | O_RDWR | O_APPEND, 0644)) < 0) {
+                        perror("open error!");
+                        exit(1);
+                    }
+                } else if (ctls[j].filefd < 0) { /* exist */
+                    printf("%s what a fuck?!\n", ctls[j].file);
                     exit(1);
                 }
 
-                while ((nread = read(ctls[j].fd, buf, sizeof(buf))) > 0) {
-                    if (write(filefd, buf, nread) != nread) {
+                while ((nread = read(ctls[j].sockfd, buf, sizeof(buf))) > 0) {
+                    if (write(ctls[j].filefd, buf, nread) != nread) {
                         perror("write error!");
                         exit(1);
                     }
                 }
-                ctls[j].flags = FLCTL_DONE;
-                FD_CLR(ctls[j].fd, &rset);
-                close(ctls[j].fd);
-                nlefttoread--;
-                nconn--;
-                printf("j=%d download file [%s] succ! \n",j, ctls[j].file);
+                if (nread == 0) {
+                    ctls[j].flags = FLCTL_DONE;
+                    FD_CLR(ctls[j].sockfd, &rset);
+                    close(ctls[j].sockfd);
+                    close(ctls[j].filefd);
+                    nlefttoread--;
+                    nconn--;
+                    printf("j=%d download file [%s] succ! \n",j, ctls[j].file);
+                } else if (errno != EAGAIN) {
+                    perror("read error!");
+                    exit(1);
+                }
             }
         }
     }
