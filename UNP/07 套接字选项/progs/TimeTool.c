@@ -6,14 +6,14 @@
 #include <string.h>
 #include "TimeTool.h"
 
-unsigned long getCurTimeUs()
+unsigned long curtimeus()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return 1000000 * tv.tv_sec + tv.tv_usec;
 }
 
-const char *curTime()
+const char *curtimestr()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);

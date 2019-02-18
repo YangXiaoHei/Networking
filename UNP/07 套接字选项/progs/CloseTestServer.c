@@ -41,7 +41,7 @@ int main(int argc, char const *argv[])
     for (;;) {
         int connfd = accept(fd, (struct sockaddr *)&cliaddr, &clilen);
 
-        unsigned long begin = getCurTimeUs();
+        unsigned long begin = curtimeus();
         ssize_t nread = 0;
         ssize_t totalRead = 0;
         while ((nread = read(connfd, buf, sizeof(buf))) > 0)
@@ -62,12 +62,12 @@ int main(int argc, char const *argv[])
             close(connfd);
 
         }
-        printf("read finsihed! %s [total_read=%ld] [total_cost=%ld]\n", curTime(), totalRead, getCurTimeUs() - begin);
+        printf("read finsihed! %s [total_read=%ld] [total_cost=%ld]\n", curtimestr(), totalRead, curtimeus() - begin);
 
-        printf("close begin! %s\n", curTime());
-        begin = getCurTimeUs();
+        printf("close begin! %s\n", curtimestr());
+        begin = curtimeus();
         close(connfd);
-        printf("close finished! %s total_cost = %ld\n\n\n\n\n\n\n", curTime(), getCurTimeUs() - begin);
+        printf("close finished! %s total_cost = %ld\n\n\n\n\n\n\n", curtimestr(), curtimeus() - begin);
     }
     
     return 0;

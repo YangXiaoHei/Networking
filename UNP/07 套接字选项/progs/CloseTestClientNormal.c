@@ -50,18 +50,18 @@ int main(int argc, char const *argv[])
     }
 
     memset(buf, 'a', size);
-    printf("write begin! %s\n", curTime());
-    unsigned long begin = getCurTimeUs();
+    printf("write begin! %s\n", curtimestr());
+    unsigned long begin = curtimeus();
     if (write(fd, buf, size) != size) {
         perror("write error!");
         exit(1);
     }
-    printf("write finished! %s total_cost=%ld\n", curTime(), getCurTimeUs() - begin);
+    printf("write finished! %s total_cost=%ld\n", curtimestr(), curtimeus() - begin);
 
-    printf("close begin %s\n", curTime());
-    begin = getCurTimeUs();
+    printf("close begin %s\n", curtimestr());
+    begin = curtimeus();
     int retCode = close(fd);
-    printf("close finished! [ret_code=%d] %s total_cost=%ld\n", retCode, curTime(), getCurTimeUs() - begin);
+    printf("close finished! [ret_code=%d] %s total_cost=%ld\n", retCode, curtimestr(), curtimeus() - begin);
 
     return 0;
 }

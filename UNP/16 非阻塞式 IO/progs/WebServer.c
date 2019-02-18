@@ -93,8 +93,7 @@ void collect_child(int signo)
 {
     int status;
     pid_t pid;
-    while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
-        printf("collect child %ld\n", (long)pid);
+    while ((pid = waitpid(-1, &status, WNOHANG)) > 0);
     if (pid < 0 && errno != ECHILD)
         perror("waitpid error!");
     return;
@@ -111,7 +110,7 @@ int hanlde_client_req(int connfd)
             break;
         ptr += nread;
     }
-    printf("req content = 【%s】\n", buf);
+    // printf("req content = [%s]\n", buf);
     if (nread <= 0 && strstr(buf, "\r\n\r\n") == NULL) 
         return REQ_INCOMPLETE;
 
@@ -126,7 +125,7 @@ int hanlde_client_req(int connfd)
 
     char path[256];
     strncpy(path, pathbeg, pathend - pathbeg);
-    printf("client req path = %s\n", path);
+    printf("client req [file=%s]\n", path);
 
     int fd = -1;
     if ((fd = open(path, O_RDONLY)) < 0)
@@ -143,7 +142,7 @@ int hanlde_client_req(int connfd)
         perror("read error!");
         return REQ_FILE_ERROR;
     } else {
-        printf("eof of file\n");
+        printf("file finished! [file=%s]\n", path);
     }
     return 0;
 }
