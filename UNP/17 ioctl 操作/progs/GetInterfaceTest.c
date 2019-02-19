@@ -6,7 +6,18 @@
 #include <net/if.h>
 #include <errno.h>
 #include <string.h>
+#include <net/if_dl.h>
 #include "config.h"
+
+void tostring(unsigned char *ptr, int len)
+{
+    int i = len;
+    printf("\t");
+    do {
+        printf("%s%02x", (i == len) ? "" : ":", *ptr++);
+    } while (--i > 0);
+    printf("\n");
+}
 
 int main(int argc, char const *argv[])
 {
@@ -105,6 +116,16 @@ int main(int argc, char const *argv[])
             }
 #endif
             break;
+
+#ifdef HAVE_SOCKADDR_DL_STRUCT
+            case AF_LINK: {
+                struct sockaddr_dl *sdl = (struct sockaddr_dl *)&ifr->ifr_addr;
+                tostring((unsigned char *)(sdl->sdl_data + sdl->sdl_nlen), sdl->sdl_alen);
+                // printf("\thard addr : %s\n", sdl->sdl_data + sdl->sdl_nlen);
+                printf("\thard idx : %d\n", sdl->sdl_index);
+            } break;
+#endif
+
             default : 
             break;
         }
