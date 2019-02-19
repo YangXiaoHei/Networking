@@ -44,3 +44,5 @@ UNP/16 非阻塞式 IO/progs/server_echo
 UNP/16 非阻塞式 IO/progs/data
 UNP/16 非阻塞式 IO/progs/tcpd
 UNP/16 非阻塞式 IO/progs/echo_log
+UNP/16 非阻塞式 IO/progs/svr
+UNP/16 非阻塞式 IO/progs/cli
