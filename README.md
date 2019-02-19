@@ -154,7 +154,18 @@
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/习题.md)
 
 * 第 16 章 非阻塞式 IO
-* 
+   * **非阻塞 connect 测试** [NonblockConnect.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/NonblockConnect.c)
+   * **读写非阻塞 TCP 回显客户端 - 2 个缓冲区，4 个读写控制游标** [NonblockTCPEchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/NonblockTCPEchoClient.c)
+   * **读写非阻塞 TCP 回显客户端 - 一次运行的时序日志 - 合并了 tcpdump 日志** [analyze](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/analyze)
+   * **分成两个进程的 TCP 回显客户端 - 代码超简单** [TCPEchoClientByFork.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/TCPEchoClientByFork.c)
+   * **简单的多进程 Web 服务器 - 只能处理 GET 请求 - 请求路径必须和执行程序处于同一目录下** [WebServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/WebServer.c)
+   * **Web 客户端 - 批量下载文件 - 每次阻塞型 connect，发送下载请求，接收响应写文件** [WebClientMultiConnectDownload_Block.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/WebClientMultiConnectDownload_Block.c) **编译 + 运行脚本** [run_block.sh](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/run_block.sh)
+   * **Web 客户端 - 批量下载文件 - 可以指定最大连接数 - 先创建若干连接 - 然后轮询下载** [WebClientMultiConnectDownload_Nonblock.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/WebClientMultiConnectDownload_Nonblock.c) **编译 + 运行脚本** [run_nonblock.sh](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/run_nonblock.sh)
+   * **时间工具** [TimeTool.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/TimeTool.h) | [TimeTool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/TimeTool.c)
+   * **客户端 - 阻塞型 accept 可能会引发的阻塞 BUG 验证 - connect 返回后睡 1 秒然后发送 RST - 然而并没有得到书上所述的结果 💔** [BlockAcceptBug_TCPClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/BlockAcceptBug_TCPClient.c)
+   * **服务器 - 阻塞型 accept 可能会引发的阻塞 BUG 验证 - select 可读事件后睡 5 秒然后 accept - 然而并没有得到书上所述的结果 💔** [BlockAcceptBug_TCPServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/BlockAcceptBug_TCPServer.c)
+   * **阻塞型 accept 可能会引发的阻塞 BUG 验证 - 合并了 tcpdump 的时序日志** [timeline.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/timeline.c)
+   * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/习题.md)
           
 # 《计算机网络-自顶向下 6th》
 
