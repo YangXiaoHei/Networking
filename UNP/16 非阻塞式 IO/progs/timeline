@@ -1,0 +1,8 @@
+12:58:05.234255 IP client.6623 > server.50001: Flags [S], seq 3699206896, win 65535, length 0
+12:58:05.234288 IP server.50001 > client.6623: Flags [S.], seq 970044221, ack 3699206897, win 28960, length 0
+12:58:05.260216 IP client.6623 > server.50001: Flags [.], ack 1, win 2056, length 0
+12:58:05.260268: busy server cannot handle next accept right away! sleep 5 sec to simulate
+12:58:06.262243 IP client.6623 > server.50001: Flags [R.], seq 1, ack 1, win 2056length
+12:58:10.260521: busy server now is ready to handle next accept!
+12:58:10.260585: TCP connection from [client:6623]
+12:58:10.261624: read error! Connection reset by peer
