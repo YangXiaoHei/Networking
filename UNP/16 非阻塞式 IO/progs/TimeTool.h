@@ -3,5 +3,7 @@
 
 const char *curtimestr();
 unsigned long curtimeus();
+char *tcpdump_timestamp(void);
+ssize_t logx(const char *fmt, ...);
 
 #endif
