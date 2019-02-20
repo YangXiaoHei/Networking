@@ -88,10 +88,56 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
                 len = sizeof(struct sockaddr_in6);
                 break;
 #endif /* IPV6 */
-            case AF_INET :
-            default :
-                len = sizeof(struct sockaddr);
-                break;
+            case AF_INET : 
+            default : {
+                struct ifreq test;
+                /*
+                 * 在 UNPv3 版书上，作者写的是 len = sizeof(struct sockaddr);
+                 * 因为在作者写书时用的系统中，struct ifreq 结构如下
+
+                   struct ifreq {
+                        char ifr_name[IFNAMESIZ];
+                        union {
+                            struct sockaddr ifru_addr;
+                            ...
+                            short ifru_flags;
+                            int ifru_metric;
+                            caddr_t ifru_data;
+                        } ifr_ifru;
+                   }
+
+                   结构体中的 union 的尺寸由 struct sockaddr 决定（因为它最长）
+                   于是，作者把 sizeof(struct sockaddr) 当作 union 的长度直接用了。
+                   然而，现在的 linux 源码中，struct ifreq 结构如下
+
+                   struct ifreq {
+                        union
+                        {   
+                            char    ifrn_name[IFNAMSIZ];        
+                        } ifr_ifrn;
+                        
+                        union {
+                            struct  sockaddr ifru_addr;
+                            ...
+                            short   ifru_flags;
+                            int ifru_ivalue;
+                            int ifru_mtu;
+                            struct  ifmap ifru_map;
+                            char    ifru_slave[IFNAMSIZ];   
+                            char    ifru_newname[IFNAMSIZ];
+                            void *  ifru_data;
+                            struct  if_settings ifru_settings;
+                        } ifr_ifru;
+                    };
+
+                    其中这个 union 的尺寸已经不是 sizeof(struct sockaddr) 了，最长的类型是
+                    struct ifmap，而 sizeof(struct ifmap) 为 24，
+                    因此，若当前指向一个 IPv4 套接字地址的 struct ifreq，在寻找下一个缓冲区中的 struct ifreq 时，
+                    指针本来应该偏移 24 字节，而 UNPv3 版的代码只偏移了 16 字节。
+
+                 */
+                len = sizeof(test.ifr_ifru);  /* 能正确工作的修正，由 GNU/Linux 4.15.0-42-generic x86_64 测试  */
+            } break;
         }
 #endif /* HAVE_SOCKADDR_SA_LEN */
 
@@ -107,8 +153,10 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
         }
 #endif /* HAVE_SOCKADDR_DL_STRUCT */
 
-        if (ifr->ifr_addr.sa_family != family)
+        if (ifr->ifr_addr.sa_family != family) {
+            printf("(ignored) family = [%d] name = %s\n", ifr->ifr_addr.sa_family, ifr->ifr_name);
             continue;
+        }
 
         int myflags = 0;
         char *cptr = NULL;
@@ -142,6 +190,7 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
         ifi->ifi_flags = flags;
         ifi->ifi_myflags = myflags;
 
+/* 获取 MTU */
 #if defined(SIOCGIFMTU) && defined(HAVE_STRUCT_IFREQ_IFR_MTU)
         if (ioctl(sockfd, SIOCGIFMTU, &ifrcopy) < 0) {
             perror("ioctl error!");
@@ -170,6 +219,8 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
                     exit(1);
                 }
                 memcpy(ifi->ifi_addr, addr, sizeof(struct sockaddr_in));
+
+/* 广播 */
 #ifdef SIOCGIFBRDADDR
                 if (flags & IFF_BROADCAST) {
                     if (ioctl(sockfd, SIOCGIFBRDADDR, &ifrcopy) < 0) {
@@ -185,6 +236,7 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
                 }
 #endif
 
+/* 点对点 */
 #ifdef SIOCGIFDSTADDR
                 if (flags & IFF_POINTOPOINT) {
                     if (ioctl(sockfd, IFF_POINTOPOINT, &ifrcopy) < 0) {
@@ -236,5 +288,15 @@ struct iff_info *Get_ifi_info(int family, int doaliaes)
 }
 void free_ifi_info(struct ifi_info *tofree)
 {
-
+    struct ifi_info *ifi, *ifinext;
+    for (ifi = tofree; ifi != NULL; ifi = ifinext) {
+        if (ifi->ifi_addr)
+            free(ifi->ifi_addr);
+        if (ifi->ifi_brdaddr)
+            free(ifi->ifi_brdaddr);
+        if (ifi->ifi_dstaddr)
+            free(ifi->ifi_dstaddr);
+        ifinext = ifi->ifi_next;
+        free(ifi);
+    }
 }
