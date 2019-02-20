@@ -239,7 +239,7 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
 /* 点对点 */
 #ifdef SIOCGIFDSTADDR
                 if (flags & IFF_POINTOPOINT) {
-                    if (ioctl(sockfd, IFF_POINTOPOINT, &ifrcopy) < 0) {
+                    if (ioctl(sockfd, SIOCGIFDSTADDR, &ifrcopy) < 0) {
                         perror("ioctl error!");
                         exit(1);
                     }
@@ -262,7 +262,7 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
                 memcpy(ifi->ifi_addr, addr, sizeof(struct sockaddr_in6));
 #ifdef SIOCGIFDSTADDR
                 if (flags & IFF_POINTOPOINT) {
-                    if (ioctl(sockfd, IFF_POINTOPOINT, &ifrcopy) < 0) {
+                    if (ioctl(sockfd, SIOCGIFDSTADDR, &ifrcopy) < 0) {
                         perror("ioctl error!");
                         exit(1);
                     }
