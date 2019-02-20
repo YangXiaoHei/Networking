@@ -1,23 +1,21 @@
+#include "config.h"
+#include "InterfaceTool.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <errno.h>
 
+#ifdef HAVE_SOCKADDR_DL_STRUCT
+#include <net/if_dl.h>
+#endif
 
-// #define IFI_NAME 16
-// #define IFI_HADDR 8  
+#include <net/if.h>
+#include <string.h>
+#include <sys/ioctl.h>
 
-// struct ifi_info {
-//     char ifi_name[IFI_NAME];
-//     short ifi_index;
-//     short ifi_mtu;
-//     unsigned char ifi_haddr[IFI_HADDR];
-//     unsigned short ifi_hlen;
-//     short ifi_flags;
-//     short ifi_myflags;
-//     struct sockaddr *ifi_addr;
-//     struct sockaddr *ifi_brdaddr;
-//     struct sockaddr *ifi_dstaddr;
-//     struct ifi_info *ifi_next;
-// };
-
-// #define IFI_ALIAS 1
+static int max(int a, int b) { return a > b ? a : b; }
 
 struct ifi_info *get_ifi_info(int family, int doaliases)
 {
@@ -68,16 +66,16 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
     }
 
     /* 缓冲区足够大，足以容纳所有的 struct ifreq 结构 */
-    printf("final memory alloc size = %ld, kernel tell =%ld\n", (long)len, (long)ifc.ifc_len);
+    printf("final memory alloc size = %ld, kernel tell = %ld\n", (long)len, (long)ifc.ifc_len);
 
     struct ifi_info *ifihead = NULL, **ifipnext = &ifihead;
-    char lastname[IFINAMSIZ];
+    char lastname[IFI_NAME];
     lastname[0] = 0;
     char *sdlname = NULL, *haddr = NULL;
     int idx = -1, hlen = 0;
 
     char *ptr = NULL;
-    char *ifr = NULL;
+    struct ifreq *ifr = NULL;
     for (ptr = buf; ptr < buf + ifc.ifc_len;) {
         ifr = (struct ifreq *)ptr;
 
@@ -100,7 +98,7 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
         ptr += sizeof(ifr->ifr_name) + len;
 
 #ifdef HAVE_SOCKADDR_DL_STRUCT
-        if (ifr->ifr_addr.sa_family = AF_LINK) {
+        if (ifr->ifr_addr.sa_family == AF_LINK) {
             struct sockaddr_dl *sdl = (struct sockaddr_dl *)&ifr->ifr_addr;
             sdlname = ifr->ifr_name;
             idx = sdl->sdl_index;
@@ -114,17 +112,17 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
 
         int myflags = 0;
         char *cptr = NULL;
-        if ((cptr = strchr(ifr->ifr_name, ":")) == NULL)
+        if ((cptr = strchr(ifr->ifr_name, ':')) == NULL)
             cptr = 0;
-        if (strncmp(lastname, ifr->ifr_name, IFINAMSIZ) == 0)
-            if (!doaliaes)
+        if (strncmp(lastname, ifr->ifr_name, IFI_NAME) == 0)
+            if (!doaliases)
                 continue;
         myflags = IFI_ALIAS;
 
-        memcpy(lastname, ifr->ifr_name, IFNAMSIZ);
+        memcpy(lastname, ifr->ifr_name, IFI_NAME);
 
         struct ifreq ifrcopy = *ifr;
-        if (ioctl(sockfd, SIOCGIFFLGAS, &ifrcopy) < 0) {
+        if (ioctl(sockfd, SIOCGIFFLAGS, &ifrcopy) < 0) {
             perror("ioctl error!");
             exit(1);
         }
@@ -167,7 +165,7 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
         switch (ifr->ifr_addr.sa_family) {
             case AF_INET : {
                 struct sockaddr_in *addr = (struct sockaddr_in *)&ifr->ifr_addr;
-                if (ifi->ifi_addr = calloc(1, sizeof(struct sockaddr_in)) == NULL) {
+                if ((ifi->ifi_addr = calloc(1, sizeof(struct sockaddr_in))) == NULL) {
                     perror("calloc error!");
                     exit(1);
                 }
@@ -179,7 +177,7 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
                         exit(1);
                     }
                     struct sockaddr_in *addr = (struct sockaddr_in *)&ifr->ifr_broadaddr;
-                    if (ifi->ifi_brdaddr = calloc(1, sizeof(struct sockaddr_in)) == NULL) {
+                    if ((ifi->ifi_brdaddr = calloc(1, sizeof(struct sockaddr_in))) == NULL) {
                         perror("calloc error!");
                         exit(1);
                     }
@@ -194,7 +192,7 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
                         exit(1);
                     }
                     struct sockaddr_in *addr = (struct sockaddr_in *)&ifr->ifr_dstaddr;
-                    if (ifi->ifi_dstaddr = calloc(1, sizeof(struct sockaddr_in)) == NULL) {
+                    if ((ifi->ifi_dstaddr = calloc(1, sizeof(struct sockaddr_in))) == NULL) {
                         perror("calloc error!");
                         exit(1);
                     }
@@ -204,8 +202,8 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
             } break;
 
             case AF_INET6 : {
-                struct sockaddr_in6 *addr = (struct sockaddr_in *)&ifr->ifr_addr;
-                if (ifi->ifi_addr = calloc(1, sizeof(struct sockaddr_in6)) == NULL) {
+                struct sockaddr_in6 *addr = (struct sockaddr_in6 *)&ifr->ifr_addr;
+                if ((ifi->ifi_addr = calloc(1, sizeof(struct sockaddr_in6))) == NULL) {
                     perror("calloc error!");
                     exit(1);
                 }
@@ -217,7 +215,7 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
                         exit(1);
                     }
                     struct sockaddr_in6 *addr = (struct sockaddr_in6 *)&ifr->ifr_dstaddr;
-                    if (ifi->ifi_dstaddr = calloc(1, sizeof(struct sockaddr_in6)) == NULL) {
+                    if ((ifi->ifi_dstaddr = calloc(1, sizeof(struct sockaddr_in6))) == NULL) {
                         perror("calloc error!");
                         exit(1);
                     }
@@ -234,7 +232,7 @@ struct ifi_info *get_ifi_info(int family, int doaliases)
 }
 struct iff_info *Get_ifi_info(int family, int doaliaes)
 {
-
+    return NULL;
 }
 void free_ifi_info(struct ifi_info *tofree)
 {
