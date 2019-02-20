@@ -13,8 +13,39 @@
 #include <net/if_dl.h>
 #endif
 
+/*
+ *   linux 
+
+#if __UAPI_DEF_IF_IFREQ
+struct ifreq {
+#define IFHWADDRLEN 6
+    union
+    {   
+        char    ifrn_name[IFNAMSIZ];        // if name, e.g. "en0" 
+    } ifr_ifrn;
+    
+    union {
+        struct  sockaddr ifru_addr;
+        struct  sockaddr ifru_dstaddr;
+        struct  sockaddr ifru_broadaddr;
+        struct  sockaddr ifru_netmask;
+        struct  sockaddr ifru_hwaddr;
+        short   ifru_flags;
+        int ifru_ivalue;
+        int ifru_mtu;
+        struct  ifmap ifru_map;
+        char    ifru_slave[IFNAMSIZ];   // Just fits the size 
+        char    ifru_newname[IFNAMSIZ];
+        void *  ifru_data;
+        struct  if_settings ifru_settings;
+    } ifr_ifru;
+};
+#endif 
+ */
+
 void printtips(void)
 {
+    struct ifreq test;
     printf("\ntips : IFNAMSIZ = %d\n"
 #ifdef IPV6
                    "sockaddr_in6 = %ld\n"
@@ -25,8 +56,8 @@ void printtips(void)
                    "sockaddr_storage = %ld\n"
                    "sockaddr = %ld\n"
                    "sockaddr_in = %ld\n"
-                   
-                   "sockaddr_un = %ld\n\n", 
+                   "sockaddr_un = %ld\n"
+                   "union ifr_ifru = %ld\n", 
                    IFNAMSIZ, 
 #ifdef IPV6
                    (long)sizeof(struct sockaddr_in6),
@@ -34,10 +65,18 @@ void printtips(void)
 #ifdef HAVE_SOCKADDR_DL_STRUCT
                    (long)sizeof(struct sockaddr_dl),
 #endif
-                   (long)sizeof(struct sockaddr_un),
                    (long)sizeof(struct sockaddr_storage),
                    (long)sizeof(struct sockaddr),
-                   (long)sizeof(struct sockaddr_in));
+                   (long)sizeof(struct sockaddr_in),
+                   (long)sizeof(struct sockaddr_un),
+                   (long)sizeof(test.ifr_ifru));
+#ifdef __linux__
+#include <linux/if.h>
+    printf("struct  ifmap = %ld\n", (long)sizeof(struct ifmap));
+    printf("struct  if_settings = %ld\n\n", (long)sizeof(struct if_settings));
+#else
+    printf("\n");
+#endif
 }
 
 int main(int argc, char const *argv[])
