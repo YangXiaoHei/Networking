@@ -37,9 +37,6 @@
 
 * 第 5 章 TCP 客户/服务器程序示例
    * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/README.md)
-   * **读写工具**
-      * [ReadWriteTool.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ReadWriteTool.h)
-      * [ReadWriteTool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ReadWriteTool.c)
    * **fgets 和 fputs 对比** [fgetsAndfputs.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/fgetsAndfputs.c)
    * **TCP 多进程回显服务器** [ConcurrentMultiProcessEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/ConcurrentMultiProcessEchoServer.c)
    * **TCP 回显客户端** [EchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/05%20TCP%20客户%20服务器程序示例/progs/EchoClient.c)
@@ -69,8 +66,6 @@
    * **不使用 `SO_REUSEADDR` 选项的 server** [`NotUseOptionSO_REUSEADDR.c`](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/NotUseOptionSO_REUSEADDR.c)
    * **使用 `SO_REUSEADDR` 选项的 server** [`UseOptionSO_REUSEADDR_BindDifferentIp.c`](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/UseOptionSO_REUSEADDR_BindDifferentIp.c)
    * **查看 `TCP_NODELAY` 选项的影响的客户端** [`TCP_NODELAYClient.c`](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/TCP_NODELAYClient.c)
-   * **套接字工具** [AddrTool.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/AddrTool.h) [AddrTool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/AddrTool.c)
-   * **时间戳工具** [TimeTool.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/TimeTool.h) [TimeTool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/TimeTool.c)
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/习题.md)
   
 * 第 8 章 基本 UDP 套接字编程
@@ -148,7 +143,6 @@
    * **Unix 域套接字版本 - UDP 回显服务器** [UDPEchoServer_UnixFd.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/progs/UDPEchoServer_UnixFd.c)
    * **socketpair 测试** [SocketPairTest.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/progs/SocketPairTest.c)
    * **backlog 和已连接数的关系 - 可以分别在 Mac 和 Linux 上测试** [GetRatioOfConnectionsByBacklog.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/progs/GetRatioOfConnectionsByBacklog.c)
-   * **获取绝对路径工具** [PathTool.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/progs/PathTool.h) [PathTool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/progs/PathTool.c)
    * **描述符传递 - 被传递描述符的读取端 - 父进程** [FdTransfer_Read_End.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/progs/FdTransfer_Read_End.c)
    * **描述符传递 - 被传递描述符的写入端 - 子进程** [FdTransfer_Write_End.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/progs/FdTransfer_Write_End.c)
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/15%20Unix%20域协议/习题.md)
@@ -161,7 +155,6 @@
    * **简单的多进程 Web 服务器 - 只能处理 GET 请求 - 请求路径必须和执行程序处于同一目录下** [WebServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/WebServer.c)
    * **Web 客户端 - 批量下载文件 - 每次阻塞型 connect，发送下载请求，接收响应写文件** [WebClientMultiConnectDownload_Block.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/WebClientMultiConnectDownload_Block.c) **编译 + 运行脚本** [run_block.sh](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/run_block.sh)
    * **Web 客户端 - 批量下载文件 - 可以指定最大连接数 - 先创建若干连接 - 然后轮询下载** [WebClientMultiConnectDownload_Nonblock.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/WebClientMultiConnectDownload_Nonblock.c) **编译 + 运行脚本** [run_nonblock.sh](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/run_nonblock.sh)
-   * **时间工具** [TimeTool.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/TimeTool.h) | [TimeTool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/TimeTool.c)
    * **客户端 - 阻塞型 accept 可能会引发的阻塞 BUG 验证 - connect 返回后睡 1 秒然后发送 RST - 然而并没有得到书上所述的结果 💔** [BlockAcceptBug_TCPClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/BlockAcceptBug_TCPClient.c)
    * **服务器 - 阻塞型 accept 可能会引发的阻塞 BUG 验证 - select 可读事件后睡 5 秒然后 accept - 然而并没有得到书上所述的结果 💔** [BlockAcceptBug_TCPServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/BlockAcceptBug_TCPServer.c)
    * **阻塞型 accept 可能会引发的阻塞 BUG 验证 - 合并了 tcpdump 的时序日志** [timeline.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/timeline.c)
