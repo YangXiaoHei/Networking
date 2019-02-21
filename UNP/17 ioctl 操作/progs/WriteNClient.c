@@ -141,17 +141,17 @@ int main(int argc, char const *argv[])
     }
 
     pid_t pid = -1;
-    // if ((pid = fork()) < 0) {
-    //     perror("fork error!");
-    //     exit(1);
-    // } else if (pid == 0) {
-    //     usleep(1000 * 200);
-    //     for (;;) {
-    //         kill(getppid(), SIGINT);
-    //         usleep(1000 * 10);
-    //     }
-    //     exit(0);
-    // }
+    if ((pid = fork()) < 0) {
+        perror("fork error!");
+        exit(1);
+    } else if (pid == 0) {
+        usleep(1000 * 200);
+        for (;;) {
+            kill(getppid(), SIGINT);
+            usleep(1000 * 10);
+        }
+        exit(0);
+    }
 
     int sockfd = -1;
     if ((sockfd = TCP_connect(hostname, service)) < 0) {
