@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <errno.h>
-#include "ReadWriteTool.h"
+#include "../../tool/ReadWriteTool.h"
 
 void clientSendTextNeedEcho(FILE *fp, int fd) 
 {   

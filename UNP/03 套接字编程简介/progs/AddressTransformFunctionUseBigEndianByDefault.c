@@ -4,7 +4,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <string.h>
-#include "tool/bin_tool.h"
+#include "../../tool/bin_tool.h"
 
 int main(int argc, char const *argv[])
 {

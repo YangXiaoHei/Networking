@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <net/if.h>
 #include "InterfaceTool.h"
-#include "AddrTool.h"
+#include "../../tool/AddrTool.h"
 
 int main(int argc, char const *argv[])
 {

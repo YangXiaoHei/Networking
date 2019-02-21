@@ -3,9 +3,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
-#include "TimeTool.h"
+#include "../../tool/TimeTool.h"
 #include <netinet/in.h>
-#include "AddrTool.h"
+#include "../../tool/AddrTool.h"
 int main(int argc, char const *argv[])
 {
     if (argc != 2) {

@@ -7,7 +7,7 @@
 #include <errno.h>
 #include <sys/wait.h>
 #include <signal.h>
-#include "AddrTool.h"
+#include "../../tool/AddrTool.h"
 
 typedef void(*sig_handler)(int);
 

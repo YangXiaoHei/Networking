@@ -7,7 +7,7 @@
 #include <netdb.h>
 #include <signal.h>
 #include <errno.h>
-#include "AddrTool.h"
+#include "../../tool/AddrTool.h"
 
 void connect_terminate(int signo) { return; }
 

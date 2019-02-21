@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <errno.h>
-#include "AddrTool.h"
+#include "../../tool/AddrTool.h"
 #include <sys/resource.h>
 
 void printClifds(int *clifds) 

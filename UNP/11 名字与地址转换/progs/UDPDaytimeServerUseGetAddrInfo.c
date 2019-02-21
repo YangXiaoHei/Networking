@@ -5,7 +5,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <unistd.h>
-#include "AddrTool.h"
+#include "../../tool/AddrTool.h"
 #include <time.h>
 
 int main(int argc, char const *argv[])

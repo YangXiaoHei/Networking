@@ -5,7 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
-#include "tool/bin_tool.h"
+#include "../../tool/bin_tool.h"
 
 int inet_pton_loose(int family, const char *ipaddr, void *addrptr) 
 {

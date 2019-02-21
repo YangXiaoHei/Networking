@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#include "AddrTool.h"
+#include "../../tool/AddrTool.h"
 
 int main(int argc, char const *argv[])
 {

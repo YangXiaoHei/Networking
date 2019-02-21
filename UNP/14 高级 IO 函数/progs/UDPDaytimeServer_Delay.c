@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <sys/time.h>
 #include <time.h>
-#include "AddrTool.h"
+#include "../../tool/AddrTool.h"
 
 long curtimeus()
 {

@@ -8,7 +8,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include <errno.h>
-#include "PathTool.h"
+#include "../../tool/PathTool.h"
 
 typedef void(*sig_handler)(int);
 

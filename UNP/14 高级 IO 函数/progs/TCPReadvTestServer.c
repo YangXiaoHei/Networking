@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/uio.h>
-#include "AddrTool.h"
+#include "../../tool/AddrTool.h"
 
 int main(int argc, char const *argv[])
 {

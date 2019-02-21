@@ -11,7 +11,7 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include "AddrTool.h"
+#include "../../tool/AddrTool.h"
 
 int daemon_init(const char *pname, int facility) 
 {

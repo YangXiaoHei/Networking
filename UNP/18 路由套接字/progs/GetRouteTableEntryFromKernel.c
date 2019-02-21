@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <net/route.h>
 #include <string.h>
-#include "AddrTool.h"
+#include "../../tool/AddrTool.h"
 
 #define BUFLEN (sizeof(struct rt_msghdr) + 512)
 #define ROUNDUP(a, size) (((a) & ((size) - 1)) ? (1 + ((a) | ((size) - 1))) : (a))

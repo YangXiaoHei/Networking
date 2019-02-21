@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <sys/wait.h>
 #include <signal.h>
-#include "ReadWriteTool.h"
+#include "../../tool/ReadWriteTool.h"
 
 void sendMessageToSvr(FILE *fp, int fd) 
 {

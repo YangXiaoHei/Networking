@@ -6,7 +6,7 @@
 #include <errno.h>
 #include <sys/un.h>
 #include <unistd.h>
-#include "PathTool.h"
+#include "../../tool/PathTool.h"
 
 int main(int argc, char const *argv[])
 {
