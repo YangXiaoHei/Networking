@@ -1,21 +1,20 @@
 #include "ReadWriteTool.h"
 
-ssize_t writen(int fd, void *vptr, size_t n)
+ssize_t writen(int fd, void *vptr, ssize_t n)
 {
     ssize_t nleft = n;
     char *ptr = vptr;
     ssize_t nwrite = 0;
     while (nleft > 0) {
-        if ((nwrite = write(fd, ptr, nleft)) <= 0) {
-            if (nwrite < 0 && errno == EINTR)
-                nwrite = 0;
-            else
-                return -1;
+        if ((nwrite = write(fd, ptr, nleft)) < 0) {
+            if (errno != EINTR && errno != EAGAIN)
+                break;
+            nwrite = 0;
         }
         nleft -= nwrite;
         ptr += nwrite;
     }
-    return ptr - (char *)vptr;
+    return n - nleft;
 }
 
 static ssize_t read_cnt;
@@ -27,11 +26,11 @@ ssize_t __internal_read(int fd, char *c)
     if (read_cnt <= 0) {
     again:
         if ((read_cnt = read(fd, read_buf, sizeof(read_buf))) < 0) {
-            if (errno == EINTR)
+            if (errno == EINTR)  
                 goto again;
             else
                 return -1;
-        } else if (read_cnt == 0)
+        } else if (read_cnt == 0)  /* EOF 文件结尾，或者收到 FIN 的套接字，或者管道为空 */
             return 0;
         read_ptr = read_buf;
     }
