@@ -8,6 +8,30 @@
 #include <net/if_dl.h>
 #include "config.h"
 
+const char * getMaskInfo(struct sockaddr *sa)
+{
+#ifndef HAVE_SOCKADDR_SA_LEN
+    printf("not supported!\n");
+    exit(1);
+#endif
+
+    static char str[INET6_ADDRSTRLEN];
+    unsigned char *ptr = (unsigned char *)&sa->sa_data[2];
+    bzero(&str, sizeof(str));
+
+    if (sa->sa_len == 0)
+        return "0.0.0.0";
+    else if (sa->sa_len == 5)
+        snprintf(str, sizeof(str), "%d.0.0.0", *ptr);
+    else if (sa->sa_len == 6)
+        snprintf(str, sizeof(str), "%d.%d.0.0", ptr[0], ptr[1]);
+    else if (sa->sa_len == 7)
+        snprintf(str, sizeof(str), "%d.%d.%d.0", ptr[0], ptr[1], ptr[2]);
+    else if (sa->sa_len == 8)
+        snprintf(str, sizeof(str), "%d.%d.%d.%d", ptr[0], ptr[1], ptr[2], ptr[3]);
+    return str;
+}
+
 char *getAddrInfo(struct sockaddr *addr) 
 {
     char *buf = NULL;
@@ -46,9 +70,10 @@ char *getAddrInfo(struct sockaddr *addr)
             return NULL;
         }
         struct sockaddr_dl *dladdr = (struct sockaddr_dl *)addr;
-        int i = dladdr->sdl_alen;
-        unsigned char *ptr = (unsigned char *)dladdr->sdl_data + dladdr->sdl_nlen; 
-        snprintf(buf, slen, "[mac %02x:%02x:%02x:%02x:%02x:%02x]", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5]);
+        if (dladdr->sdl_alen) {
+            unsigned char *ptr = (unsigned char *)dladdr->sdl_data + dladdr->sdl_nlen; 
+            snprintf(buf, slen, "[mac %02x:%02x:%02x:%02x:%02x:%02x]", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5]);
+        }
     }
 #endif /* HAVE_SOCKADDR_DL_STRUCT */
     else {
