@@ -99,7 +99,5 @@ int main(int argc, char const *argv[])
     if ((sa = rti_info[RTAX_GENMASK]) != NULL) {
         printf("genmask : %s\n", getMaskInfo(rti_info[RTAX_GENMASK]));
     }
-
-
     return 0;
 }
