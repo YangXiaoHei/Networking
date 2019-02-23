@@ -159,6 +159,39 @@
    * **服务器 - 阻塞型 accept 可能会引发的阻塞 BUG 验证 - select 可读事件后睡 5 秒然后 accept - 然而并没有得到书上所述的结果 💔** [BlockAcceptBug_TCPServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/BlockAcceptBug_TCPServer.c)
    * **阻塞型 accept 可能会引发的阻塞 BUG 验证 - 合并了 tcpdump 的时序日志** [timeline.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/progs/timeline.c)
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/16%20非阻塞式%20IO/习题.md)
+
+* 第 17 章 ioctl 操作
+   * [note](https://github.com/YangXiaoHei/Networking/blob/master/UNP/17%20ioctl%20操作/README.md)
+   * **通过 ioctl 的 SIOCGARP 获取 ARP 表项 - IP 地址对应的 MAC 地址** [ARPOperation.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/17%20ioctl%20操作/progs/ARPOperation.c)
+   * **通过 ioctl 的 SIOCGIFCONF 获取全部接口信息 - 观察分配比较小的缓冲区时会发生什么** [AssignMemoryForIfconfTooLess.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/17%20ioctl%20操作/progs/AssignMemoryForIfconfTooLess.c)
+   * **获取所有网络接口的工具 - 使用 ioctl 的 SIOCGIFCONF 选项实现** [InterfaceTool.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/17%20ioctl%20操作/progs/InterfaceTool.h) [InterfaceTool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/17%20ioctl%20操作/progs/InterfaceTool.c)
+   * **获取所有网络接口工具 - 测试** [TestInterface.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/17%20ioctl%20操作/progs/TestInterface.c)
+   * **写一个尽量完善的 writen - 客户端 - 创建子进程不断对父进程发送 SIGINT 信号 - 同时一并测试非阻塞描述符的情况** [WriteNClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/17%20ioctl%20操作/progs/WriteNClient.c)
+   * **写一个尽量完善的 writen - 服务器** [WriteNServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/17%20ioctl%20操作/progs/WriteNServer.c)
+   * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/17%20ioctl%20操作/习题.md)
+
+* 第 18 章 路由套接字 (⚠️ ***linux 系统不支持 sysctl 和路由套接字, 下面的代码都是在 Mac 上运行测试***)
+   * **通过 sysctl - CTL_NET - AF_INET - IPPROTO_UDP - UDPCTL_CHECKSUM 检查 UDP 校验和是否开启** [CheckIfUDPChecksumEnable.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/progs/CheckIfUDPChecksumEnable.c)
+   * **通过 sysctl - CTL_NET - AF_ROUTE - 0 - AF_INET - NET_RT_FLAGS - RTF_LLINFO 获取全部 ARP 表项** [GetARPTable_BySysctl.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/progs/GetARPTable_BySysctl.c)
+   * **通过 sysctl - CTL_NET - AF_ROUTE - 0 - AF_INET - NET_RT_DUMP 获取全部路由表项** [GetRouteTable_BySysctl.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/progs/GetRouteTable_BySysctl.c)
+   * **通过路由套接字获取指定路由表项 - （⚠️ 路由套接字无法获得全部路由表项，只能获得指定的那一个）** [GetRouteTableEntry_BySockfd.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/progs/GetRouteTableEntry_BySockfd.c)
+   * **禁用 SO_USELOOPBACK 使得内核不会向进程发送数据** [Practise_02.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/progs/Practise_02.c)
+   * **通过 sysctl - CTL_NET - AF_ROUTE - 0 - family - NET_RT_IFLIST 获取全部网络接口的工具** [InterfaceTool_v2.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/progs/InterfaceTool_v2.h) [InterfaceTool_v2.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/progs/InterfaceTool_v2.c)
+   * **获取全部网络接口 - 第二版本 - 测试** [TestInterface.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/progs/TestInterface.c)
+   * **向 2 的次幂舍入宏的测试** [RoundUpTest.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/progs/RoundUpTest.c)
+   * **获取接口索引 - 通过接口名** [GetInterfaceIndexByName.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/progs/GetInterfaceIndexByName.c)
+   * **获取接口名 - 通过接口索引** [GetInterfaceNameByIndex.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/progs/GetInterfaceNameByIndex.c)
+   * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/18%20路由套接字/习题.md)
+
+* 第 22 章 高级 UDP 套接字编程
+   * **在服务器端获取 UDP 套接字目的 IP - 设置套接字选项 SO_RECVORIGDSTADDR - 使用 recvmsg - 服务器** [GetUDPIP_server.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/GetUDPIP_server.c)
+   * **在服务器端获取 UDP 套接字目的 IP - 设置套接字选项 SO_RECVORIGDSTADDR - 使用 recvmsg - 客户端** [GetUDPIP_client.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/GetUDPIP_client.c)
+   * **UDP 回显客户端 - 验证 UDP 会丢包这件事** [UDPEchoClient_TimeoutRecv_TestPacketLoss.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/UDPEchoClient_TimeoutRecv_TestPacketLoss.c)
+   * **可靠的 UDP - 超时重传 - 动态估计 RTO - 指数退避 - 避免重传二义性 - 序号确认** [reliable_udp.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/reliable_udp.h) [reliable_udp.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/reliable_udp.c)
+   * **可靠的 UDP 测试客户端** [UDPEchoClient_Reliable.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/UDPEchoClient_Reliable.c)
+   * **并发的 UDP 回显服务器 - 模拟 TCP : 监听套接字收到请求连入, 再创建一个新的套接字用于通信** [ConccurentUDPEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/ConccurentUDPEchoServer.c)
+   * **并发的 UDP 回显客户端 - 模拟 TCP : 发送三次握手分组** [ConccurentUDPEchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/ConccurentUDPEchoClient.c)
+   * **创建一个指定字节文件 - 填充任意字符** [CreateData.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/CreateData.c)
           
 # 《计算机网络-自顶向下 6th》
 
