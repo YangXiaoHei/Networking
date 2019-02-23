@@ -7,7 +7,6 @@
 #include <sys/ioctl.h>
 #include <errno.h>
 #include <signal.h>
-#include "reliable_udp.h"
 
 typedef void(*sig_handler)(int);
 
