@@ -2,12 +2,12 @@
 #define _RELIABLE_UDP_H_
 
 struct rtt_info {
-	float rtt_rtt;  /* 测量得出的往返时间 */
-	float rtt_srtt; /* 估算的往返时间 */
-	float rtt_rttvar; /* 波动 */
-	float rtt_rto; /* 计算得出的超时估计值 rtt_rto = rtt_srtt + 4  * rtt_rttvar */
-	int rtt_nretrans; /* 重传的次数 */
-	long rtt_base;  /* 开始的时间点 */
+    float rtt_rtt;  /* 测量得出的往返时间 */
+    float rtt_srtt; /* 估算的往返时间 */
+    float rtt_rttvar; /* 波动 */
+    float rtt_rto; /* 计算得出的超时估计值 rtt_rto = rtt_srtt + 4  * rtt_rttvar */
+    int rtt_nretrans; /* 重传的次数 */
+    long rtt_base;  /* 开始的时间点 */
 };
 
 #define RTT_RXTMIN 2
