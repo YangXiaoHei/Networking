@@ -1,6 +1,8 @@
 #ifndef _TIME_TOOL_H
 #define _TIME_TOOL_H
 
+#include <sys/_types/_ssize_t.h>
+
 const char *curtimestr();
 unsigned long curtimeus();
 char *tcpdump_timestamp(void);
