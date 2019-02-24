@@ -27,9 +27,10 @@ int main(int argc, char *argv[])
     char buf[100];
     memset(buf, 'a', sizeof(buf));
     send(fd, buf, sizeof(buf), 0);
-   
-     char c = 'x';
-    send(fd, &c, 1, MSG_OOB);
+    
+    char haha[3000];    
+    memset(haha, 'x', sizeof(haha)); 
+    send(fd, haha, sizeof(haha), MSG_OOB);
    
     memset(buf, 'c', sizeof(buf));
     send(fd, buf, sizeof(buf), 0);
