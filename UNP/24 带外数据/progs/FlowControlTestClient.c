@@ -6,6 +6,15 @@
 #include <unistd.h>
 #include <errno.h>
 
+int connfd = -1;
+
+void sig_alrm(int signo) 
+{
+    char c;
+    send(connfd, &c, 1, MSG_OOB);
+    printf("send 1 bytes OOB data\n");
+}
+
 int main(int argc, char *argv[])
 {
     if (argc != 3) {
@@ -23,7 +32,7 @@ int main(int argc, char *argv[])
     svraddr.sin_port = htons(atoi(argv[2]));
     svraddr.sin_addr.s_addr = inet_addr(argv[1]);
     
-    ssize_t sndbuf = 5 << 10;
+    ssize_t sndbuf = 10 << 10;
     if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &sndbuf, sizeof(sndbuf)) < 0) {
         perror("setsockopt error!");
         exit(1);
@@ -34,11 +43,20 @@ int main(int argc, char *argv[])
         exit(1);
     }
     
-    ssize_t len = 3 << 20; 
+    if (signal(SIGALRM, sig_alrm) == SIG_ERR) {
+        perror("signal error!");
+        exit(1);
+    } 
+    
+    alarm(20);
+    ssize_t len = 6 << 10; 
     char buf[len];
-    if (send(fd, buf, len, MSG_WAITALL) < 0) {
+    if (send(fd, buf, len, 0) < 0) {
         perror("send error!");
         exit(1);
     }     
     printf("all data finished!");
+    connfd = fd; 
+    for (;;) 
+        sleep(1);
 }
