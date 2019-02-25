@@ -8,6 +8,10 @@
 
 int main(int argc, char *argv[])
 {
+    if (argc != 3) {
+        printf("usage : %s <ip> <port>\n", argv[0]);
+        exit(1);
+    }
     int fd = -1;
     if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         perror("socket fd create fail!");
@@ -24,11 +28,11 @@ int main(int argc, char *argv[])
         exit(1);
     }
     
-    char buf[100];
+    char buf[3000];
     memset(buf, 'a', sizeof(buf));
     send(fd, buf, sizeof(buf), 0);
     
-    char haha[3000];    
+    char haha[65540];    
     memset(haha, 'x', sizeof(haha)); 
     send(fd, haha, sizeof(haha), MSG_OOB);
    
