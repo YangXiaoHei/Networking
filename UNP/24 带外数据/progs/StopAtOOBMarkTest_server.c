@@ -85,6 +85,7 @@ int main(int argc, char *argv[])
             printf("client cut connection\n");
             exit(0);
         }
-        printf("read %zd bytes from recv buffer\n", nread);
+        buf[nread] = 0;
+        printf("read %zd bytes from recv buffer, %s\n", nread, buf);
     }
 }
