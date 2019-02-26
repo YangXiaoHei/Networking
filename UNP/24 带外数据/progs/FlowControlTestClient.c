@@ -11,7 +11,8 @@ int connfd = -1;
 void sig_alrm(int signo) 
 {
     char c;
-    send(connfd, &c, 1, MSG_OOB);
+    char buf[100];
+    send(connfd, buf, 100, MSG_OOB);
     printf("send 1 bytes OOB data\n");
 }
 
