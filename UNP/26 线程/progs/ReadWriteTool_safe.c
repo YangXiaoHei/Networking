@@ -6,7 +6,7 @@
 #include <errno.h>
 
 struct RLine {
-    char buf[4096];
+    char buf[8192];
     char *buf_ptr;
     ssize_t read_cnt;
 };
