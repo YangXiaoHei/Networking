@@ -6,8 +6,33 @@
 #include <string.h>
 #include <errno.h>
 #include "ReadWriteTool_safe.h"
-#include "../../tool/AddrTool.h"
+#include "AddrTool.h"
 #include <pthread.h>
+#include <signal.h>
+
+static ssize_t total_send;
+
+typedef void(*sig_handler)(int);
+
+sig_handler fuck(int signo, sig_handler newhandler)
+{
+    struct sigaction newact, oldact;
+    bzero(&newact, sizeof(newact));
+    newact.sa_handler = newhandler;
+    
+    if (signo == SIGALRM) {
+#ifdef SA_INTERRUPT
+        newact.sa_flags |= SA_INTERRUPT;
+#endif
+    } else {
+#ifdef SA_RESTART
+        newact.sa_flags |= SA_RESTART;
+#endif
+    }
+    if (sigaction(signo, &newact, &oldact) < 0)
+        return SIG_ERR;
+    return oldact.sa_handler;
+}
 
 int tcp_server(unsigned short port)
 {
@@ -34,24 +59,15 @@ int tcp_server(unsigned short port)
     return fd;    
 }
 
-ssize_t writen(int fd, char *buf, ssize_t n)
+void sig_pipe(int signo)
 {
-    ssize_t ntowrite = n;
-    ssize_t nwrite = 0;
-    while (ntowrite > 0) {
-        if ((nwrite = write(fd, buf, ntowrite)) < 0) {
-            if (errno != EINTR && errno != EAGAIN)
-                break;
-            nwrite = 0;
-        }
-        buf += nwrite;
-        ntowrite -= nwrite;
-    }
-    return n - ntowrite;
+    printf("recv sigpipe signal!\n");
+    exit(1);
 }
 
 void *echoTextToClient(void *arg)
 {
+    pthread_detach(pthread_self());
     int connfd = (int)arg;
     char *srcInfo = getPeerInfo(connfd);
     char buf[1024];
@@ -62,6 +78,7 @@ void *echoTextToClient(void *arg)
             break;
         } else if (nread == 0) {
             printf("client %s cut connection\n", srcInfo);
+            close(connfd);
             break;
         }
         buf[nread] = 0;
@@ -70,6 +87,8 @@ void *echoTextToClient(void *arg)
             perror("writen error!");
             break;
         }
+        total_send += nwrite;
+        printf("send %zd bytes to client %s, total_send=%zd\n", nwrite, srcInfo, total_send);
     }
     free(srcInfo);
     return (void *)NULL;
@@ -81,13 +100,19 @@ int main(int argc, char *argv[])
         printf("usage : %s <port>\n", argv[0]);
         exit(1);
     }
-
+    setbuf(stdout, NULL);
     pthread_t tid;
     int fd = -1;
     if ((fd = tcp_server(atoi(argv[1]))) < 0) {
         perror("tcp_server error!");
         exit(1);
     }
+    
+    if (fuck(SIGPIPE, sig_pipe) == SIG_ERR) {
+        perror("fuck error!");
+        exit(1);
+    }    
+
     int connfd = -1;
     struct sockaddr_in cliaddr;
     socklen_t clilen = sizeof(cliaddr);
