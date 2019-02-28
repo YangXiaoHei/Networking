@@ -14,6 +14,23 @@ struct RLine {
 pthread_once_t rl_once = PTHREAD_ONCE_INIT;
 pthread_key_t rl_key;
 
+ssize_t writen(int fd, void *vptr, ssize_t n)
+{
+    ssize_t nleft = n;
+    char *ptr = vptr;
+    ssize_t nwrite = 0;
+    while (nleft > 0) {
+        if ((nwrite = write(fd, ptr, nleft)) < 0) {
+            if (errno != EINTR && errno != EAGAIN)
+                break;
+            nwrite = 0;
+        }
+        nleft -= nwrite;
+        ptr += nwrite;
+    }
+    return n - nleft;
+}
+
 ssize_t __read(int fd, struct RLine *tsd, char *c)
 {
     if (tsd->read_cnt <= 0) {
@@ -34,11 +51,13 @@ ssize_t __read(int fd, struct RLine *tsd, char *c)
 
 void readline_free(void *ptr)
 {
+    printf("readline_free\n");
     free(ptr);
 }
 
 void readline_once(void)
 {
+    printf("read_line once\n");
     pthread_key_create(&rl_key, readline_free);
 }
 
