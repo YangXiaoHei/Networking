@@ -33,17 +33,17 @@ int tcp_server(unsigned short port)
     }
     if (listen(fd, 1000) < 0) {
         perror("listen error!");
-		return -4;
+        return -4;
     }
     return fd;
 }
 
 int main(int argc, char *argv[])
 {
-	if (argc != 2) {
-		printf("usage : %s <port>\n", argv[0]);
-		exit(1);
-	}
+    if (argc != 2) {
+        printf("usage : %s <port>\n", argv[0]);
+        exit(1);
+    }
     int listenfd = -1;
     if ((listenfd = tcp_server(atoi(argv[1]))) < 0) {
         perror("tcp_server error!");
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 
     int nready = 0;
     int connfd = -1;
-	ssize_t nread, nwrite;
+    ssize_t nread, nwrite;
     for (;;) {
         if ((nready = epoll_wait(efd, evlist, 1024, -1)) < 0) {
             perror("epoll_wait error!");
