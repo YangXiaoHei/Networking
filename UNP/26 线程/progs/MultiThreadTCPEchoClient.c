@@ -44,7 +44,7 @@ void *recvTextFromServer(void *arg)
         total_read += nread;
         /* fprintf(stderr, "recv %zd bytes from server, total_read=%zd\n", nread, total_read); */
         /* buf[nread] = 0; */
-        /* if ((nwrite = write(STDOUT_FILENO, buf, nread)) != nread) { */
+        if ((nwrite = write(STDOUT_FILENO, buf, nread)) != nread) {
             perror("write error!");
             exit(1);
         }
@@ -82,6 +82,7 @@ void sendTextToServer(int fd)
     }
     if (nread == 0) {
         shutdown(fd, SHUT_WR);
+        printf("client no data send\n");
     } else {
         perror("read error!");
         exit(1);
