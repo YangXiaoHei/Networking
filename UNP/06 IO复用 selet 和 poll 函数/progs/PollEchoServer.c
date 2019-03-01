@@ -93,6 +93,9 @@ int main(int argc, char const *argv[])
 
         /* 客户端套接字 */
         for (int i = 1; i <= maxi; i++) {
+            if (clients[i].revents & POLLHUP) {
+                printf("client %d hup\n", clients[i].fd);
+            }
             if (clients[i].revents & POLLRDNORM) {
                 ssize_t nread = -1, nwrite = -1;
                 if ((nread = read(clients[i].fd, buf, sizeof(buf))) < 0) {
