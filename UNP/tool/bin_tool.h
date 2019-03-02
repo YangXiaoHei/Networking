@@ -17,9 +17,9 @@ typedef char               TINT8;
 #endif
 
 typedef enum EN_BIN_TOOL_TYPE {
-    EN_IGNORE_LEADING_ZERO  = 1 << 0,
-    EN_GROUP_IN_FOURS       = 1 << 1,
-    EN_GROUP_IN_EIGHTS      = 1 << 2
+    ignore_leading  = 1 << 0,
+    four       = 1 << 1,
+    eight      = 1 << 2
 } EN_BIN_TOOL_TYPE;
 
 TUINT64 binaryStringToU64(const char *binary);

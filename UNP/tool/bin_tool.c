@@ -13,7 +13,7 @@ const char *_prefix_##ToBinaryString(_intype_ a, EN_BIN_TOOL_TYPE type) \
     int mod = 0;                                                \
                                                                 \
     /* 忽略先导零 */                                              \
-    if (type & EN_IGNORE_LEADING_ZERO)                          \
+    if (type & ignore_leading)                          \
     while(i >= 0 && ((a >> i) & 1) == 0) i--;                   \
                                                                 \
     /* 拼完 0 1 串 */                                            \
@@ -22,7 +22,7 @@ const char *_prefix_##ToBinaryString(_intype_ a, EN_BIN_TOOL_TYPE type) \
     _buf[j] = 0;                                                \
                                                                 \
     /* 要分成多少组？空格分隔 */                                    \
-    groups = (type & EN_GROUP_IN_EIGHTS) ? 8 : (type & EN_GROUP_IN_FOURS) ? 4 : 128;    \
+    groups = (type & eight) ? 8 : (type & four) ? 4 : 128;    \
     if (groups == 128)                                          \
     return _buf;                                                \
                                                                 \
@@ -117,7 +117,7 @@ BIN_2_INT_PROTOTYPE(TINT8, I8)
 
 const char *asciiToBinaryString(unsigned char ascii)
 {
-    return u8ToBinaryString(ascii, EN_GROUP_IN_FOURS);
+    return u8ToBinaryString(ascii, four);
 }
 
 unsigned char binaryStringToAscii(const char *binary)
