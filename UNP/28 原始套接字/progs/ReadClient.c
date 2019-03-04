@@ -8,7 +8,7 @@
 #include "../../tool/PathTool.h"
 #include "FdTransmitTool.h"
 
-#define UNIX_PATH "hanson_unix"
+#define UNIX_PATH "unix_hanson"
 
 int main(int argc, char *argv[])
 {
