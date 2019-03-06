@@ -1,3 +1,4 @@
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,17 +6,15 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/un.h>
+
+#ifdef HAVE_SOCKADDR_DL_STRUCT
 #include <net/if_dl.h>
-#include "config.h"
+#endif
 
 const char * getMaskInfo(struct sockaddr *sa)
 {
-#ifndef HAVE_SOCKADDR_SA_LEN
-    printf("not supported!\n");
-    exit(1);
-#endif
-
     static char str[INET6_ADDRSTRLEN];
+#ifdef HAVE_SOCKADDR_DL_STRUCT
     unsigned char *ptr = (unsigned char *)&sa->sa_data[2];
     bzero(&str, sizeof(str));
 
@@ -29,6 +28,7 @@ const char * getMaskInfo(struct sockaddr *sa)
         snprintf(str, sizeof(str), "%d.%d.%d.0", ptr[0], ptr[1], ptr[2]);
     else if (sa->sa_len == 8)
         snprintf(str, sizeof(str), "%d.%d.%d.%d", ptr[0], ptr[1], ptr[2], ptr[3]);
+#endif
     return str;
 }
 
