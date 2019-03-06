@@ -3,6 +3,7 @@
 
 #include <sys/_types/_ssize_t.h>
 
+void cpu_time(void);
 const char *curtimestr();
 unsigned long curtimeus();
 char *tcpdump_timestamp(void);
