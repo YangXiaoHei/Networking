@@ -48,8 +48,10 @@ void handle_req(int connfd)
     char buf[100];
     for (;;) {
         if ((nread = read(connfd, buf, sizeof(buf))) <= 0) {
-            if (errno != 0)
+            if (errno != 0) {
                 perror("read error!");
+                errno = 0;
+            }
             break;
         } 
         buf[nread] = 0;
@@ -81,7 +83,7 @@ void *thread_main(void *arg)
         char *info = getPeerInfo(connfd);
         printf("thread - %d handle req from %s connfd=%d\n", (int *)arg, info, connfd);
 
-        if (naccepted == MAXCLI - 1)
+        if (naccepted <= MAXCLI - 1)
             pthread_cond_broadcast(&full);
         pthread_mutex_unlock(&mtx);
 
@@ -89,7 +91,7 @@ void *thread_main(void *arg)
         close(connfd);
         printf("thread - %d cut connection from %s\n", (int *)arg, info);
         free(info);
-    } 
+   } 
 }
 
 void make_thread(int i)
@@ -157,7 +159,7 @@ int main(int argc, char *argv[])
         if (++iput == MAXCLI)
             iput = 0;
     again: 
-        if (naccepted == 1) 
+        if (naccepted >= 1) 
             pthread_cond_broadcast(&empty);
         pthread_mutex_unlock(&mtx);
     }
