@@ -7,6 +7,6 @@
 #include <errno.h>
 
 ssize_t readline(int fd, char *buf, size_t buflen);
-ssize_t writen(int fd, void *vptr, size_t n);
+ssize_t writen(int fd, void *vptr, ssize_t n);
 
 #endif
