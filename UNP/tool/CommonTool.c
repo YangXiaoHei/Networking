@@ -103,6 +103,11 @@ int tcp_server(const char *service)
             saveerrno = errno;
             continue;
         }
+        int on = 1;
+        if ((setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on))) < 0) {
+            saveerrno = errno;
+            continue;
+        }
         if (bind(fd, res->ai_addr, res->ai_addrlen) < 0) {
             saveerrno = errno;
             continue;
@@ -251,6 +256,11 @@ int udp_server(const char *service)
     ressave = res;
     do {
         if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0) {
+            saveerrno = errno;
+            continue;
+        }
+        int on = 1;
+        if ((setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on))) < 0) {
             saveerrno = errno;
             continue;
         }
