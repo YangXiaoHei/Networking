@@ -1,0 +1,10 @@
+20:52:27.984798: fd = 3 connect invoked
+20:52:27.985584: fd = 4 connect invoked
+20:52:27.985648: fd = 5 connect invoked
+20:52:27.985701: fd = 6 connect invoked
+20:52:27.985746: fd = 7 connect invoked
+20:52:28.000097: fd = 5 connect succ! sockaddr is [192.168.0.100:49922]
+20:52:28.000248: fd = 3 connect succ! sockaddr is [192.168.0.100:49920]
+20:52:28.000274: fd = 4 connect succ! sockaddr is [192.168.0.100:49921]
+20:52:28.000294: fd = 6 connect succ! sockaddr is [192.168.0.100:49923]
+20:52:28.005051: fd = 7 connect succ! sockaddr is [192.168.0.100:49924]
