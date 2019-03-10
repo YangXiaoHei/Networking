@@ -23,7 +23,7 @@ int tcp_connect_cb(const char *hostname, const char *service, int(*cb)(int))
         exit(1);
     }
     ressave = res;
-    saveerrno = 0;
+    int saveerrno = 0;
     do {
         if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0) {
             saveerrno = errno;
@@ -64,6 +64,7 @@ int tcp_connect(const char *hostname, const char *service)
         exit(1);
     }
     ressave = res;
+    int saveerrno = 0;
     do {
         if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0) {
             saveerrno = errno;
@@ -94,10 +95,11 @@ int tcp_server(const char *service)
 
     int error = 0;
     if ((error = getaddrinfo(NULL, service, &hints, &res)) != 0) {
-        printf("getaddrinfo error! %s : %s\n",, service, gai_strerror(error));
+        printf("getaddrinfo error! %s : %s\n", service, gai_strerror(error));
         exit(1);
     }
     ressave = res;
+    int saveerrno = 0;
     do {
         if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0) {
             saveerrno = errno;
@@ -141,6 +143,7 @@ int tcp_server_cb(const char *service, int(*cb)(int))
         exit(1);
     }
     ressave = res;
+    int saveerrno = 0;
     do {
         if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0) {
             saveerrno = errno;
@@ -177,6 +180,7 @@ int udp_connect_cb(const char *hostname, const char *service, int(*cb)(int))
     hints.ai_family = AF_INET;
 
     int error = 0;
+    int saveerrno = 0;
     if ((error = getaddrinfo(hostname, service, &hints, &res)) != 0) {
         printf("getaddrinfo error! %s %s : %s\n", hostname, service, gai_strerror(error));
         exit(1);
@@ -220,6 +224,7 @@ int udp_connect(const char *hostname, const char *service)
         exit(1);
     }
     ressave = res;
+    int saveerrno = 0;
     do {
         if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0) {
             saveerrno = errno;
@@ -254,6 +259,7 @@ int udp_server(const char *service)
         exit(1);
     }
     ressave = res;
+    int saveerrno = 0;
     do {
         if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0) {
             saveerrno = errno;
@@ -293,6 +299,7 @@ int udp_server_cb(const char *service, int(*cb)(int))
         exit(1);
     }
     ressave = res;
+    int saveerrno = 0;
     do {
         if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) < 0) {
             saveerrno = errno;
