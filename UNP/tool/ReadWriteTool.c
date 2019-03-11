@@ -1,5 +1,23 @@
 #include "ReadWriteTool.h"
 
+ssize_t readn(int fd, char *buf, ssize_t n)
+{
+    ssize_t nleft = n;
+    char *ptr = buf;
+    ssize_t nread;
+    while (nleft > 0) {
+        if ((nread = read(fd, ptr, nleft)) < 0) {
+            if (errno != EAGAIN && errno != EINTR)
+               break; 
+            nread = 0;
+        } else if (nread == 0)
+            break;
+        ptr += nread;
+        nleft -= nread;
+    }
+    return n - nleft;
+}
+
 ssize_t writen(int fd, void *vptr, ssize_t n)
 {
     ssize_t nleft = n;
