@@ -7,6 +7,9 @@
 #include <stdarg.h>
 #include "TimeTool.h"
 #include <sys/resource.h>
+#include <errno.h>
+
+int log_err = 0;
 
 void cpu_time(void)
 {
@@ -53,8 +56,12 @@ ssize_t _mlogx(const char *file, int line, const char *fmt, ...)
     va_start(ap, fmt);
     char buf[1024];
     n += snprintf(buf + n, sizeof(buf) - n, "%s:%d %s: ", file, line, tcpdump_timestamp());
-    vsnprintf(buf + n, sizeof(buf) - n, fmt, ap);
+    n += vsnprintf(buf + n, sizeof(buf) - n, fmt, ap);
     va_end(ap);
+    if (log_err && errno != 0) {
+        n += snprintf(buf + n, sizeof(buf) - n, " : %s", strerror(errno));
+        errno = 0;
+    }
     return fprintf(stderr, "%s\n", buf);
 }
 
@@ -65,8 +72,12 @@ ssize_t logx(const char *fmt, ...)
     va_start(ap, fmt);
     char buf[1024];
     n += snprintf(buf + n, sizeof(buf) - n, "%s: ", tcpdump_timestamp());
-    vsnprintf(buf + n, sizeof(buf) - n, fmt, ap);
+    n += vsnprintf(buf + n, sizeof(buf) - n, fmt, ap);
     va_end(ap);
+    if (log_err && errno != 0) {
+        n += snprintf(buf + n, sizeof(buf) - n, " : %s", strerror(errno));
+        errno = 0;
+    }
     return fprintf(stderr, "%s\n", buf);
 }
 
