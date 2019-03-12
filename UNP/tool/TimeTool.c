@@ -46,13 +46,25 @@ char *tcpdump_timestamp(void)
     return str;
 }
 
+ssize_t _mlogx(const char *file, int line, const char *fmt, ...) 
+{
+    size_t n = 0;
+    va_list ap;
+    va_start(ap, fmt);
+    char buf[1024];
+    n += snprintf(buf + n, sizeof(buf) - n, "%s:%d %s: ", file, line, tcpdump_timestamp());
+    vsnprintf(buf + n, sizeof(buf) - n, fmt, ap);
+    va_end(ap);
+    return fprintf(stderr, "%s\n", buf);
+}
+
 ssize_t logx(const char *fmt, ...) 
 {
     size_t n = 0;
     va_list ap;
     va_start(ap, fmt);
     char buf[1024];
-    n = snprintf(buf, sizeof(buf), "%s: ", tcpdump_timestamp());
+    n += snprintf(buf + n, sizeof(buf) - n, "%s: ", tcpdump_timestamp());
     vsnprintf(buf + n, sizeof(buf) - n, fmt, ap);
     va_end(ap);
     return fprintf(stderr, "%s\n", buf);
