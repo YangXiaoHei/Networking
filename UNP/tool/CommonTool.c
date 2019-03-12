@@ -6,7 +6,39 @@
 #include <netdb.h>
 #include <errno.h>
 #include <string.h>
+#include <signal.h>
 #include "CommonTool.h"
+
+sig_handler fuck_int(int signo, sig_handler newhandler)
+{
+    struct sigaction newact, oldact;
+    bzero(&newact, sizeof(newact));
+    newact.sa_handler = newhandler;
+#ifdef SA_INTERRUPT
+    newact.sa_flags |= SA_INTERRUPT;
+#endif
+    if (sigaction(signo, &newact, &oldact) < 0) 
+        return SIG_ERR;
+    return oldact.sa_handler;
+}
+sig_handler fuck(int signo, sig_handler newhandler)
+{
+    struct sigaction newact, oldact;
+    bzero(&newact, sizeof(newact));
+    newact.sa_handler = newhandler;
+    if (signo == SIGALRM) {
+#ifdef SA_INTERRUPT
+        newact.sa_flags |= SA_INTERRUPT;
+#endif
+    } else {
+#ifdef SA_RESTART
+        newact.sa_flags |= SA_RESTART;
+#endif
+    }
+    if (sigaction(signo, &newact, &oldact) < 0) 
+        return SIG_ERR;
+    return oldact.sa_handler;
+}
 
 int tcp_connect_cb(const char *hostname, const char *service, int(*cb)(int))
 {
@@ -176,7 +208,7 @@ int udp_connect_cb(const char *hostname, const char *service, int(*cb)(int))
     struct addrinfo hints, *res = NULL, *ressave = NULL;
     bzero(&hints, sizeof(hints));
     hints.ai_flags = AI_CANONNAME;
-    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_socktype = SOCK_DGRAM;
     hints.ai_family = AF_INET;
 
     int error = 0;
@@ -215,7 +247,7 @@ int udp_connect(const char *hostname, const char *service)
     struct addrinfo hints, *res = NULL, *ressave = NULL;
     bzero(&hints, sizeof(hints));
     hints.ai_flags = AI_CANONNAME;
-    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_socktype = SOCK_DGRAM;
     hints.ai_family = AF_INET;
 
     int error = 0;
