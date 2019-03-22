@@ -5,6 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include "../../tool/TimeTool.h"
 
 int main(int argc, char *argv[])
 {
@@ -32,10 +33,19 @@ int main(int argc, char *argv[])
     memset(buf, 'a', sizeof(buf));
     send(fd, buf, sizeof(buf), 0);
     
-    char haha[65540];    
+    char haha[4000];    
     memset(haha, 'x', sizeof(haha)); 
     send(fd, haha, sizeof(haha), MSG_OOB);
    
     memset(buf, 'c', sizeof(buf));
     send(fd, buf, sizeof(buf), 0);
+
+
+    shutdown(fd, SHUT_WR);
+
+    if ((read(fd, buf, sizeof(buf))) == 0) {
+        logx("client closed connection");
+    } else {
+        logx("server what a fuck!");
+    }
 }

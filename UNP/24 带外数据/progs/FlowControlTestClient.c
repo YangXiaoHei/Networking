@@ -13,7 +13,7 @@ void sig_alrm(int signo)
     char c;
     char buf[100];
     send(connfd, buf, 100, MSG_OOB);
-    printf("send 1 bytes OOB data\n");
+    printf("send 100 bytes OOB data\n");
 }
 
 int main(int argc, char *argv[])
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
         perror("send error!");
         exit(1);
     }     
-    printf("all data finished!");
+    printf("all data finished!\n");
     connfd = fd; 
     for (;;) 
         sleep(1);

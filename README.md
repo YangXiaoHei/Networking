@@ -193,6 +193,20 @@
    * **并发的 UDP 回显服务器 - 模拟 TCP : 监听套接字收到请求连入, 创建新套接字用于通信** [ConccurentUDPEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/ConccurentUDPEchoServer.c)
    * **并发的 UDP 回显客户端 - 模拟 TCP : 发送三次握手分组** [ConccurentUDPEchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/ConccurentUDPEchoClient.c)
    * **创建一个指定字节文件 - 填充任意字符** [CreateData.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/22%20高级%20UDP%20套接字编程/progs/CreateData.c)
+   
+* 第 24 章 带外数据
+	* **带外数据 - 发送** [SendOutOfBandData_TCPClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/SendOutOfBandData_TCPClient.c)
+	* **带外数据 - 接收 - select 异常事件** [SendOutOfBandData_TCPSelectServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/SendOutOfBandData_TCPSelectServer.c)
+	* **带外数据 - 接收 - SIGURG 信号触发** [SendOutOfBandData_TCPServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/SendOutOfBandData_TCPServer.c)
+	* **读函数会在带外数据前停下 - 客户端** [StopAtOOBMarkTest_client.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/StopAtOOBMarkTest_client.c) 
+	* **读函数会在带外数据前停下 - 服务器** [StopAtOOBMarkTest_server.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/StopAtOOBMarkTest_server.c) 
+	* **用 sockatmark 判断下一个待读取字节是否是带外数据 - sockatmark 的 ioctl 实现 - 设置套接字选项 SO_OOBINLINE 则带外数据不使用 MSG_OOB flag 就能读到** [StopAtOOBMarkTest_server.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/StopAtOOBMarkTest_server.c) 
+	* **旧的带外数据若不读取，则带外标记会被新的带外标记覆盖** [OOBMarkCover_client.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/OOBMarkCover_client.c) 
+	* **验证在对端 TCP 通告滑动窗口为 0 时，也能把紧急状态通知给对端 - 客户端** [FlowControlTestClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/FlowControlTestClient.c)
+	* **验证在对端 TCP 通告滑动窗口为 0 时，也能把紧急状态通知给对端 - 命令行参数设置接收缓冲区大小 (KB) - 服务器** [FlowControlTestServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/FlowControlTestServer.c)
+	* **客户端心跳保活** [client_heartbeat_helper.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/client_heartbeat_helper.h) | [client_heartbeat_helper.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/client_heartbeat_helper.c)
+	* **服务器心跳保活** [server_heartbeat_helper.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/server_heartbeat_helper.h) | [server_heartbeat_helper.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/server_heartbeat_helper.c)
+	* [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/习题.md)
           
 # 《计算机网络-自顶向下 6th》
 
