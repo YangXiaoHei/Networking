@@ -207,6 +207,31 @@
 	* **客户端心跳保活** [client_heartbeat_helper.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/client_heartbeat_helper.h) | [client_heartbeat_helper.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/client_heartbeat_helper.c)
 	* **服务器心跳保活** [server_heartbeat_helper.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/server_heartbeat_helper.h) | [server_heartbeat_helper.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/progs/server_heartbeat_helper.c)
 	* [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/24%20带外数据/习题.md)
+
+* 第 25 章 信号驱动式 IO
+   * **SIGIO 实现的 UDP recv_and_send** [udp_echo_driven_by_sigio.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/25%20信号驱动式%20IO/progs/udp_echo_driven_by_sigio.h) | [udp_echo_driven_by_sigio.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/25%20信号驱动式%20IO/progs/udp_echo_driven_by_sigio.c)
+   * **SIGIO 实现的 UDP 回显服务器** [UDPEchoServer_BySIGIO.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/25%20信号驱动式%20IO/progs/UDPEchoServer_BySIGIO.c)
+
+* 第 26 章 线程
+   * **两个线程无锁递增静态变量 - BUG** [IncorrectOfMultiThreadIncreaseStaticVar.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/26%20线程/progs/IncorrectOfMultiThreadIncreaseStaticVar.c)
+   * **pthread_join 功能测试** [PthreadJoinTest.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/26%20线程/progs/PthreadJoinTest.c)
+   * **线程安全的 readline** [ReadWriteTool_safe.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/26%20线程/progs/ReadWriteTool_safe.h) | [ReadWriteTool_safe.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/26%20线程/progs/ReadWriteTool_safe.c)
+   * **多线程回显客户端** [MultiThreadTCPEchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/26%20线程/progs/MultiThreadTCPEchoClient.c)
+   * **多线程回显服务器** [MultiThreadTCPEchoServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/26%20线程/progs/MultiThreadTCPEchoServer.c)
+   * **多线程下载客户端 - 轮询** [MultiThreadWebClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/26%20线程/progs/MultiThreadWebClient.c)
+   * **多线程下载客户端 - 条件变量** [MultiThreadWebClient_ByCondition.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/26%20线程/progs/MultiThreadWebClient_ByCondition.c)
+   * **下载客户端 - 非阻塞** [NonblockWebClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/26%20线程/progs/NonblockWebClient.c)
+
+* 第 28 章 原始套接字
+   * **struct icmp 不是 8 字节** [LookHowManyBytesOfStructICMP.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/LookHowManyBytesOfStructICMP.c)
+   * **文件描述符传递 - 读取从服务器传递回的描述符 - 客户端** [ReadClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/ReadClient.c)
+   * **文件描述符传递 - 打开文件然后把描述符传递给客户 - 服务器** [OpenServer.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/OpenServer.c)
+   * **看书上的 cksum 对疑惑地方的测试** [SignBitExpendTest.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/SignBitExpendTest.c)
+   * **ping** [ping.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/ping.c)
+   * **traceroute - BUG** [traceroute.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/traceroute.c)
+   * **traceroute - book** [traceroute_book.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/traceroute_book.c)
+   * **ICMP 守护进程** [icmp_daemon.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/icmp_daemon.c)
+   * **UDP 回显客户端 - 使用 ICMP daemon 接收 ICMP 错误** [](* **ICMP 守护进程** [comm.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/comm.h) | [UDPEchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/UDPEchoClient.c)
           
 # 《计算机网络-自顶向下 6th》
 
