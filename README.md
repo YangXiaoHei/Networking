@@ -232,7 +232,19 @@
    * **traceroute - book** [traceroute_book.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/traceroute_book.c)
    * **ICMP 守护进程** [icmp_daemon.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/icmp_daemon.c)
    * **UDP 回显客户端 - 使用 ICMP daemon 接收 ICMP 错误** [comm.h](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/comm.h) | [UDPEchoClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/28%20原始套接字/progs/UDPEchoClient.c)
-          
+
+* 第 30 章 客户服务器程序设计范式
+	* **文件锁测试** [FileLockTest.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/30%20客户服务器程序设计范式/progs/FileLockTest.c)
+	* **TCP 客户端 - 用于测试服务器性能** [TCPClient_ForBenchmark.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/30%20客户服务器程序设计范式/progs/TCPClient_ForBenchmark.c)
+	* **TCP 服务器 - 临时创建子进程** [TCPServer_Fork.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/30%20客户服务器程序设计范式/progs/TCPServer_Fork.c)
+	* **TCP 服务器 - 进程池 - 各子进程无上锁竞争 accept** [TCPServer_ForkPool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/30%20客户服务器程序设计范式/progs/TCPServer_ForkPool.c)
+	* **TCP 服务器 - 进程池 - 各子进程上文件锁 accept** [TCPServer_FileLockForkPool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/30%20客户服务器程序设计范式/progs/TCPServer_FileLockForkPool.c)
+   * **TCP 服务器 - 进程池 - 各子进程上 Pthread 锁 accept** [TCPServer_PthreadLockForkPool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/30%20客户服务器程序设计范式/progs/TCPServer_PthreadLockForkPool.c)     
+   * **TCP 服务器 - 进程池 - 主进程统一 accept 然后描述符传递给子进程** [TCPServer_FdTransmitForkPool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/30%20客户服务器程序设计范式/progs/TCPServer_FdTransmitForkPool.c)
+   * **TCP 服务器 - 线程池 - 各子线程无上锁竞争 accept** [TCPServer_ThreadPool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/30%20客户服务器程序设计范式/progs/TCPServer_ThreadPool.c)
+   * **TCP 服务器 - 线程池 - 主线程统一 accept 后分发给子线程** [TCPServer_MainThreadAccept_ThreadPool.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/30%20客户服务器程序设计范式/progs/TCPServer_MainThreadAccept_ThreadPool.c)
+   * **TCP 服务器 - 线程池 - 主线程统一 accept 后分发给子线程 - BUG** [TCPServer_MainThreadAccept_ThreadPool_BUG.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/30%20客户服务器程序设计范式/progs/TCPServer_MainThreadAccept_ThreadPool_BUG.c)
+    
 # 《计算机网络-自顶向下 6th》
 
 * 第 1 章 计算机网络和因特网
