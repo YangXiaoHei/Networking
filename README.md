@@ -66,6 +66,7 @@
    * **不使用 `SO_REUSEADDR` 选项的 server** [`NotUseOptionSO_REUSEADDR.c`](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/NotUseOptionSO_REUSEADDR.c)
    * **使用 `SO_REUSEADDR` 选项的 server** [`UseOptionSO_REUSEADDR_BindDifferentIp.c`](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/UseOptionSO_REUSEADDR_BindDifferentIp.c)
    * **查看 `TCP_NODELAY` 选项的影响的客户端** [`TCP_NODELAYClient.c`](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/TCP_NODELAYClient.c)
+   * **TCP_KEEPALIVE TCP_KEEPINTVL TCP_KEEPCNT 等选项的测试** [TCPKeepAliveClient.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/TCPKeepAliveClient.c)
    * **Nagle 算法测试** [NagleTest.c](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/progs/NagleTest.c)
    * [习题](https://github.com/YangXiaoHei/Networking/blob/master/UNP/07%20套接字选项/习题.md)
   
