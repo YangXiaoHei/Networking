@@ -41,7 +41,6 @@ int main(int argc, char *argv[])
         for (int i = 0; i < strlen(msg); i++) {
             write(fd, msg + i, 1);
             logx("send %c to server", msg[i]);
-            usleep(300 * 1000);
         }
     }
     close(fd);
